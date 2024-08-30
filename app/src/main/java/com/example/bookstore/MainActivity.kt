@@ -1,6 +1,8 @@
 package com.example.bookstore
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,17 +21,22 @@ import com.example.bookstore.ui.theme.BookstoreTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        installSplashScreen().setKeepOnScreenCondition {
-//            !splashViewModel.isLoading.value
-//        }
-//
-//        setContent {
-//            OnBoardingComposeTheme {
-//                val screen by splashViewModel.startDestination
-//                val navController = rememberNavController()
-//                SetupNavGraph(navController = navController, startDestination = screen)
-//            }
-//        }
-        installSplashScreen().setKeepOnScreenCondition { true }
+        installSplashScreen()
+
+        val sharedPref = getSharedPreferences("app_preferences", MODE_PRIVATE)
+        val onboardingComplete = sharedPref.getBoolean("chaptery_onboarding_complete", false)
+
+        if (!onboardingComplete) {
+            val intent = Intent(this, OnboardingActivity::class.java)
+
+            startActivity(intent)
+            Log.d("FlightScreen", "F2 ")
+
+            finish()
+        } else {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
