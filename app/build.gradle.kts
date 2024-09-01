@@ -79,4 +79,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation ("com.google.maps.android:maps-compose:2.11.2") // Thư viện Jetpack Compose cho Google Maps
+    implementation ("com.google.android.libraries.places:places:3.5.0") // Thư viện Places API
+
 }
