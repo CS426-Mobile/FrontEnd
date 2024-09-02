@@ -2,6 +2,7 @@ package com.example.bookstore
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
@@ -18,7 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.bookstore.ui.theme.mainColor
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
@@ -53,7 +54,7 @@ fun Home() {
 @Composable
 fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = BottomNavItem.Home.route, modifier = modifier) {
-//        composable(BottomNavItem.Home.route) { HomeScreen(onNaviGateToTransport = { navController.navigate("transportBooking") })}
+        composable(BottomNavItem.Home.route) { HomeScreen(navController)}
 
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -82,7 +83,6 @@ fun BottomNavigationBar(navController: NavHostController) {
         items.forEach { item ->
             BottomNavigationItem(
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
-                label = { Text(text = item.title) },
                 selectedContentColor = mainColor,
                 unselectedContentColor = Color.Gray,
                 alwaysShowLabel = true,
