@@ -330,6 +330,7 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
             value = password,
             onValueChange = { password = it },
             label = "Password",
+            isError = errorMessage.isNotEmpty(),
             isPassword = true,
             icon = R.drawable.ic_password
         )
@@ -340,6 +341,7 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = "Confirm Password",
+            isError = errorMessage.isNotEmpty(),
             isPassword = true,
             icon = R.drawable.ic_password
         )
@@ -373,6 +375,23 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Sign In Text
+        Row {
+            Text(
+                text = "Already have an account?",
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Sign in",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable { onSignUpSuccess() },
+                color = mainColor
             )
         }
     }
