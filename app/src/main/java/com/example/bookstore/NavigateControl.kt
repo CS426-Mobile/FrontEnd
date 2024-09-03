@@ -55,6 +55,12 @@ fun Home() {
 fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = BottomNavItem.Home.route, modifier = modifier) {
         composable(BottomNavItem.Home.route) { HomeScreen(navController)}
+        composable(Screen.Author.route) {
+            AuthorScreen(navController)
+        }
+        composable(Screen.Book.route) {
+            BookDetailScreen(navController)
+        }
 
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
