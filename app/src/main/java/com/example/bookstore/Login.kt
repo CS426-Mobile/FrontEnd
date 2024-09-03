@@ -43,15 +43,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.CustomTextField
-import com.example.bookstore.data.AppDatabase
-import com.example.bookstore.model.User
-import com.example.bookstore.repository.UserRepository
+import com.example.bookstore.model.UserEntity
+import com.example.bookstore.screen.HomeActivity
 import com.example.bookstore.ui.theme.blurOrange
 import com.example.bookstore.ui.theme.errorColor
 import com.example.bookstore.ui.theme.mainColor
@@ -91,8 +89,9 @@ fun SignInScreen(navController: NavController, userViewModel: UserViewModel) {
 
     SignInUI(
         onSignInSuccess = {
-//             Navigate to HomeActivity or any other screen on successful sign-in
-            navController.context.startActivity(Intent(navController.context, OnboardingActivity::class.java))
+// Navigate to HomeActivity on successful sign-in
+            navController.context.startActivity(Intent(navController.context, HomeActivity::class.java))
+            (navController.context as? ComponentActivity)?.finish() // Finish LoginActivity
         },
         onSignUpClick = {
             navController.navigate("sign_up")
@@ -352,7 +351,7 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
             onClick = {
                 if (isFormValid) {
                     if (password == confirmPassword) {
-                        userViewModel.insertUser(User(0, email, password))
+                        userViewModel.insertUser(UserEntity(0, email, password))
                         onSignUpSuccess()
                     } else {
                         errorMessage = "Passwords do not match"

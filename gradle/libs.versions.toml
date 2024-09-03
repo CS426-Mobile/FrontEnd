@@ -29,6 +29,7 @@ lifecycleViewmodelKtx = "2.8.3"
 junitJunit = "4.12"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
+runtimeLivedata = "1.6.8"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPagerIndicators" }
@@ -69,6 +70,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
