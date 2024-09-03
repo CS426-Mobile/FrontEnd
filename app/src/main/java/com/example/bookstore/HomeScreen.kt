@@ -41,6 +41,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.clip
+import com.example.bookstore.ui.theme.mainColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,8 +78,8 @@ fun HomeScreen(navController: NavHostController) {
     ) {
         CustomTopAppBar(
             title = "Browse everything",
-            onBackClick = { /* Handle back action */ },
-            onCartClick = { /* Handle cart action */ }
+            isCart = true,
+            navController = navController
         )
 
         SearchBar()
@@ -176,7 +178,7 @@ fun HomeScreen(navController: NavHostController) {
 
 
 @Composable
-fun CustomTopAppBar(isBack: Boolean = false, title: String, onBackClick: () -> Unit, onCartClick: () -> Unit) {
+fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = false, navController: NavHostController) {
     TopAppBar(
         backgroundColor = Color.White,
         contentColor = Color.Black,
@@ -199,7 +201,7 @@ fun CustomTopAppBar(isBack: Boolean = false, title: String, onBackClick: () -> U
                 // Nút quay lại bên trái
                 if (isBack) {
                     IconButton(
-                        onClick = { onBackClick() },
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
                         Icon(
@@ -212,14 +214,16 @@ fun CustomTopAppBar(isBack: Boolean = false, title: String, onBackClick: () -> U
                 Spacer(modifier = Modifier.weight(1f))
 
                 // Nút giỏ hàng bên phải
-                IconButton(
-                    onClick = { onCartClick() },
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_shopping), // Thay bằng icon giỏ hàng của bạn
-                        contentDescription = "Cart"
-                    )
+                if (isCart) {
+                    IconButton(
+                        onClick = { navController.navigate(Screen.Cart.route) },
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_shopping), // Thay bằng icon giỏ hàng của bạn
+                            contentDescription = "Cart"
+                        )
+                    }
                 }
             }
         }
@@ -292,8 +296,9 @@ fun CategoriesSection(
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable { onCategorySelected(category) }
-                    .background(if (selectedCategories.contains(category)) Color(0xFFFF6F00) else Color.Transparent)
-                    .padding(16.dp),
+                    .background(if (selectedCategories.contains(category)) mainColor else Color.Transparent)
+                    .padding(16.dp)
+                    .clip(shape = RoundedCornerShape(24.dp)),
                 color = if (selectedCategories.contains(category)) Color.White else Color.Black
             )
         }

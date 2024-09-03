@@ -60,15 +60,15 @@ import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.ui.theme.textColor
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
     isSheetOpen: Boolean = false,
     onSheetOpenChange: (Boolean) -> Unit = {}
 ) {
-    var priceFrom by remember { mutableStateOf("0") }
-    var priceTo by remember { mutableStateOf("50") }
-    var selectedStarRating by remember { mutableStateOf(1) }
+    var priceRange by remember { mutableStateOf(1f..20f) }
+    var selectedStarRating by remember { mutableStateOf(0) }
 
     if (isSheetOpen) {
         ModalBottomSheet(
@@ -103,7 +103,8 @@ fun FilterScreen(
                                 // Nút "Reset" bên phải
                                 TextButton(
                                     onClick = {
-                                        // Xử lý nút reset
+                                        priceRange = 1f..20f
+                                        selectedStarRating = 0
                                     }
                                 ) {
                                     Text(
@@ -133,7 +134,7 @@ fun FilterScreen(
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        PriceRangeSlider()
+                        PriceRangeSlider(priceRange = priceRange, onPriceRangeChange = { priceRange = it })
 
                         // Star Rating Section
                         Text(
@@ -217,30 +218,99 @@ fun FilterScreen(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun FilterScreenPreview() {
-    FilterScreen()
-}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PriceRangeSlider() {
-    // Trạng thái để lưu giá trị từ và đến của RangeSlider
-    var sliderPosition by remember { mutableStateOf(1f..200f) }
-    val sliderRange = 1f..200f
+fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeChange: (ClosedFloatingPointRange<Float>) -> Unit) {
+    var isFromFocused by remember { mutableStateOf(false) } // Trạng thái focus của ô "From"
+    var isToFocused by remember { mutableStateOf(false) } // Trạng thái focus của ô "To"
+    var fromPrice by remember { mutableStateOf(priceRange.start) }
+    var toPrice by remember { mutableStateOf(priceRange.endInclusive) }
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Hàng hiển thị thông tin giá trị của slider
-        EditablePriceRange()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start, // Không trải dài hết hàng
+            modifier = Modifier
+                .wrapContentWidth()
+        ) {
+            Text(text = "From", color = Color.Black, modifier = Modifier.padding(end = 8.dp)) // Thêm khoảng cách với ô
+
+            // Ô nhập liệu "From"
+            OutlinedTextField(
+                value = "${fromPrice.toInt()}",
+                onValueChange = { value ->
+                    fromPrice = value.toFloatOrNull() ?: 1f
+                    onPriceRangeChange(fromPrice..toPrice)
+                },
+                modifier = Modifier
+                    .width(100.dp) // Giảm chiều rộng của ô
+                    .border(
+                        width = 1.dp,
+                        color = if (isFromFocused) Color(0xFFFF6F00) else Color.Gray,
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    .onFocusChanged { isFromFocused = it.isFocused },
+                shape = RoundedCornerShape(24.dp),
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    cursorColor = Color.Black
+                ),
+                trailingIcon = {
+                    Text(text = "$", color = Color.Black)
+                },
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center) // Canh giữa giá trị
+            )
+
+//        Spacer(modifier = Modifier.width(16.dp)) // Khoảng cách giữa các ô
+
+            Text(text = "to", color = Color.Black, modifier = Modifier.padding(horizontal = 8.dp)) // Thêm khoảng cách với các ô
+
+            // Ô nhập liệu "To"
+            OutlinedTextField(
+                value = "${toPrice.toInt()}",
+                onValueChange = { value ->
+                    toPrice = value.toFloatOrNull() ?: 20f
+                    onPriceRangeChange(fromPrice..toPrice)},
+                modifier = Modifier
+                    .width(100.dp) // Giảm chiều rộng của ô
+                    .border(
+                        width = 1.dp,
+                        color = if (isToFocused) Color(0xFFFF6F00) else Color.Gray,
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    .onFocusChanged { isToFocused = it.isFocused },
+                shape = RoundedCornerShape(24.dp),
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    cursorColor = Color.Black
+                ),
+                trailingIcon = {
+                    Text(text = "$", color = Color.Black)
+                },
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center) // Canh giữa giá trị
+            )
+        }
 
         // Hàng chứa thanh RangeSlider
         RangeSlider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = it },
-            valueRange = sliderRange,
+            value = priceRange,
+            onValueChange = { range ->
+                onPriceRangeChange(range)
+                fromPrice = range.start
+                toPrice = range.endInclusive
+            },
+            valueRange = 1f..20f,
             onValueChangeFinished = {
                 // Xử lý khi người dùng hoàn thành thay đổi
             },
@@ -254,79 +324,9 @@ fun PriceRangeSlider() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
 @Composable
-fun EditablePriceRange() {
-    var fromValue by remember { mutableStateOf("2") } // Giá trị "From"
-    var toValue by remember { mutableStateOf("50") } // Giá trị "To"
-    var isFromFocused by remember { mutableStateOf(false) } // Trạng thái focus của ô "From"
-    var isToFocused by remember { mutableStateOf(false) } // Trạng thái focus của ô "To"
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start, // Không trải dài hết hàng
-        modifier = Modifier
-            .wrapContentWidth()
-    ) {
-        Text(text = "From", color = Color.Black, modifier = Modifier.padding(end = 8.dp)) // Thêm khoảng cách với ô
-
-        // Ô nhập liệu "From"
-        OutlinedTextField(
-            value = fromValue,
-            onValueChange = { fromValue = it },
-            modifier = Modifier
-                .width(100.dp) // Giảm chiều rộng của ô
-                .border(
-                    width = 1.dp,
-                    color = if (isFromFocused) Color(0xFFFF6F00) else Color.Gray,
-                    shape = RoundedCornerShape(24.dp)
-                )
-                .onFocusChanged { isFromFocused = it.isFocused },
-            shape = RoundedCornerShape(24.dp),
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-                cursorColor = Color.Black
-            ),
-            trailingIcon = {
-                Text(text = "$", color = Color.Black)
-            },
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center) // Canh giữa giá trị
-        )
-
-//        Spacer(modifier = Modifier.width(16.dp)) // Khoảng cách giữa các ô
-
-        Text(text = "to", color = Color.Black, modifier = Modifier.padding(horizontal = 8.dp)) // Thêm khoảng cách với các ô
-
-        // Ô nhập liệu "To"
-        OutlinedTextField(
-            value = toValue,
-            onValueChange = { toValue = it },
-            modifier = Modifier
-                .width(100.dp) // Giảm chiều rộng của ô
-                .border(
-                    width = 1.dp,
-                    color = if (isToFocused) Color(0xFFFF6F00) else Color.Gray,
-                    shape = RoundedCornerShape(24.dp)
-                )
-                .onFocusChanged { isToFocused = it.isFocused },
-            shape = RoundedCornerShape(24.dp),
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-                cursorColor = Color.Black
-            ),
-            trailingIcon = {
-                Text(text = "$", color = Color.Black)
-            },
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center) // Canh giữa giá trị
-        )
-    }
+fun FilterScreenPreview() {
+    FilterScreen( isSheetOpen = true, onSheetOpenChange = {})
 }
-
-
 
