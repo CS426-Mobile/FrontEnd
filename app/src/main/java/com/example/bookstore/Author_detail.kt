@@ -1,16 +1,11 @@
 package com.example.bookstore
 
 import android.annotation.SuppressLint
-import android.widget.Space
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -20,60 +15,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.ui.theme.mainColor
-import com.example.bookstore.ui.theme.textColor
-import kotlinx.coroutines.launch
-
 
 
 // Mẫu dữ liệu tác giả
@@ -93,6 +56,45 @@ data class Author(
 @SuppressLint("RememberReturnType", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AuthorScreen(navController: NavHostController) {
+
+    val books = listOf(
+        BookDetail(
+            title = "The Alchemist",
+            author = "Paulo Coelho",
+            rating = 4.5f,
+            isFavorite = true,
+        ),
+        BookDetail(
+            title = "To Kill a Mockingbird",
+            author = "Harper Lee",
+            rating = 4.8f,
+            isFavorite = false,
+        ),
+        BookDetail(
+            title = "1984",
+            author = "George Orwell",
+            rating = 4.6f,
+            isFavorite = false,
+        ),
+        BookDetail(
+            title = "Pride and Prejudice",
+            author = "Jane Austen",
+            rating = 4.5f,
+            isFavorite = false,
+        ),
+        BookDetail(
+            title = "The Great Gatsby",
+            author = "F. Scott Fitzgerald",
+            rating = 4.3f,
+            isFavorite = true,
+        ),
+        BookDetail(
+            title = "Moby Dick",
+            author = "Herman Melville",
+            rating = 4.1f,
+            isFavorite = false,
+        )
+    )
 
     // Dữ liệu mẫu cho Author và Book
     val sampleAuthor = Author(
@@ -201,10 +203,9 @@ fun AuthorScreen(navController: NavHostController) {
                 text = "About",
                 style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
             )
-            Text(
+            ExpandableText(
                 text = author.about,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(vertical = 8.dp)
+                minimizedMaxLines = 6 // Số dòng tối đa khi thu gọn
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -220,8 +221,17 @@ fun AuthorScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
-                items(author.booksList) { book ->
-                    BookCard(book = book)
+                items(books) { book ->
+                    BookCard(
+                        title = book.title,
+                        author = book.author,
+                        rating = book.rating,
+                        isFavorite = book.isFavorite,
+                        onFavoriteClick = {
+                            // Thay đổi trạng thái isFavorite khi nhấn vào
+                            book.isFavorite = !book.isFavorite
+                        }
+                    )
                 }
             }
         }

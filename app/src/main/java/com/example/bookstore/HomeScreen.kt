@@ -51,10 +51,42 @@ fun HomeScreen(navController: NavHostController) {
     var offsetY by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
     val books = listOf(
-        Book("1917", "Richard Moors"),
-        Book("Perfume", "Amber Julia"),
-        Book("Travel to Japan", "John Underwood")
-        // Thêm sách khác nếu có
+        BookDetail(
+            title = "The Alchemist",
+            author = "Paulo Coelho",
+            rating = 4.5f,
+            isFavorite = true,
+        ),
+        BookDetail(
+            title = "To Kill a Mockingbird",
+            author = "Harper Lee",
+            rating = 4.8f,
+            isFavorite = false,
+        ),
+        BookDetail(
+            title = "1984",
+            author = "George Orwell",
+            rating = 4.6f,
+            isFavorite = false,
+        ),
+        BookDetail(
+            title = "Pride and Prejudice",
+            author = "Jane Austen",
+            rating = 4.5f,
+            isFavorite = false,
+        ),
+        BookDetail(
+            title = "The Great Gatsby",
+            author = "F. Scott Fitzgerald",
+            rating = 4.3f,
+            isFavorite = true,
+        ),
+        BookDetail(
+            title = "Moby Dick",
+            author = "Herman Melville",
+            rating = 4.1f,
+            isFavorite = false,
+        )
     )
 
     // State để theo dõi vị trí cuộn
@@ -440,7 +472,7 @@ fun AuthorsSection(navController: NavHostController) {
 }
 
 @Composable
-fun FeaturedBooksSection(books: List<Book>) {
+fun FeaturedBooksSection(books: List<BookDetail>) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -458,39 +490,18 @@ fun FeaturedBooksSection(books: List<Book>) {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             for (book in bookRow) {
-                                BookCard(book = book)
+                                BookCard(
+                                    title = book.title,
+                                    author = book.author,
+                                    rating = book.rating,
+                                    isFavorite = book.isFavorite,
+                                    onFavoriteClick = { /* Handle favorite click */ }
+                                )
                             }
                         }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun BookCard(book: Book) {
-    Card(
-        modifier = Modifier
-            .width(150.dp)
-            .padding(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(
-            modifier = Modifier.padding(8.dp)
-        ) {
-            // Hình ảnh sách giả lập
-            Box(
-                modifier = Modifier
-                    .height(188.dp)
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-            ) {
-                // Nội dung khác như hình ảnh thật, nếu có
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = book.title, style = MaterialTheme.typography.subtitle1)
-            Text(text = book.author, style = MaterialTheme.typography.caption)
         }
     }
 }
