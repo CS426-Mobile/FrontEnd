@@ -412,94 +412,6 @@ fun ExpandableText(
     }
 }
 
-@Composable
-fun BookCard(
-    title: String,
-    author: String,
-    rating: Float,
-    isFavorite: Boolean,
-    onFavoriteClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .width(144.dp) // Kích thước thẻ sách
-            .padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Bìa sách
-            Box(
-                modifier = Modifier
-                    .size(144.dp, 181.dp)
-                    .background(Color.LightGray) // Thay bằng hình ảnh bìa sách của bạn
-            ) {
-                // Nút yêu thích
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Add to Favorite",
-                        tint = if (isFavorite) Color.Red else Color.White, // Đổi màu khi yêu thích
-
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                // Số lượt rating trung bình
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 16.dp, end = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Rating",
-                        tint = Color.Yellow,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = rating.toString(),
-                        style = MaterialTheme.typography.caption,
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Tiêu đề sách
-            Text(
-                text = title,
-                style = MaterialTheme.typography.body2,
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                textAlign = TextAlign.Center
-            )
-
-            // Tên tác giả
-            Text(
-                text = author,
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray,
-                fontSize = 10.sp,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun BookCardPreview() {
@@ -513,12 +425,5 @@ fun BookCardPreview() {
         onFavoriteClick = { isFavorite = !isFavorite } // Thay đổi trạng thái khi nhấn vào
     )
 }
-
-data class BookDetail(
-    var title: String,
-    var author: String,
-    var rating: Float,
-    var isFavorite: Boolean,
-)
 
 
