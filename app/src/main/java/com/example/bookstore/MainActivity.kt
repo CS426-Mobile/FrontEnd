@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
-import com.example.bookstore.test.HomeActivity
 import com.example.bookstore.viewmodel.UserViewModel
 
 @ExperimentalAnimationApi

@@ -154,4 +154,3 @@ fun sampleFavoriteBooks(): List<BookDetail> {
         BookDetail("Peace in His Life", "Armando Newman", 3.9f, true)
     )
 }
-

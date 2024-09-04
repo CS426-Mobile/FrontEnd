@@ -522,4 +522,3 @@ data class BookDetail(
 )
 
 
-

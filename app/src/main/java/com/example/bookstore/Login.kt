@@ -1,7 +1,6 @@
 package com.example.bookstore
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -53,7 +52,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.CustomTextField
 import com.example.bookstore.model.UserEntity
-import com.example.bookstore.test.HomeActivity
 import com.example.bookstore.ui.theme.blurOrange
 import com.example.bookstore.ui.theme.errorColor
 import com.example.bookstore.ui.theme.mainColor
