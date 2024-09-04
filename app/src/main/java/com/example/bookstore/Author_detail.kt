@@ -38,18 +38,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.ui.theme.mainColor
 
-
-// Mẫu dữ liệu tác giả
-data class Author(
-    val name: String,
-    val followers: String,
-    val books: Int,
-    val isFollowing: Boolean,
-    val categories: List<String>,
-    val about: String,
-    val booksList: List<Book>
-)
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
     ExperimentalFoundationApi::class
 )

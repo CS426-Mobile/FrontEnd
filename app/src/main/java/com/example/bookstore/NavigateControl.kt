@@ -39,7 +39,7 @@ fun Home() {
 
             if (currentDestination?.route in listOf(
                     BottomNavItem.Home.route,
-                    BottomNavItem.Cart.route,
+                    BottomNavItem.Order.route,
                     BottomNavItem.Favorite.route,
                     BottomNavItem.Notification.route,
                     BottomNavItem.Account.route,)) {
@@ -53,13 +53,25 @@ fun Home() {
 
 @Composable
 fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavHost(navController = navController, startDestination = BottomNavItem.Home.route, modifier = modifier) {
-        composable(BottomNavItem.Home.route) { HomeScreen(navController)}
+    NavHost(navController = navController, startDestination = Screen.Home.route, modifier = modifier) {
+        composable(Screen.Home.route) { HomeScreen(navController)}
         composable(Screen.Author.route) {
             AuthorScreen(navController)
         }
         composable(Screen.Book.route) {
             BookDetailScreen(navController)
+        }
+        composable(Screen.Order.route) {
+            ListOrder(navController)
+        }
+        composable(Screen.Favorite.route) {
+            FavoriteScreen(navController)
+        }
+        composable(Screen.Cart.route) {
+            CartScreen(navController)
+        }
+        composable(Screen.Account.route) {
+            AccountScreen(navController)
         }
 
     }
@@ -75,7 +87,7 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
 fun BottomNavigationBar(navController: NavHostController) {
     val items = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Cart,
+        BottomNavItem.Order,
         BottomNavItem.Favorite,
         BottomNavItem.Notification,
         BottomNavItem.Account
@@ -110,9 +122,9 @@ fun BottomNavigationBar(navController: NavHostController) {
 }
 
 sealed class BottomNavItem(var title: String, var icon: Int, var route: String) {
-    object Home : BottomNavItem("Home", R.drawable.ic_home, "home")
-    object Cart : BottomNavItem("Cart", R.drawable.ic_cart, "booking")
-    object Favorite : BottomNavItem("Favorite", R.drawable.ic_favo, "booking")
+    object Home : BottomNavItem("Home", R.drawable.ic_home, Screen.Home.route)
+    object Order : BottomNavItem("Order", R.drawable.ic_cart, Screen.Order.route)
+    object Favorite : BottomNavItem("Favorite", R.drawable.ic_favo, Screen.Favorite.route)
     object Notification : BottomNavItem("Notification", R.drawable.ic_noti, "notification")
-    object Account : BottomNavItem("Account", R.drawable.ic_account, "account")
+    object Account : BottomNavItem("Account", R.drawable.ic_account, Screen.Account.route)
 }
