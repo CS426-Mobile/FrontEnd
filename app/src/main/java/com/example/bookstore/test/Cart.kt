@@ -1,4 +1,4 @@
-package com.example.bookstore.screen
+package com.example.bookstore.test
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
@@ -7,6 +7,6 @@ import com.example.bookstore.viewmodel.HomeViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun FavoriteScreen(viewModel: HomeViewModel = viewModel()) {
+fun CartScreen(viewModel: HomeViewModel = viewModel()) {
 
 }

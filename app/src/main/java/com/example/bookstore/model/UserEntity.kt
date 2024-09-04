@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user")
 data class UserEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val email: String,
-    val password: String
+    @PrimaryKey val email: String,
+    val password: String,
+    val address: String? = null // New Address field, which can be null initially
 )

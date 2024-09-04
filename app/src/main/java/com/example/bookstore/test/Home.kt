@@ -1,4 +1,4 @@
-package com.example.bookstore.screen
+package com.example.bookstore.test
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image

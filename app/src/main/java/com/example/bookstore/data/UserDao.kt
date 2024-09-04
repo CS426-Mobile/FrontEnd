@@ -1,13 +1,16 @@
+// File: UserDao.kt
 package com.example.bookstore.data
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.bookstore.model.UserEntity
 
 @Dao
 interface UserDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: UserEntity)
 
     @Query("SELECT * FROM user WHERE email = :email AND password = :password")
@@ -15,4 +18,8 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE email = :email")
     suspend fun getUserByEmail(email: String): UserEntity?
+
+    // Method to update address
+    @Query("UPDATE user SET address = :address WHERE email = :email")
+    suspend fun updateAddress(email: String, address: String)
 }

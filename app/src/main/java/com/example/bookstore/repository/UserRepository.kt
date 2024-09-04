@@ -1,3 +1,4 @@
+// File: UserRepository.kt
 package com.example.bookstore.repository
 
 import com.example.bookstore.data.UserDao
@@ -15,5 +16,10 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUserByEmail(email: String): UserEntity? {
         return userDao.getUserByEmail(email)
+    }
+
+    // Method to update address
+    suspend fun updateAddress(email: String, address: String) {
+        userDao.updateAddress(email, address)
     }
 }

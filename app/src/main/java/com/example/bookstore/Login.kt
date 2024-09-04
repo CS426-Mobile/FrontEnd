@@ -1,7 +1,10 @@
 package com.example.bookstore
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +53,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.CustomTextField
 import com.example.bookstore.model.UserEntity
-import com.example.bookstore.screen.HomeActivity
+import com.example.bookstore.test.HomeActivity
 import com.example.bookstore.ui.theme.blurOrange
 import com.example.bookstore.ui.theme.errorColor
 import com.example.bookstore.ui.theme.mainColor
@@ -85,7 +89,6 @@ fun LoginNavHost(userViewModel: UserViewModel) {
 
 @Composable
 fun SignInScreen(navController: NavController, userViewModel: UserViewModel) {
-//    val userViewModel: UserViewModel = viewModel()
 
     SignInUI(
         onSignInSuccess = {
@@ -122,6 +125,8 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
     var rememberMe by remember { mutableStateOf(false) }
     val isFormValid = email.isNotBlank() && password.isNotBlank()
     val focusManager = LocalFocusManager.current
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -226,8 +231,12 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
             Button(
                 onClick = {
                     if (isFormValid) {
+                        // Backend get User
                         userViewModel.getUser(email, password) { user ->
                             if (user != null) {
+                                if (rememberMe) {
+                                    saveEmailToPreferences(context, email)
+                                }
                                 onSignInSuccess()
                             } else {
                                 errorMessage = "Incorrect password or account does not exist"
@@ -269,6 +278,15 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
                 )
             }
         }
+    }
+}
+
+fun saveEmailToPreferences(context: Context, email: String) {
+    Log.d("Account: ", email)
+    val sharedPref = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    with(sharedPref.edit()) {
+        putString("remembered_user_email", email)
+        apply()
     }
 }
 
@@ -351,7 +369,9 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
             onClick = {
                 if (isFormValid) {
                     if (password == confirmPassword) {
-                        userViewModel.insertUser(UserEntity(0, email, password))
+                        // Backend register
+                        // insert User into local DB
+                        userViewModel.insertUser(UserEntity(email, password))
                         onSignUpSuccess()
                     } else {
                         errorMessage = "Passwords do not match"

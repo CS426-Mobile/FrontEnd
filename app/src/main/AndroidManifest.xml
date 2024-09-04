@@ -26,7 +26,7 @@
 
         <activity android:name=".OnboardingActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".screen.HomeActivity" />
+        <activity android:name=".test.HomeActivity" />
 
 
     </application>

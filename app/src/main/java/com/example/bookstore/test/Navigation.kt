@@ -1,4 +1,4 @@
-package com.example.bookstore.screen
+package com.example.bookstore.test
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -18,6 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.R
+import com.example.bookstore.test.AccountScreen
+import com.example.bookstore.test.CartScreen
+import com.example.bookstore.test.FavoriteScreen
+import com.example.bookstore.test.HomeScreen
 import com.example.bookstore.ui.theme.BookstoreTheme
 
 class HomeActivity : ComponentActivity() {
