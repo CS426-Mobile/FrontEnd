@@ -17,6 +17,10 @@ data class GetUserInfoRequest(
 )
 
 data class UpdateAddressRequest(
+    val address: String
+)
+
+data class UpdateAddressWithEmailRequest(
     val user_email: String,
     val address: String
 )
@@ -26,3 +30,6 @@ data class ChangePasswordRequest(
     val new_password: String,
     val new_password2: String
 )
+
+data class LogoutRequest(val user_email: String)
+

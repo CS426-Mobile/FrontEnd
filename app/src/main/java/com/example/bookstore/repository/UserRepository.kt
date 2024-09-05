@@ -4,10 +4,12 @@ package com.example.bookstore.repository
 import android.util.Log
 import com.example.bookstore.data.UserDao
 import com.example.bookstore.model.UserEntity
+import com.example.bookstore.network.ChangePasswordRequest
 import com.example.bookstore.network.LoginRequest
 import com.example.bookstore.network.RegisterRequest
 import com.example.bookstore.network.RetrofitInstance
 import com.example.bookstore.network.UpdateAddressRequest
+import com.example.bookstore.network.UpdateAddressWithEmailRequest
 import com.example.bookstore.network.UserInfo
 import retrofit2.HttpException
 import retrofit2.Response
@@ -52,7 +54,6 @@ class UserRepository(private val userDao: UserDao) {
         }
     }
 
-
     suspend fun registerUser(email: String, password: String, confirmPassword: String): Result<String> {
         return try {
             Log.d("RegisterUser", "Attempting to register user with email: $email")
@@ -88,10 +89,73 @@ class UserRepository(private val userDao: UserDao) {
         }
     }
 
-    suspend fun updateAddress(email: String, address: String) {
-        val response = RetrofitInstance.api.updateAddressByEmail(UpdateAddressRequest(email, address))
-        if (!response.isSuccessful) {
-            throw Exception("Address update failed")
+    suspend fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String): Result<String> {
+        return try {
+            val response = RetrofitInstance.api.changePassword(ChangePasswordRequest(oldPassword, newPassword, confirmPassword))
+            if (response.isSuccessful) {
+                val changePasswordResponse = response.body()
+                Result.success(changePasswordResponse?.message ?: "Password changed successfully")
+            } else {
+                Result.failure(Exception(response.body()?.message ?: "Password change failed with code ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
+
+    suspend fun updateAddress(address: String): Result<String> {
+        return try {
+            val response = RetrofitInstance.api.updateAddress(UpdateAddressRequest(address))
+            if (response.isSuccessful) {
+                val updateAddressResponse = response.body()
+                Result.success(updateAddressResponse?.message ?: "Address updated successfully")
+            } else {
+                Result.failure(Exception(response.body()?.message ?: "Address update failed with code ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
+
+    suspend fun updateAddressWithEmail(email: String, address: String): Result<String> {
+        return try {
+            val response = RetrofitInstance.api.updateAddressWithEmail(UpdateAddressWithEmailRequest(email, address))
+            if (response.isSuccessful) {
+                val updateAddressResponse = response.body()
+                Result.success(updateAddressResponse?.message ?: "Address updated successfully")
+            } else {
+                Result.failure(Exception(response.body()?.message ?: "Address update failed with code ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
+
+    suspend fun getAddress(email: String): Result<String> {
+        return try {
+            val response = RetrofitInstance.api.getAddress(email)
+            if (response.isSuccessful) {
+                val getAddressResponse = response.body()
+                Result.success(getAddressResponse?.address ?: "Address not found")
+            } else {
+                Result.failure(Exception(response.body()?.address ?: "Get address failed with code ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
+
+    suspend fun logoutUser(): Result<String> {
+        return try {
+            val response = RetrofitInstance.api.logoutUser()
+            if (response.isSuccessful) {
+                val logoutResponse = response.body()
+                Result.success(logoutResponse?.message ?: "Logout successful")
+            } else {
+                Result.failure(Exception(response.body()?.message ?: "Logout failed with code ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
         }
     }
 }

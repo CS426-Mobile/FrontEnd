@@ -74,7 +74,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     fun logoutUser() {
         viewModelScope.launch {
             val sharedPref = getApplication<Application>().getSharedPreferences("app_preferences", MODE_PRIVATE)
@@ -86,19 +85,64 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /* UI Code for Log out
-    @Composable
-    fun AccountScreen(userViewModel: UserViewModel) {
-        // Assuming there's a button to trigger logout
-        Button(onClick = {
-            userViewModel.logoutUser()
-            // Navigate to the login screen
-            val context = LocalContext.current
-            context.startActivity(Intent(context, LoginActivity::class.java))
-            (context as? Activity)?.finish()
-        }) {
-            Text("Log Out")
+    fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.changePassword(oldPassword, newPassword, confirmPassword)
+            result.onSuccess { message ->
+                onResult(true, message)
+            }.onFailure { exception ->
+                onResult(false, exception.message)
+            }
         }
     }
-     */
+
+    fun updateAddress(address: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.updateAddress(address)
+            result.onSuccess { message ->
+                onResult(true, message)
+            }.onFailure { exception ->
+                onResult(false, exception.message)
+            }
+        }
+    }
+
+    fun updateAddressWithEmail(email: String, address: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.updateAddressWithEmail(email, address)
+            result.onSuccess { message ->
+                onResult(true, message)
+            }.onFailure { exception ->
+                onResult(false, exception.message)
+            }
+        }
+    }
+
+    fun getAddress(email: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.getAddress(email)
+            result.onSuccess { address ->
+                onResult(true, address)
+            }.onFailure { exception ->
+                onResult(false, exception.message)
+            }
+        }
+    }
+
+    fun logoutUser(onResult: (Boolean, String?) -> Unit) {
+        val sharedPref = getApplication<Application>().getSharedPreferences("app_preferences", MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            remove("remembered_user_email")
+            remove("remembered_user_password")
+            apply()
+        }
+        viewModelScope.launch {
+            val result = userRepository.logoutUser()
+            result.onSuccess { message ->
+                onResult(true, message)
+            }.onFailure { exception ->
+                onResult(false, exception.message)
+            }
+        }
+    }
 }

@@ -14,4 +14,13 @@ data class UserInfo(
     val address: String
 )
 
+data class UpdateAddressResponse(val message: String)
+
+data class GetAddressResponse(val address: String)
+
+data class ChangePasswordResponse(val message: String)
+
 data class LogoutResponse(val message: String)
+
+
+
