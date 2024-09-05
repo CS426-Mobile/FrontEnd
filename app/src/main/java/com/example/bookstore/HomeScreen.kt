@@ -1,34 +1,64 @@
 package com.example.bookstore
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,14 +66,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.ui.theme.textColor
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.draw.clip
-import com.example.bookstore.ui.theme.mainColor
 
+@SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
@@ -92,6 +119,13 @@ fun HomeScreen(navController: NavHostController) {
     // State để theo dõi vị trí cuộn
     val listState = rememberLazyListState()
 
+    // FocusRequester to manage the focus of the search bar
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var searchQuery by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+
     // State cho nút Filter và Sort
     var isFilterActive by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(SortType.NONE) }
@@ -107,6 +141,9 @@ fun HomeScreen(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 16.dp, top = 16.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { focusManager.clearFocus() })
+            }
     ) {
         CustomTopAppBar(
             title = "Browse everything",
@@ -114,11 +151,20 @@ fun HomeScreen(navController: NavHostController) {
             navController = navController
         )
 
-        SearchBar()
+        SearchBar(
+            query = searchQuery,
+            onQueryChanged = { searchQuery = it },
+        )
 
         FilterScreen(
             isSheetOpen = isSheetOpen,
             onSheetOpenChange = { isSheetOpen = it }
+        )
+
+        Text(
+            text = "Recommended",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            style = MaterialTheme.typography.h6
         )
 
         LazyColumn(
@@ -263,27 +309,53 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
 }
 
 @Composable
-fun SearchBar() {
-    TextField(
-        value = "",
-        onValueChange = { /* Handle text change */ },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
-        placeholder = { Text(text = "Search") },
-//        singleLine = true,
+fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
+    val focusRequester = remember { FocusRequester() }
+    val isFocused = remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = query,
+        onValueChange = { newQuery ->
+            // Update the query with the new text
+            onQueryChanged(newQuery)
+        },
+        label = {
+            if (query.isEmpty()) {
+                Text(
+                    text = "Search",
+                    color = when {
+                        isFocused.value -> mainColor
+                        else -> Color.Gray
+                    }
+                )
+            }
+        },
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = "Search"
+                contentDescription = null,
+                tint = when {
+                    isFocused.value -> mainColor
+                    else -> Color.Gray
+                },
+                modifier = Modifier.size(24.dp)
             )
         },
-        shape = RoundedCornerShape(30.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color(0xFFF6F6F7), // Màu nền của ô tìm kiếm
-            focusedIndicatorColor = Color.Transparent, // Xóa viền khi ô được chọn
-            unfocusedIndicatorColor = Color.Transparent // Xóa viền khi ô không được chọn
-        )
+        textStyle = TextStyle(
+            fontSize = 18.sp,
+            color = Color.Black
+        ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = mainColor,
+            unfocusedBorderColor = Color.Gray,
+            backgroundColor = if (isFocused.value) Color.White else Color.Transparent
+        ),
+        shape = RoundedCornerShape(32.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 24.dp)
+            .onFocusChanged { focusState -> isFocused.value = focusState.isFocused }
+            .focusRequester(focusRequester)
     )
 }
 
@@ -301,7 +373,7 @@ fun rememberNestedScrollConnection(onScroll: (Float) -> Unit): NestedScrollConne
 
 @Composable
 fun RecommendedBooksSection() {
-    Text(text = "Recommended", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.h6)
+//    Text(text = "Recommended", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.h6)
     LazyRow {
         items(3) {
             // Hiển thị các sách được đề xuất
