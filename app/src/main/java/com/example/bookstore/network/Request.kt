@@ -1,6 +1,7 @@
 // Request.kt
 package com.example.bookstore.network
 
+// User Request
 data class LoginRequest(
     val user_email: String,
     val password: String
@@ -33,3 +34,10 @@ data class ChangePasswordRequest(
 
 data class LogoutRequest(val user_email: String)
 
+// Author Request
+data class AuthorRequest(
+    val author_name: String,
+    val num_follower: Int,
+    val about: String,
+    val author_image: String
+)

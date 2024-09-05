@@ -11,9 +11,6 @@ import com.example.bookstore.network.RetrofitInstance
 import com.example.bookstore.network.UpdateAddressRequest
 import com.example.bookstore.network.UpdateAddressWithEmailRequest
 import com.example.bookstore.network.UserInfo
-import retrofit2.HttpException
-import retrofit2.Response
-import java.io.IOException
 
 class UserRepository(private val userDao: UserDao) {
 

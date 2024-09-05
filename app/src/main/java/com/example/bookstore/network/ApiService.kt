@@ -4,6 +4,7 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+    // User APIs
     @POST("/register/")
     suspend fun registerUser(@Body registerRequest: RegisterRequest): Response<RegisterResponse>
 
@@ -33,4 +34,43 @@ interface ApiService {
 
     @POST("/logout/")
     suspend fun logoutUser(): Response<LogoutResponse>
+
+    // Author APIs
+    // Get author info by name
+    @GET("/author/")
+    suspend fun getAuthor(
+        @Query("author_name") authorName: String
+    ): Response<AuthorResponse>
+
+    // Add a new author
+    @PUT("/author/")
+    suspend fun addAuthor(
+        @Body authorRequest: AuthorRequest
+    ): Response<RegisterResponse>
+
+    // Get all authors
+    @GET("/all_authors/")
+    suspend fun getAllAuthors(): Response<List<AuthorResponse>>
+
+    // Get top 5 popular authors
+    @GET("/author/popular_5/")
+    suspend fun getTop5PopularAuthors(): Response<List<AuthorResponse>>
+
+    // Get simple author info
+    @GET("/author/simple/")
+    suspend fun getSimpleAuthors(
+        @Query("author_name") authorName: String
+    ): Response<List<SimpleAuthorResponse>>
+
+    // Get matching authors by string
+    @GET("/author/match_string/")
+    suspend fun getMatchingAuthors(
+        @Query("author_name") authorName: String
+    ): Response<List<SimpleAuthorResponse>>
+
+    // Get all info of an author
+    @GET("/author/info/")
+    suspend fun getAuthorInfo(
+        @Query("author_name") authorName: String
+    ): Response<AuthorResponse>
 }
