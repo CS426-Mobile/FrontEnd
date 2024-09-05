@@ -41,7 +41,6 @@ fun Home() {
                     BottomNavItem.Home.route,
                     BottomNavItem.Order.route,
                     BottomNavItem.Favorite.route,
-                    BottomNavItem.Notification.route,
                     BottomNavItem.Account.route,)) {
                 BottomNavigationBar(navController)
             }
@@ -89,7 +88,6 @@ fun BottomNavigationBar(navController: NavHostController) {
         BottomNavItem.Home,
         BottomNavItem.Order,
         BottomNavItem.Favorite,
-        BottomNavItem.Notification,
         BottomNavItem.Account
     )
     BottomNavigation(
@@ -125,6 +123,5 @@ sealed class BottomNavItem(var title: String, var icon: Int, var route: String) 
     object Home : BottomNavItem("Home", R.drawable.ic_home, Screen.Home.route)
     object Order : BottomNavItem("Order", R.drawable.ic_cart, Screen.Order.route)
     object Favorite : BottomNavItem("Favorite", R.drawable.ic_favo, Screen.Favorite.route)
-    object Notification : BottomNavItem("Notification", R.drawable.ic_noti, "notification")
     object Account : BottomNavItem("Account", R.drawable.ic_account, Screen.Account.route)
 }

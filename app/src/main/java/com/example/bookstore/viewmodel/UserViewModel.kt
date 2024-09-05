@@ -1,12 +1,13 @@
+// UserViewModel.kt
 package com.example.bookstore.viewmodel
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstore.data.BookStoreDatabase
 import com.example.bookstore.model.UserEntity
+import com.example.bookstore.network.UserInfo
 import com.example.bookstore.repository.UserRepository
 import kotlinx.coroutines.launch
 
@@ -39,20 +40,47 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // New method to update the address
-    fun updateAddress(email: String, address: String) {
+    fun loginUser(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
-            userRepository.updateAddress(email, address)
+            val result = userRepository.loginUser(email, password)
+            result.onSuccess {
+                onResult(true, null) // Login success
+            }.onFailure {
+                onResult(false, it.message) // Error message
+            }
         }
     }
 
-    // New method to handle logout
+    // Register user function
+    fun registerUser(email: String, password: String, password2: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.registerUser(email, password, password2)
+            result.onSuccess { message ->
+                onResult(true, message)
+            }.onFailure { exception ->
+                onResult(false, exception.message)
+            }
+        }
+    }
+
+    fun getUserInfo(onResult: (Boolean, UserInfo?, String?) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.getUserInfo()
+            result.onSuccess { userInfo ->
+                onResult(true, userInfo, null) // Success with user info
+            }.onFailure { exception ->
+                onResult(false, null, exception.message) // Error with message
+            }
+        }
+    }
+
+
     fun logoutUser() {
         viewModelScope.launch {
-            // Clear the remembered user from local storage
             val sharedPref = getApplication<Application>().getSharedPreferences("app_preferences", MODE_PRIVATE)
             with(sharedPref.edit()) {
                 remove("remembered_user_email")
+                remove("remembered_user_password")
                 apply()
             }
         }

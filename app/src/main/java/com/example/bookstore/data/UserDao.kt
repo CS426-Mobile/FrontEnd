@@ -18,8 +18,4 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE email = :email")
     suspend fun getUserByEmail(email: String): UserEntity?
-
-    // Method to update address
-    @Query("UPDATE user SET address = :address WHERE email = :email")
-    suspend fun updateAddress(email: String, address: String)
 }

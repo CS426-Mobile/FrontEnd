@@ -104,11 +104,6 @@ dependencies {
 // KSP
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.21-1.0.15")
 
-//    implementation("androidx.room:room-runtime:$room_version")
-//    annotationProcessor("androidx.room:room-compiler:$room_version")
-
-//    val room_version = "2.6.1"
-
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
     // To use Kotlin Symbol Processing (KSP) ***Keep commented until build passes
@@ -121,19 +116,24 @@ dependencies {
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
-
     // optional - RxJava2 support for Room
     implementation("androidx.room:room-rxjava2:$room_version")
-
     // optional - RxJava3 support for Room
     implementation("androidx.room:room-rxjava3:$room_version")
-
     // optional - Guava support for Room, including Optional and ListenableFuture
     implementation("androidx.room:room-guava:$room_version")
-
     // optional - Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
-
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
+
+    // Retrofit (Omnicart)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+//    Retrofit chatgpt
+//    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+//    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
 }

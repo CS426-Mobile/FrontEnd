@@ -1,3 +1,5 @@
+// Login.kt
+
 package com.example.bookstore
 
 import android.content.Context
@@ -27,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -116,15 +120,20 @@ fun SignUpScreen(navController: NavController, userViewModel: UserViewModel) {
 }
 
 @Composable
-fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewModel: UserViewModel) {
+fun SignInUI(
+    onSignInSuccess: () -> Unit,
+    onSignUpClick: () -> Unit,
+    userViewModel: UserViewModel
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     val isFormValid = email.isNotBlank() && password.isNotBlank()
     val focusManager = LocalFocusManager.current
-
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -152,7 +161,11 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
             )
 
             // Welcome Texts
-            Text(text = "Welcome Back!", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text(
+                text = "Welcome Back!",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
             Text(text = "Login to your existing account", color = Color.Gray)
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -228,18 +241,24 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
             // Sign In Button
             Button(
                 onClick = {
-                    if (isFormValid) {
-                        // Backend get User
-                        userViewModel.getUser(email, password) { user ->
-                            if (user != null) {
+                    if (isFormValid && !isLoading) {
+                        isLoading = true
+                        errorMessage = ""
+                        // Local: userViewModel.getUser(email, password)
+                        // API
+                        userViewModel.loginUser(email, password) { success, message ->
+                            isLoading = false
+                            if (success) {
                                 if (rememberMe) {
-                                    saveEmailToPreferences(context, email)
+                                    saveEmailToPreferences(context, email, password)
                                 }
                                 onSignInSuccess()
                             } else {
-                                errorMessage = "Incorrect password or account does not exist"
+                                errorMessage = message ?: "An unknown error occurred."
                             }
                         }
+                    } else if (!isFormValid) {
+                        errorMessage = "Please fill in all fields."
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -249,14 +268,23 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(50.dp),
+                enabled = isFormValid && !isLoading
             ) {
-                Text(
-                    text = "Sign in",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        text = "Sign in",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -279,24 +307,29 @@ fun SignInUI(onSignInSuccess: () -> Unit, onSignUpClick: () -> Unit, userViewMod
     }
 }
 
-fun saveEmailToPreferences(context: Context, email: String) {
-    Log.d("Account: ", email)
+fun saveEmailToPreferences(context: Context, email: String, password: String) {
+    Log.d("Save Account: ", email)
     val sharedPref = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     with(sharedPref.edit()) {
         putString("remembered_user_email", email)
+        putString("remembered_user_password", password)
         apply()
     }
 }
 
 @Composable
-fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
+fun SignUpUI(
+    onSignUpSuccess: () -> Unit,
+    userViewModel: UserViewModel
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     val isFormValid = email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank()
-
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -319,7 +352,11 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
         )
 
         // Welcome Texts
-        Text(text = "Create New Account", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Create New Account",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
         Text(text = "Register new account", color = Color.Gray)
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -365,17 +402,28 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
         // Sign Up Button
         Button(
             onClick = {
-                if (isFormValid) {
+                if (isFormValid && !isLoading) {
                     if (password == confirmPassword) {
-                        // Backend register
+                        isLoading = true
+                        errorMessage = ""
                         // insert User into local DB
                         userViewModel.insertUser(UserEntity(email, password))
-                        onSignUpSuccess()
+                        // insert User into API
+                        Log.d("Register Account: ", email)
+                        userViewModel.registerUser(email, password, confirmPassword) { success, message ->
+                            isLoading = false
+                            if (success) {
+                                // Optionally, you can log the user in immediately after registration
+                                onSignUpSuccess()
+                            } else {
+                                errorMessage = message ?: "Registration failed. Please try again."
+                            }
+                        }
                     } else {
-                        errorMessage = "Passwords do not match"
+                        errorMessage = "Passwords do not match."
                     }
-                } else {
-                    errorMessage = "All fields are required"
+                } else if (!isFormValid) {
+                    errorMessage = "All fields are required."
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -385,14 +433,23 @@ fun SignUpUI(onSignUpSuccess: () -> Unit, userViewModel: UserViewModel) {
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            enabled = isFormValid && !isLoading
         ) {
-            Text(
-                text = "Sign up",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Sign up",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
