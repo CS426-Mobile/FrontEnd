@@ -43,7 +43,7 @@ import com.example.bookstore.ui.theme.mainColor
 )
 @SuppressLint("RememberReturnType", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AuthorScreen(navController: NavHostController) {
+fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
 
     val books = listOf(
         BookDetail(
@@ -241,6 +241,6 @@ fun Chip(text: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun AuthorScreenPreview() {
-    AuthorScreen(navController = rememberNavController())
+fun AuthorDetailScreenPreview() {
+    AuthorDetailScreen(navController = rememberNavController(), authorName = "Averie Stecanella")
 }

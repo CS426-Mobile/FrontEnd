@@ -71,7 +71,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation ("io.coil-kt:coil-compose:1.3.2")
+    implementation("io.coil-kt:coil-compose:2.7.0") // newest
+//    implementation ("io.coil-kt:coil-compose:2.0.0") // chat gpt
+//    implementation ("io.coil-kt:coil-compose:1.3.2") // Old
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)

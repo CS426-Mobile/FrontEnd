@@ -59,15 +59,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.ui.theme.textColor
+import com.example.bookstore.viewmodel.AuthorViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("RememberReturnType")
@@ -116,6 +116,9 @@ fun HomeScreen(navController: NavHostController) {
         )
     )
 
+    // Create AuthorViewModel instance
+    val authorViewModel: AuthorViewModel = viewModel()
+
     // State để theo dõi vị trí cuộn
     val listState = rememberLazyListState()
 
@@ -140,7 +143,7 @@ fun HomeScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, top = 16.dp)
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { focusManager.clearFocus() })
             }
@@ -227,7 +230,7 @@ fun HomeScreen(navController: NavHostController) {
                         )
                     }
                     else
-                        AuthorsSection(navController = navController)
+                        AuthorsSection(navController = navController, authorViewModel = authorViewModel)
                 }
             }
 
@@ -254,7 +257,6 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 
-
 @Composable
 fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = false, navController: NavHostController) {
     TopAppBar(
@@ -279,6 +281,7 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
                 // Nút quay lại bên trái
                 if (isBack) {
                     IconButton(
+                        // onClick = { navController.navigateUp() }
                         onClick = { navController.popBackStack() },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
@@ -353,7 +356,7 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
         shape = RoundedCornerShape(32.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, end = 24.dp)
+            .padding(start = 8.dp, end = 8.dp)
             .onFocusChanged { focusState -> isFocused.value = focusState.isFocused }
             .focusRequester(focusRequester)
     )
@@ -510,40 +513,6 @@ enum class SortType {
 }
 
 @Composable
-fun AuthorsSection(navController: NavHostController) {
-    Row(){
-        Text(text = "Popular Authors", modifier = Modifier
-            .padding(16.dp)
-            .weight(3.4f), style = MaterialTheme.typography.h6)
-        Button(
-            onClick = { navController.navigate("author") },
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.White
-            )
-        ){
-            Text(text = "See all >", color = Color.Gray, fontSize = 11.sp,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
-            )
-        }
-    }
-    LazyRow {
-        items(listOf("Gerard Fabiano", "Amber Julia", "Fernando Agaro")) { author ->
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .background(Color.Gray)
-                    .padding(8.dp)
-                    .clickable { navController.navigate("author/${author.replace(" ", "_")}") }
-            ) {
-                Text(text = author, color = Color.White)
-            }
-        }
-    }
-}
-
-@Composable
 fun FeaturedBooksSection(books: List<BookDetail>) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -579,10 +548,3 @@ fun FeaturedBooksSection(books: List<BookDetail>) {
 }
 
 data class Book(val title: String, val author: String)
-
-
-@Composable
-@Preview(showBackground = true)
-fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
-}
