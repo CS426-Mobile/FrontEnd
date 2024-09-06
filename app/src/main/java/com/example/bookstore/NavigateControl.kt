@@ -17,6 +17,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.bookstore.ui.theme.mainColor
 
 class HomeActivity : ComponentActivity() {
@@ -54,8 +56,23 @@ fun Home() {
 fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = Screen.Home.route, modifier = modifier) {
         composable(Screen.Home.route) { HomeScreen(navController)}
+        // Add AuthorDetailScreen with a dynamic author_name argument
+        composable(
+            route = "author/{author_name}",
+            arguments = listOf(navArgument("author_name") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            // Extract the author_name argument from the back stack
+            val authorName = backStackEntry.arguments?.getString("author_name")
+            if (authorName != null) {
+                AuthorDetailScreen(navController, authorName)
+            }
+        }
+
+        // implement later
         composable(Screen.Author.route) {
-            AuthorScreen(navController)
+            CartScreen(navController)
         }
         composable(Screen.Book.route) {
             BookDetailScreen(navController)

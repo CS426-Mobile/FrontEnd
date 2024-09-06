@@ -11,6 +11,7 @@ import com.example.bookstore.network.RetrofitInstance
 import com.example.bookstore.network.UpdateAddressRequest
 import com.example.bookstore.network.UpdateAddressWithEmailRequest
 import com.example.bookstore.network.UserInfo
+import org.json.JSONObject
 
 class UserRepository(private val userDao: UserDao) {
 
@@ -42,8 +43,19 @@ class UserRepository(private val userDao: UserDao) {
                     }
                 }
                 else -> {
-                    // Handle other response codes
-                    Result.failure(Exception(response.body()?.message ?: "Login failed with code: ${response.code()}."))
+                    // Handle non-2xx responses by parsing error body
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = if (errorBody != null) {
+                        try {
+                            // Parse the error body to extract the message field
+                            JSONObject(errorBody).getString("message")
+                        } catch (e: Exception) {
+                            "Login failed with code: ${response.code()}."
+                        }
+                    } else {
+                        "Login failed with code: ${response.code()}."
+                    }
+                    Result.failure(Exception(errorMessage))
                 }
             }
         } catch (e: Exception) {
@@ -65,7 +77,19 @@ class UserRepository(private val userDao: UserDao) {
                     Result.failure(Exception(registerResponse?.message ?: "Registration failed with code${response.code()}."))
                 }
             } else {
-                Result.failure(Exception(response.body()?.message ?: "Registration failed with code ${response.code()}."))
+                // Handle non-2xx responses by parsing error body
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = if (errorBody != null) {
+                    try {
+                        // Parse the error body to extract the message field
+                        JSONObject(errorBody).getString("message")
+                    } catch (e: Exception) {
+                        "Registration failed with code: ${response.code()}."
+                    }
+                } else {
+                    "Registration failed with code: ${response.code()}."
+                }
+                Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {
             Result.failure(Exception("Network or HTTP error: ${e.message}"))

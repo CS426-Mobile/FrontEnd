@@ -24,6 +24,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.bookstore.screen.LoginActivity
+import com.example.bookstore.screen.OnboardingActivity
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.UserViewModel
 

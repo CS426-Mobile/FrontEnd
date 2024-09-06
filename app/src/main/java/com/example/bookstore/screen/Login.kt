@@ -1,6 +1,5 @@
 // Login.kt
-
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import android.content.Context
 import android.content.Intent
@@ -54,6 +53,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.HomeActivity
+import com.example.bookstore.R
 import com.example.bookstore.components.CustomTextField
 import com.example.bookstore.model.UserEntity
 import com.example.bookstore.ui.theme.blurOrange
@@ -181,7 +182,7 @@ fun SignInUI(
             CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = "Email or Phone number",
+                label = "Email",
                 icon = R.drawable.ic_email
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -372,7 +373,7 @@ fun SignUpUI(
         CustomTextField(
             value = email,
             onValueChange = { email = it },
-            label = "Email or Phone number",
+            label = "Email",
             icon = R.drawable.ic_email
         )
         Spacer(modifier = Modifier.height(8.dp))

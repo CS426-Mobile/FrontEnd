@@ -43,13 +43,12 @@ fun CustomTextField(
             Text(
                 text = label,
                 color = when {
-                    isError -> errorColor
                     isFocused.value -> mainColor
                     else -> Color.Gray
                 }
             )
         },
-        isError = isError,
+        isError = false,
         visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
         trailingIcon = {
@@ -60,7 +59,7 @@ fun CustomTextField(
                             id = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off
                         ),
                         contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                        tint = if (isError) errorColor else Color.Gray,
+                        tint = Color.Gray,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -72,7 +71,6 @@ fun CustomTextField(
                     painter = painterResource(id = it),
                     contentDescription = null,
                     tint = when {
-                        isError -> errorColor
                         isFocused.value -> mainColor
                         else -> Color.Gray
                     },
@@ -82,11 +80,11 @@ fun CustomTextField(
         },
         textStyle = TextStyle(
             fontSize = 18.sp,
-            color = if (isError) errorColor else Color.Black
+            color = Color.Black
         ),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = if (isError) errorColor else mainColor,
-            unfocusedBorderColor = if (isError) errorColor else Color.Gray,
+            focusedBorderColor = mainColor,
+            unfocusedBorderColor = Color.Gray,
             backgroundColor = if (isFocused.value) Color.White else Color.Transparent
         ),
         shape = RoundedCornerShape(32.dp),
