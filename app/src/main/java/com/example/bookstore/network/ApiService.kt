@@ -73,4 +73,41 @@ interface ApiService {
     suspend fun getAuthorInfo(
         @Query("author_name") authorName: String
     ): Response<AuthorResponse>
+
+    // Book APIs
+    // Get 10 books
+    @GET("/books/10/")
+    suspend fun get10Books(): Response<List<SimpleBookResponse>>
+
+    // Get 20 books
+    @GET("/books/20/")
+    suspend fun get20Books(): Response<List<SimpleBookResponse>>
+
+    // Get books by category with optional filters
+    @GET("/books/category/")
+    suspend fun getBooksByCategory(
+        @Query("category_name") categoryName: String,
+        @Query("rating_optional") ratingOptional: String = "all",
+        @Query("price_optional") priceOptional: String = "no",
+        @Query("price_min") priceMin: Double = 0.0,
+        @Query("price_max") priceMax: Double = 99999999.0,
+        @Query("rating_sort") ratingSort: String = "none",
+        @Query("price_sort") priceSort: String = "none"
+    ): Response<List<BookCategoryResponse>>
+
+    // Get book information by name
+    @GET("/book/{book_name}/")
+    suspend fun getBookInfo(@Path("book_name") bookName: String): Response<BookResponse>
+
+    // Get number of books by author
+    @GET("/books/author/{author_name}/count/")
+    suspend fun getNumBooksByAuthor(@Path("author_name") authorName: String): Response<BookCountResponse>
+
+    // Get categories of books by an author
+    @GET("/books/author/{author_name}/categories/")
+    suspend fun getAuthorCategories(@Path("author_name") authorName: String): Response<AuthorCategoriesResponse>
+
+    // Get related books by book name
+    @GET("/books/related/{book_name}/")
+    suspend fun getRelatedBooks(@Path("book_name") bookName: String): Response<List<SimpleBookResponse>>
 }

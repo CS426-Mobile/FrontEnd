@@ -36,5 +36,44 @@ data class SimpleAuthorResponse(
     val author_image: String
 )
 
+// Book Response
+data class BookResponse(
+    val book_name: String,
+    val author_name: String,
+    val book_image: String,
+    val price: Double,
+    val num_1_star: Int,
+    val num_2_star: Int,
+    val num_3_star: Int,
+    val num_4_star: Int,
+    val num_5_star: Int,
+    val book_description: String,
+    val public_date: String, // Date in "yyyy-MM-dd" format
+    val book_language: String,
+    val book_weight: Double,
+    val book_page: Int,
+    val average_rating: Double
+)
+
+data class SimpleBookResponse(
+    val book_name: String,
+    val author_name: String,
+    val book_image: String
+)
+
+data class BookCategoryResponse(
+    val book_name: String,
+    val author_name: String,
+    val book_image: String
+)
+
+data class BookCountResponse(
+    val num_books: Int
+)
+
+data class AuthorCategoriesResponse(
+    val categories: List<String>
+)
+
 
 

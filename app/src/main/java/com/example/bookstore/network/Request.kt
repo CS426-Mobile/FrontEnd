@@ -41,3 +41,15 @@ data class AuthorRequest(
     val about: String,
     val author_image: String
 )
+
+// Book Request
+data class BookCategoryRequest(
+    val category_name: String = "",
+    val rating_optional: String = "all",
+    val price_optional: String = "no",
+    val price_min: Double = 0.0,
+    val price_max: Double = 99999999.0,
+    val rating_sort: String = "none",
+    val price_sort: String = "none"
+)
+

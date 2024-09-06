@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -73,7 +74,7 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
             Text(
                 text = "See all",
                 color = Color.Gray,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 modifier = Modifier
                     .clickable { navController.navigate(Screen.Author.route) }
             )
@@ -90,10 +91,10 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
                 Text(
                     text = errorMessage!!,
                     color = Color.Gray,
+                    fontSize = 16.sp,
                     modifier = Modifier.padding(16.dp),
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(16.dp))
             }
             authors != null && authors!!.isNotEmpty() -> {
                 // Show LazyRow with authors if data is available
@@ -143,7 +144,9 @@ fun AuthorItem(author: AuthorResponse, onClick: () -> Unit) {
             color = Color.Black,
             fontSize = 12.sp,
             modifier = Modifier.padding(horizontal = 4.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 1,  // Limit to one line
+            overflow = TextOverflow.Ellipsis  // Truncate with "..."
         )
     }
 }

@@ -2,18 +2,12 @@
 package com.example.bookstore.viewmodel
 
 import android.app.Application
-import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstore.data.BookStoreDatabase
-import com.example.bookstore.model.UserEntity
-import com.example.bookstore.network.AuthorResponse
 import com.example.bookstore.network.AuthorRequest
+import com.example.bookstore.network.AuthorResponse
 import com.example.bookstore.network.SimpleAuthorResponse
-import com.example.bookstore.network.UserInfo
 import com.example.bookstore.repository.AuthorRepository
-import com.example.bookstore.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class AuthorViewModel(application: Application) : AndroidViewModel(application) {
