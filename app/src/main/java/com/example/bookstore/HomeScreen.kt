@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,15 +61,20 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bookstore.components.AuthorsSection
+import com.example.bookstore.components.CustomTopAppBar
+import com.example.bookstore.components.RecommendedBooksSection
+import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.ui.theme.textColor
 import com.example.bookstore.viewmodel.AuthorViewModel
+import com.example.bookstore.viewmodel.BookViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("RememberReturnType")
@@ -77,47 +84,10 @@ fun HomeScreen(navController: NavHostController) {
     var selectedCategories by remember { mutableStateOf(listOf<String>()) }
     var offsetY by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
-    val books = listOf(
-        BookDetail(
-            title = "The Alchemist",
-            author = "Paulo Coelho",
-            rating = 4.5f,
-            isFavorite = true,
-        ),
-        BookDetail(
-            title = "To Kill a Mockingbird",
-            author = "Harper Lee",
-            rating = 4.8f,
-            isFavorite = false,
-        ),
-        BookDetail(
-            title = "1984",
-            author = "George Orwell",
-            rating = 4.6f,
-            isFavorite = false,
-        ),
-        BookDetail(
-            title = "Pride and Prejudice",
-            author = "Jane Austen",
-            rating = 4.5f,
-            isFavorite = false,
-        ),
-        BookDetail(
-            title = "The Great Gatsby",
-            author = "F. Scott Fitzgerald",
-            rating = 4.3f,
-            isFavorite = true,
-        ),
-        BookDetail(
-            title = "Moby Dick",
-            author = "Herman Melville",
-            rating = 4.1f,
-            isFavorite = false,
-        )
-    )
 
     // Create AuthorViewModel instance
     val authorViewModel: AuthorViewModel = viewModel()
+    val bookViewModel: BookViewModel = viewModel()
 
     // State để theo dõi vị trí cuộn
     val listState = rememberLazyListState()
@@ -164,12 +134,6 @@ fun HomeScreen(navController: NavHostController) {
             onSheetOpenChange = { isSheetOpen = it }
         )
 
-        Text(
-            text = "Recommended",
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.h6
-        )
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -194,7 +158,7 @@ fun HomeScreen(navController: NavHostController) {
                         .zIndex(1f)
                 ) {
                     if (selectedCategories.isEmpty())
-                        RecommendedBooksSection()
+                        RecommendedBooksSection(navController = navController, bookViewModel = bookViewModel)
                 }
             }
 
@@ -250,62 +214,7 @@ fun HomeScreen(navController: NavHostController) {
 //                        }
 //                    }
 //                )
-                FeaturedBooksSection(books)
-            }
-        }
-    }
-}
-
-
-@Composable
-fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = false, navController: NavHostController) {
-    TopAppBar(
-        backgroundColor = Color.White,
-        contentColor = Color.Black,
-        elevation = 0.dp
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            // Tiêu đề ở giữa
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h6,
-                fontSize = 24.sp,
-                color = textColor
-            )
-
-            // Hàng chứa các icon ở hai bên
-            Row(modifier = Modifier.fillMaxWidth()) {
-                // Nút quay lại bên trái
-                if (isBack) {
-                    IconButton(
-                        // onClick = { navController.navigateUp() }
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow_back), // Thay bằng icon quay lại của bạn
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // Nút giỏ hàng bên phải
-                if (isCart) {
-                    IconButton(
-                        onClick = { navController.navigate(Screen.Cart.route) },
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_shopping), // Thay bằng icon giỏ hàng của bạn
-                            contentDescription = "Cart"
-                        )
-                    }
-                }
+                FeaturedBooksSection(navController = navController, bookViewModel = bookViewModel)
             }
         }
     }
@@ -374,9 +283,14 @@ fun rememberNestedScrollConnection(onScroll: (Float) -> Unit): NestedScrollConne
     }
 }
 
+/*
 @Composable
 fun RecommendedBooksSection() {
-//    Text(text = "Recommended", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.h6)
+    Text(
+        text = "Recommended",
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        style = MaterialTheme.typography.h6
+    )
     LazyRow {
         items(3) {
             // Hiển thị các sách được đề xuất
@@ -389,6 +303,7 @@ fun RecommendedBooksSection() {
         }
     }
 }
+*/
 
 @Composable
 fun CategoriesSection(
@@ -512,6 +427,7 @@ enum class SortType {
     DESCENDING
 }
 
+/*
 @Composable
 fun FeaturedBooksSection(books: List<BookDetail>) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -536,12 +452,96 @@ fun FeaturedBooksSection(books: List<BookDetail>) {
                                     author = book.author,
                                     rating = book.rating,
                                     isFavorite = book.isFavorite,
-                                    onFavoriteClick = { /* Handle favorite click */ }
+                                    onFavoriteClick = { /* Handle favorite click */ },
+                                    onClick = { /* Handle book click */ }
                                 )
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+}
+*/
+
+@Composable
+fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookViewModel) {
+    var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Fetch featured books from ViewModel
+    LaunchedEffect(Unit) {
+        bookViewModel.get20Books { success, result ->
+            if (success && result != null) {
+                books = result
+            } else {
+                errorMessage = "Failed to load featured books"
+            }
+            isLoading = false
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Section title
+        Text(
+            text = "Featured Books",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+
+        when {
+            isLoading -> {
+                // Show loading indicator
+                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
+            }
+            errorMessage != null -> {
+                // Show error message if data fetch fails
+                Text(
+                    text = errorMessage!!,
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+            books != null && books!!.isNotEmpty() -> {
+                // Display books in LazyColumn with 2 books per row
+                LazyColumn {
+                    items(books!!.chunked(2)) { bookRow ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            for (book in bookRow) {
+                                var isFavorite by remember { mutableStateOf(false) } // Handle favorite state
+                                BookCard(
+                                    title = book.book_name,
+                                    author = book.author_name,
+                                    rating = 4.5f,  // Placeholder rating
+                                    isFavorite = isFavorite,
+                                    onFavoriteClick = {
+                                        isFavorite = !isFavorite
+                                        // Call API to add/remove favorite (implementation later)
+                                    },
+                                    onClick = {
+                                        // Navigate to book detail screen
+                                        navController.navigate("bookDetail/${book.book_name}")
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            else -> {
+                // Show message if no featured books are available
+                Text(
+                    text = "No featured books available at the moment.",
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

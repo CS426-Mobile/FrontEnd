@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.ui.theme.mainColor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
@@ -218,6 +219,10 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                         onFavoriteClick = {
                             // Thay đổi trạng thái isFavorite khi nhấn vào
                             book.isFavorite = !book.isFavorite
+                        },
+                        onClick = {
+                            // Xử lý khi item được nhấn
+                            //navController.navigate("book/${book.book_name}")
                         }
                     )
                 }

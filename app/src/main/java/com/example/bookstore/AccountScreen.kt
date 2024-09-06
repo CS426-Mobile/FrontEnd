@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.ui.theme.mainColor
 
 @OptIn(ExperimentalMaterialApi::class)

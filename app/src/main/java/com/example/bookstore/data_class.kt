@@ -1,6 +1,7 @@
 package com.example.bookstore
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,49 +37,47 @@ fun BookCard(
     author: String,
     rating: Float,
     isFavorite: Boolean,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
-            .width(144.dp) // Kích thước thẻ sách
-            .padding(8.dp),
+            .width(144.dp)
+            .padding(8.dp)
+            .clickable { onClick() },  // Handle book click
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Bìa sách
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Book image placeholder
             Box(
                 modifier = Modifier
                     .size(144.dp, 181.dp)
-                    .background(Color.LightGray) // Thay bằng hình ảnh bìa sách của bạn
+                    .background(Color.LightGray)
             ) {
-                // Nút yêu thích
+                // Favorite button (heart icon)
                 IconButton(
                     onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
+                    modifier = Modifier.align(Alignment.TopEnd)
                 ) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Add to Favorite",
-                        tint = if (isFavorite) Color.Red else Color.White, // Đổi màu khi yêu thích
-
-                        modifier = Modifier.size(20.dp)
+                        contentDescription = null,
+                        tint = if (isFavorite) Color.Red else Color.Gray,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
 
-                // Số lượt rating trung bình
+                // Rating
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(bottom = 16.dp, end = 8.dp)
+                        .padding(8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Rating",
+                        contentDescription = null,
                         tint = Color.Yellow,
                         modifier = Modifier.size(16.dp)
                     )
@@ -86,7 +85,7 @@ fun BookCard(
                         text = rating.toString(),
                         style = MaterialTheme.typography.caption,
                         color = Color.White,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         modifier = Modifier.padding(start = 4.dp)
                     )
                 }
@@ -94,18 +93,19 @@ fun BookCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Tiêu đề sách
+            // Book title
             Text(
                 text = title,
                 style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
                 overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
                 modifier = Modifier.padding(horizontal = 8.dp),
                 textAlign = TextAlign.Center
             )
 
-            // Tên tác giả
+            // Author name
             Text(
                 text = author,
                 style = MaterialTheme.typography.caption,

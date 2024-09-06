@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.ui.theme.mainColor
 import java.sql.Time
 
@@ -69,7 +70,7 @@ import java.sql.Time
     ExperimentalFoundationApi::class
 )
 @Composable
-fun BookDetailScreen(navController: NavHostController) {
+fun BookDetailScreen(navController: NavHostController, bookName: String? = null) {
     val books = listOf(
         BookDetail(
             title = "The Alchemist",
@@ -229,7 +230,8 @@ fun BookDetailScreen(navController: NavHostController) {
                         author = book.author,
                         rating = book.rating,
                         isFavorite = book.isFavorite,
-                        onFavoriteClick = { /* Thêm vào yêu thích */ }
+                        onFavoriteClick = { /* Thêm vào yêu thích */ },
+                        onClick = { /* ... */ }
                     )
                 }
             }
@@ -422,7 +424,8 @@ fun BookCardPreview() {
         author = "Mercatorfonds",
         rating = 4.5f,
         isFavorite = isFavorite,
-        onFavoriteClick = { isFavorite = !isFavorite } // Thay đổi trạng thái khi nhấn vào
+        onFavoriteClick = { isFavorite = !isFavorite }, // Thay đổi trạng thái khi nhấn vào
+        onClick = {}
     )
 }
 

@@ -70,6 +70,19 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             }
         }
 
+        composable(
+            route = "book/{book_name}",
+            arguments = listOf(navArgument("book_name") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            // Extract the author_name argument from the back stack
+            val bookName = backStackEntry.arguments?.getString("book_name")
+            if (bookName != null) {
+                BookDetailScreen(navController, bookName)
+            }
+        }
+
         // implement later
         composable(Screen.Author.route) {
             CartScreen(navController)

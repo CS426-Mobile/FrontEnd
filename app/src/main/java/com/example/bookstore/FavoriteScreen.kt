@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.CustomTopAppBar
 
 @Composable
 fun FavoriteScreen(navController: NavHostController) {
