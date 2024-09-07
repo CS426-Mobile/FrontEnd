@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,128 +104,141 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
     )
     var author = sampleAuthor
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        stickyHeader {
-            CustomTopAppBar(title = "Author", isBack = true, navController = navController)
-            // Avatar và tên của tác giả
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth()
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(title = "Author", isBack = true, navController = navController)        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_account), // Thay bằng ảnh avatar của bạn
-                    contentDescription = "Author Avatar",
-                    modifier = Modifier
-                        .size(86.dp)
-                        .clip(CircleShape)
-                )
 
-                Text(
-                    text = author.name,
-                    style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold),
-                    color = mainColor // Màu cam cho tên tác giả
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Thông tin số lượng người following, số lượng sách và nút Follow
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-//                Column {
-                Text(
-                    text = "${author.followers} Followers",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Gray
-                )
-                Text(
-                    text = "${author.books} Books",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Gray
-                )
-//                }
-
-                Button(
-                    onClick = {
-                        author = author.copy(isFollowing = !author.isFollowing)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (author.isFollowing) Color.Gray else mainColor,
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(24.dp)
+                // Avatar và tên của tác giả
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(if (author.isFollowing) "Following" else "Follow", color = if (author.isFollowing) Color.Gray else Color.White)
-                }
-            }
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_account), // Thay bằng ảnh avatar của bạn
+                        contentDescription = "Author Avatar",
+                        modifier = Modifier
+                            .size(86.dp)
+                            .clip(CircleShape)
+                    )
 
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        item {
-            // Categories tham gia
-            Text(
-                text = "Categories",
-                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-            )
-            FlowRow(
-                modifier = Modifier.padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                author.categories.forEach { category ->
-                    Chip(category)
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        item {
-            Text(
-                text = "About",
-                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-            )
-            ExpandableText(
-                text = author.about,
-                minimizedMaxLines = 6 // Số dòng tối đa khi thu gọn
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        item {
-            // Books
-            Text(
-                text = "Books",
-                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-            )
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                items(books) { book ->
-                    BookCard(
-                        title = book.title,
-                        author = book.author,
-                        rating = book.rating,
-                        isFavorite = book.isFavorite,
-                        onFavoriteClick = {
-                            // Thay đổi trạng thái isFavorite khi nhấn vào
-                            book.isFavorite = !book.isFavorite
-                        }
+                    Text(
+                        text = author.name,
+                        style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold),
+                        color = mainColor // Màu cam cho tên tác giả
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Thông tin số lượng người following, số lượng sách và nút Follow
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+//                Column {
+                    Text(
+                        text = "${author.followers} Followers",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = "${author.books} Books",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.Gray
+                    )
+//                }
+
+                    Button(
+                        onClick = {
+                            author = author.copy(isFollowing = !author.isFollowing)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (author.isFollowing) Color.Gray else mainColor,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(24.dp)
+                    ) {
+                        Text(
+                            if (author.isFollowing) "Following" else "Follow",
+                            color = if (author.isFollowing) Color.Gray else Color.White
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                ) {
+                    item {
+                        // Categories tham gia
+                        Text(
+                            text = "Categories",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        FlowRow(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            author.categories.forEach { category ->
+                                Chip(category)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    item {
+                        Text(
+                            text = "About",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        ExpandableText(
+                            text = author.about,
+                            minimizedMaxLines = 6 // Số dòng tối đa khi thu gọn
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    item {
+                        // Books
+                        Text(
+                            text = "Books",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        ) {
+                            items(books) { book ->
+                                BookCard(
+                                    BookDetail(
+                                        title = book.title,
+                                        author = book.author,
+                                        rating = book.rating,
+                                        isFavorite = book.isFavorite
+                                    ),
+                                    onFavoriteClick = {
+                                        // Thay đổi trạng thái isFavorite khi nhấn vào
+                                        book.isFavorite = !book.isFavorite
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
-    }
+    )
 }
 
 @Composable

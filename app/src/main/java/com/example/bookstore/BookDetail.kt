@@ -111,146 +111,170 @@ fun BookDetailScreen(navController: NavHostController) {
 
     val scrollState = rememberLazyListState()
 
-    LazyColumn(
-        state = scrollState,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Phần đầu tiên: Hình bìa và thông tin sáchs
-        stickyHeader {
+    Scaffold (
+        topBar = {
             CustomTopAppBar(title = "Book", navController = navController, isBack = true)
-        }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+        },
+        content = { paddingValues ->
+            LazyColumn(
+                state = scrollState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_cart), // Thay bằng hình bìa sách của bạn
-                    contentDescription = "Book Cover",
-                    modifier = Modifier.size(153.dp, 230.dp)
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Battle of 1917", style = MaterialTheme.typography.h6, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                item {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color.Yellow)
-                        Text(text = String.format("%.1f", calculateAverageRating(listOf(123, 45, 30, 15, 5))) + " (${listOf(123, 45, 30, 15, 5).sum()} ratings)", color = Color.Gray)
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_cart), // Thay bằng hình bìa sách của bạn
+                            contentDescription = "Book Cover",
+                            modifier = Modifier.size(153.dp, 230.dp)
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "Battle of 1917",
+                                style = MaterialTheme.typography.h6,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 22.sp
+                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color.Yellow)
+                                Text(
+                                    text = String.format(
+                                        "%.1f",
+                                        calculateAverageRating(listOf(123, 45, 30, 15, 5))
+                                    ) + " (${listOf(123, 45, 30, 15, 5).sum()} ratings)", color = Color.Gray
+                                )
+                            }
+                            FlowRow(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Chip(text = "Drama")
+                                Chip(text = "Romance")
+                                Chip(text = "Mysteries")
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("In Stock", color = Color.Green, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                "$9.99",
+                                style = MaterialTheme.typography.h6,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+                        IconButton(onClick = { /* Thêm vào yêu thích */ }) {
+                            Icon(Icons.Default.FavoriteBorder, contentDescription = "Add to Favorite")
+                        }
                     }
-                    FlowRow(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                }
+
+                // Phần thứ hai: Tác giả và thông tin
+                item {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Chip(text = "Drama")
-                        Chip(text = "Romance")
-                        Chip(text = "Mysteries")
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_account), // Thay bằng hình avatar tác giả
+                            contentDescription = "Author Avatar",
+                            modifier = Modifier.size(45.dp)
+                        )
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text("Gerard Fabian", fontWeight = FontWeight.Bold)
+                            Text(
+                                "78.5K Followers",
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.body2
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(
+                            onClick = { /* Follow tác giả */ },
+                            colors = ButtonDefaults.buttonColors(containerColor = mainColor)
+                        ) {
+                            Text("Follow", color = Color.White)
+                        }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("In Stock", color = Color.Green, fontWeight = FontWeight.Bold)
+                }
+
+                // Phần thứ ba: Mô tả sách
+                var textDescription =
+                    "From athe glamorous San Francisco social scene of the 1920s, through war and the social changes of the ’60s  to the rise of Silicon Valley today, this extraordinary novel takes us on a family odyssey that is both heartbreaking and exhilarating, showing how the roots of misfortune and strength can trace through generations."
+                item {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Text("Description", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    ExpandableText(textDescription)
+                }
+
+                // Phần thứ tư: Thông tin chi tiết sách
+                item {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Text("Product Information", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    ProductInformationRow("Publication Date", "May 1, 2016")
+                    ProductInformationRow("Language", "English")
+                    ProductInformationRow("Weight", "15.7 ounces")
+                    ProductInformationRow("Pages", "374")
+                }
+
+                // Phần thứ năm: Đánh giá khách hàng
+                item {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Text("Customer Reviews", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    RatingSection(ratings = listOf(123, 45, 30, 15, 5))
+                }
+
+                // Phần cuối: Các sách liên quan
+                item {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Text("Related Books", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    LazyRow {
+                        items(books) { book ->
+                            BookCard(
+                                BookDetail(
+                                    title = book.title,
+                                    author = book.author,
+                                    rating = book.rating,
+                                    isFavorite = book.isFavorite
+                                ),
+                                onFavoriteClick = { /* Thêm vào yêu thích */ }
+                            )
+                        }
+                    }
+                }
+
+                // Nút thêm vào giỏ hàng
+                item {
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        "$9.99",
-                        style = MaterialTheme.typography.h6,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                IconButton(onClick = { /* Thêm vào yêu thích */ }) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Add to Favorite")
-                }
-            }
-        }
-
-        // Phần thứ hai: Tác giả và thông tin
-        item {
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_account), // Thay bằng hình avatar tác giả
-                    contentDescription = "Author Avatar",
-                    modifier = Modifier.size(45.dp)
-                )
-                Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text("Gerard Fabian", fontWeight = FontWeight.Bold)
-                    Text("78.5K Followers", color = Color.Gray, style = MaterialTheme.typography.body2)
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = { /* Follow tác giả */ }, colors = ButtonDefaults.buttonColors(containerColor = mainColor)) {
-                    Text("Follow", color = Color.White)
+                    Button(
+                        onClick = {
+                            // Them vo gio hang
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = mainColor)
+                    ) {
+                        Text("Add to Cart", color = Color.White)
+                    }
                 }
             }
         }
-
-        // Phần thứ ba: Mô tả sách
-        var textDescription = "From athe glamorous San Francisco social scene of the 1920s, through war and the social changes of the ’60s  to the rise of Silicon Valley today, this extraordinary novel takes us on a family odyssey that is both heartbreaking and exhilarating, showing how the roots of misfortune and strength can trace through generations."
-        item {
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            Text("Description", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            ExpandableText(textDescription)
-        }
-
-        // Phần thứ tư: Thông tin chi tiết sách
-        item {
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            Text("Product Information", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            ProductInformationRow("Publication Date", "May 1, 2016")
-            ProductInformationRow("Language", "English")
-            ProductInformationRow("Weight", "15.7 ounces")
-            ProductInformationRow("Pages", "374")
-        }
-
-        // Phần thứ năm: Đánh giá khách hàng
-        item {
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            Text("Customer Reviews", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            RatingSection(ratings = listOf(123, 45, 30, 15, 5))
-        }
-
-        // Phần cuối: Các sách liên quan
-        item {
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            Text("Related Books", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            LazyRow {
-                items(books) { book ->
-                    BookCard(
-                        title = book.title,
-                        author = book.author,
-                        rating = book.rating,
-                        isFavorite = book.isFavorite,
-                        onFavoriteClick = { /* Thêm vào yêu thích */ }
-                    )
-                }
-            }
-        }
-
-        // Nút thêm vào giỏ hàng
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    // Them vo gio hang
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = mainColor)
-            ) {
-                Text("Add to Cart", color = Color.White)
-            }
-        }
-    }
+    )
 }
 
 @Composable
@@ -418,10 +442,11 @@ fun BookCardPreview() {
     var isFavorite by remember { mutableStateOf(false) }
 
     BookCard(
+        BookDetail(
         title = "Jan Rombouts Een Renaissann",
         author = "Mercatorfonds",
         rating = 4.5f,
-        isFavorite = isFavorite,
+        isFavorite = isFavorite),
         onFavoriteClick = { isFavorite = !isFavorite } // Thay đổi trạng thái khi nhấn vào
     )
 }

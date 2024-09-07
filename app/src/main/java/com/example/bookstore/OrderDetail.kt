@@ -40,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
-fun CartScreen(navController: NavHostController) {
+fun OrderDetail(navController: NavHostController) {
     // Dữ liệu mẫu cho các sách trong giỏ hàng
     var cartItems = sampleCartItems()
 
@@ -50,7 +50,7 @@ fun CartScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = "Shopping Cart", navController = navController, isBack = true)
+            CustomTopAppBar(title = "Order Detail", navController = navController, isBack = true)
         },
         content = { paddingValues ->
             Column(
@@ -88,7 +88,6 @@ fun CartScreen(navController: NavHostController) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text("43 Bourke Street, Newbridge NSW 837 Raffles...", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
-                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Arrow")
                 }
 
                 // Thông tin phí giao hàng và tổng tiền
@@ -109,79 +108,13 @@ fun CartScreen(navController: NavHostController) {
                     )
                     Text("Include taxes",color = Color.Gray, modifier = Modifier.padding(vertical = 4.dp))
                 }
-
-
-                // Nút mua hàng
-                Button(
-                    onClick = { /* Xử lý nút Buy */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = mainColor),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
-                        .height(56.dp)
-                ) {
-                    Text("Buy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                }
             }
         }
     )
 }
-
-@Composable
-fun CartItemCard(
-    item: CartItem,
-    onRemoveItem: (CartItem) -> Unit,
-    onQuantityChange: (CartItem, Int) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_shopping), // Thay bằng hình bìa sách thực tế
-            contentDescription = "Book Cover",
-            modifier = Modifier.size(54.dp, 81.dp)
-        )
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .weight(1f)
-        ) {
-            Text(item.title, fontWeight = FontWeight.Bold)
-            Text("$${item.price}", color = Color.Gray)
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = {
-                if (item.quantity > 1) onQuantityChange(item, item.quantity - 1)
-                else onRemoveItem(item)
-            }) {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease Quantity")
-            }
-            Text(item.quantity.toString(), modifier = Modifier.padding(horizontal = 8.dp))
-            IconButton(onClick = { onQuantityChange(item, item.quantity + 1) }) {
-                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase Quantity")
-            }
-        }
-    }
-    Divider()
-}
-
-
-
-fun sampleCartItems(): List<CartItem> {
-    return listOf(
-        CartItem(1, "Battle of 1917", 12, 1),
-        CartItem(2, "A Tale of Ben Hur", 20, 1),
-        CartItem(3, "Valles Marineris", 17, 1)
-    )
-}
-
-
 
 @Preview(showBackground = true)
 @Composable
-fun CartScreenPreview() {
-    CartScreen(navController = rememberNavController())
+fun OrderDetailPreview() {
+    OrderDetail(navController = rememberNavController())
 }

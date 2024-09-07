@@ -70,7 +70,7 @@ fun FavoriteScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(favoriteBooks) { book ->
-                        FavoriteBookItem(book = book, onFavoriteClick = {
+                        BookCardHorizontal(book = book, onFavoriteClick = {
                             favoriteBooks = favoriteBooks.toMutableList().apply {
                                 remove(book)
                             }
@@ -85,40 +85,6 @@ fun FavoriteScreen(navController: NavHostController) {
     )
 }
 
-@Composable
-fun FavoriteBookItem(book: BookDetail, onFavoriteClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Hiển thị bìa sách
-        Image(
-            painter = painterResource(id = R.drawable.ic_cart), // Thay thế bằng nguồn bìa sách của bạn
-            contentDescription = "Book Cover",
-            modifier = Modifier.size(54.dp, 81.dp)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        // Hiển thị thông tin sách
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = book.title, fontWeight = FontWeight.Bold)
-            Text(text = book.author, color = Color.Gray)
-            RatingBar(rating = book.rating)
-        }
-
-        // Biểu tượng trái tim để quản lý trạng thái yêu thích
-        IconButton(onClick = onFavoriteClick) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Remove from Favorites",
-                tint = Color.Red
-            )
-        }
-    }
-}
 
 @Composable
 fun RatingBar(rating: Float) {
