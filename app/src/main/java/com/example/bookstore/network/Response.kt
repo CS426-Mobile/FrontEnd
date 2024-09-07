@@ -58,7 +58,8 @@ data class BookResponse(
 data class SimpleBookResponse(
     val book_name: String,
     val author_name: String,
-    val book_image: String
+    val book_image: String,
+    val average_rating: Float
 )
 
 data class BookCategoryResponse(

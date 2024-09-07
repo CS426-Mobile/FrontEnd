@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.bookstore.Screen
 import com.example.bookstore.network.AuthorResponse
@@ -131,10 +132,10 @@ fun AuthorItem(author: AuthorResponse, onClick: () -> Unit) {
             .padding(8.dp)
     ) {
         Image(
-            painter = rememberImagePainter(author.author_image),
+            painter = rememberAsyncImagePainter(author.author_image),
             contentDescription = null,
             modifier = Modifier
-                .size(64.dp)
+                .size(80.dp)
                 .background(Color.Gray),
             contentScale = ContentScale.Crop
         )

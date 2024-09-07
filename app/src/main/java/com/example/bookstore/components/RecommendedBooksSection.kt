@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.bookstore.BookCard
 import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.viewmodel.BookViewModel
 
@@ -71,18 +70,19 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
             books != null && books!!.isNotEmpty() -> {
                 // Show books in a LazyRow
                 LazyRow(
-                    modifier = Modifier.padding(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     items(books!!) { book ->
                         var isFavorite by remember { mutableStateOf(false) } // Example to manage favorite state
-
+                        val averageRating =
                         // Each book card
                         BookCard(
                             title = book.book_name,
                             author = book.author_name,
-                            rating = 4.5f, // Placeholder rating
+                            rating = book.average_rating, // Placeholder rating
                             isFavorite = isFavorite,
+                            imageUrl = book.book_image,
                             onFavoriteClick = {
                                 isFavorite = !isFavorite
                                 // Call API to add/remove from favorite (implementation later)

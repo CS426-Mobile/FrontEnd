@@ -43,11 +43,6 @@ class MainActivity : ComponentActivity() {
         var isLoading = true
         splashScreen.setKeepOnScreenCondition { isLoading }
 
-        // Hide status bar and make the app full screen
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val windowInsetsController = WindowInsetsControllerCompat(window, window.decorView)
-        windowInsetsController.hide(statusBars())
-
         setContent {
             // Set mainColor as the background for the whole app during loading
             MaterialTheme {

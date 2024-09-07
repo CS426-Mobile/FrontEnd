@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -24,6 +25,7 @@ import com.example.bookstore.ui.theme.textColor
 @Composable
 fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = false, navController: NavHostController) {
     TopAppBar(
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         backgroundColor = Color.White,
         contentColor = Color.Black,
         elevation = 0.dp
