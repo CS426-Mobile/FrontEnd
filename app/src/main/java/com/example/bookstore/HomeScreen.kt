@@ -152,7 +152,9 @@ fun HomeScreen(navController: NavHostController) {
             }
 
             stickyHeader {
-                Column {
+                Column(
+                    modifier = Modifier.background(Color.White) // Ensure sticky header stays visible
+                ) {
                     CategoriesSection(
                         selectedCategories = selectedCategories,
                         onCategorySelected = { category ->
@@ -182,12 +184,13 @@ fun HomeScreen(navController: NavHostController) {
                             }
                         )
                     }
-                    else
-                        AuthorsSection(navController = navController, authorViewModel = authorViewModel)
                 }
             }
 
-
+            item {
+                if (selectedCategories.isEmpty())
+                    AuthorsSection(navController = navController, authorViewModel = authorViewModel)
+            }
 
             // Featured Books Section
             item {

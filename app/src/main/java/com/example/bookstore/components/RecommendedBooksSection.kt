@@ -27,12 +27,12 @@ import com.example.bookstore.viewmodel.BookViewModel
 @Composable
 fun RecommendedBooksSection(navController: NavHostController, bookViewModel: BookViewModel) {
     var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
+//    var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Fetch books from the ViewModel
+    // Fetch books from the ViewModel, but only once
     LaunchedEffect(Unit) {
-        bookViewModel.get10Books { success, result ->
+          bookViewModel.get10Books { success, result ->
             if (success && result != null && result.isNotEmpty()) {
                 books = result
             } else if (result.isNullOrEmpty()) {
@@ -40,7 +40,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
             } else {
                 errorMessage = "Failed to load books"
             }
-            isLoading = false
+//                isLoading = false
         }
     }
 
@@ -53,10 +53,10 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
         )
 
         when {
-            isLoading -> {
-                // Show loading indicator while fetching data
-                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
-            }
+//            isLoading -> {
+//                // Show loading indicator while fetching data
+//                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
+//            }
             errorMessage != null -> {
                 // Show error message if data fetch fails
                 Text(

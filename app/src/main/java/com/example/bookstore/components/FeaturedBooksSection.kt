@@ -29,10 +29,10 @@ import com.example.bookstore.viewmodel.BookViewModel
 @Composable
 fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookViewModel) {
     var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
+//    var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Fetch featured books from ViewModel
+    // Fetch authors data
     LaunchedEffect(Unit) {
         bookViewModel.get20Books { success, result ->
             if (success && result != null) {
@@ -40,7 +40,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
             } else {
                 errorMessage = "Failed to load featured books"
             }
-            isLoading = false
+//                isLoading = false
         }
     }
 
@@ -53,10 +53,10 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
         )
 
         when {
-            isLoading -> {
-                // Show loading indicator
-                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
-            }
+//            isLoading -> {
+//                // Show loading indicator
+//                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
+//            }
             errorMessage != null -> {
                 // Show error message if data fetch fails
                 Text(
@@ -90,7 +90,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                                 },
                                 onClick = {
                                     // Navigate to book detail screen
-                                    navController.navigate("bookDetail/${book.book_name}")
+                                    navController.navigate("book/${book.book_name}")
                                 }
                             )
                         }
