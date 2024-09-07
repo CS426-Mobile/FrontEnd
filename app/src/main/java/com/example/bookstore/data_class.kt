@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import com.example.bookstore.network.AuthorResponse
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
@@ -223,6 +226,35 @@ fun AuthorItem(author: Author, onFollowToggle: () -> Unit, onButtonFollow: () ->
                 color = if (author.isFollowing) Color.Gray else Color.White
             )
         }
+    }
+}
+
+@Composable
+fun AuthorCircle(author: Author, onClick: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(8.dp)
+    ) {
+        Image(
+            painter = rememberImagePainter(R.drawable.ic_account),
+            contentDescription = null,
+            modifier = Modifier
+                .size(64.dp)
+                .background(Color.Gray),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = author.name,
+            color = Color.Black,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(horizontal = 4.dp),
+            textAlign = TextAlign.Center,
+            maxLines = 1,  // Limit to one line
+            overflow = TextOverflow.Ellipsis  // Truncate with "..."
+        )
     }
 }
 
