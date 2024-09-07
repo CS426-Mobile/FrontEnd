@@ -282,7 +282,11 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
                 if (isBack) {
                     IconButton(
                         // onClick = { navController.navigateUp() }
-                        onClick = { navController.popBackStack() },
+                        onClick = {
+                            if (navController.canGoBack) {
+                                navController.popBackStack()
+                            }
+                        },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
                         Icon(
@@ -532,10 +536,11 @@ fun FeaturedBooksSection(books: List<BookDetail>) {
                         ) {
                             for (book in bookRow) {
                                 BookCard(
+                                    BookDetail(
                                     title = book.title,
                                     author = book.author,
                                     rating = book.rating,
-                                    isFavorite = book.isFavorite,
+                                    isFavorite = book.isFavorite),
                                     onFavoriteClick = { /* Handle favorite click */ }
                                 )
                             }
