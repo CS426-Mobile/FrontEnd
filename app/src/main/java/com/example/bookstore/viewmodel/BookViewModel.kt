@@ -60,6 +60,30 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // Get books by matching string
+    fun getBooksByMatchingString(
+        categoryName: String,
+        bookInput: String,
+        ratingOptional: String = "all",
+        priceOptional: String = "no",
+        priceMin: Double = 0.0,
+        priceMax: Double = 99999999.0,
+        ratingSort: String = "none",
+        priceSort: String = "none",
+        onResult: (Boolean, List<BookCategoryResponse>?) -> Unit
+    ) {
+        viewModelScope.launch {
+            val result = bookRepository.getBooksByMatchingString(
+                categoryName, bookInput, ratingOptional, priceOptional, priceMin, priceMax, ratingSort, priceSort
+            )
+            result.onSuccess { books ->
+                onResult(true, books)
+            }.onFailure {
+                onResult(false, null)
+            }
+        }
+    }
+
     fun getBookInfo(bookName: String, onResult: (Boolean, BookResponse?) -> Unit) {
         viewModelScope.launch {
             val result = bookRepository.getBookInfo(bookName)

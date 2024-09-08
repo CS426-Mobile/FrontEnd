@@ -63,6 +63,32 @@ class BookRepository {
         }
     }
 
+    suspend fun getBooksByMatchingString(
+        categoryName: String,
+        bookInput: String,
+        ratingOptional: String = "all",
+        priceOptional: String = "no",
+        priceMin: Double = 0.0,
+        priceMax: Double = 99999999.0,
+        ratingSort: String = "none",
+        priceSort: String = "none"
+    ): Result<List<BookCategoryResponse>> {
+        return try {
+            val response = RetrofitInstance.api.getBooksByMatchingString(
+                categoryName, bookInput, ratingOptional, priceOptional, priceMin, priceMax, ratingSort, priceSort
+            )
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("No books found"))
+            } else {
+                Result.failure(Exception("Failed to fetch books by matching string. Code: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
+
     suspend fun getBookInfo(bookName: String): Result<BookResponse> {
         return try {
             val response = RetrofitInstance.api.getBookInfo(bookName)

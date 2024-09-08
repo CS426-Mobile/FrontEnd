@@ -76,5 +76,11 @@ data class AuthorCategoriesResponse(
     val categories: List<String>
 )
 
+// CustomerFavorite Response
+data class CustomerFavoriteResponse(
+    val book_name: String,
+    val author_name: String,
+    val book_image: String
+)
 
 

@@ -53,3 +53,8 @@ data class BookCategoryRequest(
     val price_sort: String = "none"
 )
 
+// CustomerFavorite Request
+data class CustomerFavoriteRequest(
+    val user_email: String,
+    val book_name: String
+)
