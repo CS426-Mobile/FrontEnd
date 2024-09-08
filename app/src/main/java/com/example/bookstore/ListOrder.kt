@@ -55,7 +55,7 @@ fun ListOrder(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = "Order", navController = navController)
+            CustomTopAppBar(title = "Order", navController = navController, )
         },
         content = { paddingValues ->
             if (orders.isEmpty()) {
@@ -76,7 +76,7 @@ fun ListOrder(navController: NavHostController) {
             } else {
                 // Hiển thị danh sách đơn hàng theo dạng lưới
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2), // Số cột là 2
+                    columns = GridCells.Fixed(1), // Số cột là 2
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
@@ -107,27 +107,26 @@ fun OrderCard(order: Order) {
                 .padding(16.dp)
         ) {
             Text(text = "Order ID: ${order.id}", fontWeight = FontWeight.Bold)
-            Text(text = "Date: ${order.date}", color = Color.Gray)
             Text(text = "Total: $${order.totalPrice}", fontWeight = FontWeight.Medium)
             Text(text = "Books: ${order.totalBooks}", color = Color.Gray)
         }
     }
 }
 
-data class Order(
-    val id: String,
-    val date: String,
-    val totalPrice: Int,
-    val totalBooks: Int
-)
-
 fun sampleOrders(): List<Order> {
     return listOf(
-        Order("12345", "2024-09-05", 54, 3),
-        Order("12346", "2024-09-06", 75, 5),
-        Order("12347", "2024-09-07", 30, 2),
-        Order("12348", "2024-09-08", 60, 4),
-        Order("12349", "2024-09-09", 40, 1)
+        Order("12345",  54, 3),
+        Order("12346",  75, 5),
+        Order("12347", 30, 2),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12348",  60, 4),
+        Order("12349",  40, 1)
     )
 }
 

@@ -26,6 +26,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -124,21 +125,19 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
             )
         }
     } else if (author != null) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp)
-        ) {
-            // Sticky header for the author image, name, followers, and books count
-            stickyHeader {
+        Scaffold(
+            topBar = {
                 CustomTopAppBar(title = "Author Detail", isBack = true, navController = navController)
+            },
+            content = { paddingValues ->
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.background)
-                        .padding(bottom = 16.dp)
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(16.dp)
                 ) {
-                    // Avatar and author name
+
+                    // Avatar và tên của tác giả
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -161,7 +160,6 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Followers, books count, and categories
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -178,97 +176,110 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                             color = Color.Gray
                         )
 
-
                         Button(
-                            onClick = { /* Handle follow/unfollow action */ },
+                            onClick = {
+                                /* Handle follow/unfollow action */
+//                                author = author.copy(isFollowing = !author.isFollowing)
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (author!!.num_follower > 0) mainColor else Color.Gray,
                                 contentColor = Color.White
                             ),
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor = if (author.isFollowing) Color.Gray else mainColor,
+//                                contentColor = Color.White
+//                            ),
                             shape = RoundedCornerShape(24.dp)
                         ) {
                             Text("Follow", color = Color.White)
+//                            Text(
+//                                if (author.isFollowing) "Following" else "Follow",
+//                                color = if (author.isFollowing) Color.Gray else Color.White
+//                            )
                         }
                     }
-                }
-            }
 
-            // Categories section
-            item {
-                Text(
-                    text = "Categories",
-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                )
-                FlowRow(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    categories?.forEach { category ->
-                        Chip(category)
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            // About Section
-            item {
-                Text(
-                    text = "About",
-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                )
-                ExpandableText(
-                    text = author!!.about,
-                    minimizedMaxLines = 4 // Max lines when collapsed
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            item {
-                Text(
-                    text = "Books",
-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                )
-            }
-
-            // Books section from API
-            if (books != null && books!!.isNotEmpty()) {
-                item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(vertical = 8.dp)
+                    LazyColumn(
                     ) {
-                        items(books!!) { book ->
-                            BookCard(
-                                title = book.book_name,
-                                author = book.author_name,
-                                rating = book.average_rating,
-                                isFavorite = false,
-                                imageUrl = book.book_image,
-                                onFavoriteClick = {
-                                    // Handle favorite action
-                                },
-                                onClick = {
-                                    // Navigate to book detail screen
-                                    navController.navigate("book/${book.book_name}")
+                        item {
+                            Text(
+                                text = "Categories",
+                                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                            )
+                            FlowRow(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                categories?.forEach { category ->
+                                    Chip(category)
                                 }
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        item {
+                            Text(
+                                text = "About",
+                                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                            )
+                            ExpandableText(
+                                text = author!!.about,
+                                minimizedMaxLines = 6 // Số dòng tối đa khi thu gọn
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                        item {
+                            Text(
+                                text = "Books",
+                                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
                             )
                         }
+
+                        // Books section from API
+                        if (books != null && books!!.isNotEmpty()) {
+                            item {
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                ) {
+                                    items(books!!) { book ->
+                                        BookCard(
+                                            title = book.book_name,
+                                            author = book.author_name,
+                                            rating = book.average_rating,
+                                            isFavorite = false,
+                                            imageUrl = book.book_image,
+                                            onFavoriteClick = {
+                                                // Handle favorite action
+                                            },
+                                            onClick = {
+                                                // Navigate to book detail screen
+                                                navController.navigate("book/${book.book_name}")
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            // Show fallback message if no books are found
+                            item {
+                                Text(
+                                    text = "No books available by this author.",
+                                    modifier = Modifier.padding(16.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
-            } else {
-                // Show fallback message if no books are found
-                item {
-                    Text(
-                        text = "No books available by this author.",
-                        modifier = Modifier.padding(16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
             }
-        }
+        )
     }
 }
-
 
 // Sample Chip composable for category display
 @Composable
@@ -281,10 +292,4 @@ fun Chip(text: String) {
     ) {
         Text(text = text, color = Color.Black)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AuthorDetailScreenPreview() {
-    AuthorDetailScreen(navController = rememberNavController(), authorName = "Paulo Coelho")
 }

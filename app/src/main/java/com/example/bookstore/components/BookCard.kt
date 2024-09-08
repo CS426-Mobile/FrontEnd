@@ -81,7 +81,7 @@ fun BookCard(
                     Icon(
                         imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = null,
-                        tint = if (isFavorite) Color.Red else Color.Gray,
+                        tint = if (isFavorite) Color.Red else Color.White,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -176,26 +176,3 @@ fun BookCardPlaceholder() {
         }
     }
 }
-
-data class BookDetail(
-    var title: String,
-    var author: String,
-    var rating: Float,
-    var isFavorite: Boolean,
-)
-
-data class Account(
-    val name: String,
-    val address: String,
-)
-
-// Mẫu dữ liệu tác giả
-data class Author(
-    val name: String,
-    val followers: String,
-    val books: Int,
-    val isFollowing: Boolean,
-    val categories: List<String>,
-    val about: String,
-    val booksList: List<Book>
-)
