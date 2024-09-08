@@ -2,13 +2,12 @@ package com.example.bookstore.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,18 +28,21 @@ import com.example.bookstore.viewmodel.BookViewModel
 @Composable
 fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookViewModel) {
     var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
-//    var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isDataFetched by remember { mutableStateOf(false) }  // Track if data was fetched
 
-    // Fetch authors data
-    LaunchedEffect(Unit) {
-        bookViewModel.get20Books { success, result ->
-            if (success && result != null) {
-                books = result
-            } else {
-                errorMessage = "Failed to load featured books"
+    // Fetch books data only once
+    LaunchedEffect(isDataFetched) {
+        if (!isDataFetched) {  // Ensure the API call is made only once
+            bookViewModel.get20Books { success, result ->
+                if (success && result != null) {
+                    books = result
+                    errorMessage = null
+                } else {
+                    errorMessage = "Failed to load featured books"
+                }
+                isDataFetched = true  // Mark data as fetched
             }
-//                isLoading = false
         }
     }
 
@@ -53,10 +55,19 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
         )
 
         when {
-//            isLoading -> {
-//                // Show loading indicator
-//                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
-//            }
+            !isDataFetched -> {
+                // Show placeholder while loading
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    repeat(2) { // Show 10 placeholder items
+                        BookCardPlaceholder()
+                    }
+                }
+            }
             errorMessage != null -> {
                 // Show error message if data fetch fails
                 Text(
@@ -77,7 +88,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         for (book in bookRow) {
-                            var isFavorite by remember { mutableStateOf(false) } // Handle favorite state
+                            var isFavorite by remember { mutableStateOf(false) }  // Handle favorite state
                             BookCard(
                                 title = book.book_name,
                                 author = book.author_name,
@@ -97,14 +108,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                     }
                 }
             }
-            else -> {
-                // Show message if no featured books are available
-                Text(
-                    text = "No featured books available at the moment.",
-                    modifier = Modifier.padding(16.dp),
-                    textAlign = TextAlign.Center
-                )
-            }
         }
     }
 }
+

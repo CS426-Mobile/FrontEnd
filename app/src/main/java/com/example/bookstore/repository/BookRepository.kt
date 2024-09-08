@@ -93,6 +93,22 @@ class BookRepository {
         }
     }
 
+    // Get books by author
+    suspend fun getBooksByAuthor(authorName: String): Result<List<SimpleBookResponse>> {
+        return try {
+            val response = RetrofitInstance.api.getBooksByAuthor(authorName)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("No books found for author"))
+            } else {
+                Result.failure(Exception("Failed to fetch books by author. Code: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
+
     suspend fun getAuthorCategories(authorName: String): Result<List<String>> {
         return try {
             val response = RetrofitInstance.api.getAuthorCategories(authorName)

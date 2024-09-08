@@ -51,7 +51,7 @@ fun BookCard(
     Card(
         modifier = Modifier
             .width(144.dp)
-            .height(255.dp)
+            .height(240.dp)
             .padding(8.dp)
             .clickable { onClick() },  // Handle book click
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -61,7 +61,7 @@ fun BookCard(
             // Book image placeholder
             Box(
                 modifier = Modifier
-                    .size(144.dp, 181.dp)
+                    .size(144.dp, 169.dp)
                     .background(Color.LightGray)
             ) {
                 // Book image
@@ -130,6 +130,46 @@ fun BookCard(
                 color = Color.Gray,
                 fontSize = 11.sp,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+
+@Composable
+fun BookCardPlaceholder() {
+    Card(
+        modifier = Modifier
+            .width(144.dp)
+            .height(240.dp)
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Placeholder image
+            Box(
+                modifier = Modifier
+                    .size(144.dp, 169.dp)
+                    .background(Color.LightGray)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            // Placeholder text
+            Text(
+                text = "Loading...",
+                style = MaterialTheme.typography.body2,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Author",
+                style = MaterialTheme.typography.caption,
+                color = Color.Gray,
+                fontSize = 11.sp,
                 modifier = Modifier.padding(horizontal = 8.dp),
                 textAlign = TextAlign.Center
             )

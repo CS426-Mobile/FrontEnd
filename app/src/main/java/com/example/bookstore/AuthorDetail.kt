@@ -45,32 +45,64 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.network.AuthorResponse
+import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
+import com.example.bookstore.viewmodel.BookViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
     val authorViewModel: AuthorViewModel = viewModel()
+    val bookViewModel: BookViewModel = viewModel()
 
-    // Local state to hold author data
+    // Local state to hold author data, books, and categories
     var author by remember { mutableStateOf<AuthorResponse?>(null) }
+    var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
+    var numBooks by remember { mutableStateOf<Int?>(null) }
+    var categories by remember { mutableStateOf<List<String>?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Fetch author information
+    // Fetch author information, number of books, and categories
     LaunchedEffect(authorName) {
+        // Fetch author info
         authorViewModel.getAuthorInfo(authorName) { success, result ->
             if (success && result != null) {
                 author = result
+
+                // Fetch number of books by this author
+                bookViewModel.getNumBooksByAuthor(authorName) { bookSuccess, numBooksResult ->
+                    if (bookSuccess && numBooksResult != null) {
+                        numBooks = numBooksResult
+                    } else {
+                        errorMessage = "Failed to load number of books."
+                    }
+
+                    // Fetch author categories
+                    bookViewModel.getAuthorCategories(authorName) { categorySuccess, categoriesResult ->
+                        if (categorySuccess && categoriesResult != null) {
+                            categories = categoriesResult
+                        }
+
+                        // Fetch books by this author after loading author info
+                        bookViewModel.getBooksByAuthor(authorName) { booksSuccess, booksResult ->
+                            if (booksSuccess && booksResult != null) {
+                                books = booksResult
+                            }
+                            isLoading = false
+                        }
+                    }
+                }
             } else {
                 errorMessage = "Failed to load author information."
+                isLoading = false
             }
-            isLoading = false
         }
     }
 
@@ -104,7 +136,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.background)
-                        .padding(bottom = 16.dp) // Add some padding to prevent overlap
+                        .padding(bottom = 16.dp)
                 ) {
                     // Avatar and author name
                     Row(
@@ -113,7 +145,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.ic_account), // Replace with author.avatar if available
+                            painter = rememberAsyncImagePainter(author!!.author_image), // Fetch the image from the URL
                             contentDescription = "Author Avatar",
                             modifier = Modifier
                                 .size(86.dp)
@@ -129,7 +161,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Followers and books count
+                    // Followers, books count, and categories
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -141,10 +173,11 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                             color = Color.Gray
                         )
                         Text(
-                            text = "873 Books", // Sample data for books
+                            text = "${numBooks ?: 0} ${if (numBooks == 1) "Book" else "Books"}", // Show "Book" or "Books" based on numBooks
                             style = MaterialTheme.typography.body1,
                             color = Color.Gray
                         )
+
 
                         Button(
                             onClick = { /* Handle follow/unfollow action */ },
@@ -160,9 +193,8 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                 }
             }
 
-            // Rest of the content scrolls beneath the sticky header
+            // Categories section
             item {
-                // Categories section (sample data)
                 Text(
                     text = "Categories",
                     style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
@@ -172,62 +204,71 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    listOf("Drama", "Mysteries", "Fantasy").forEach { category ->
+                    categories?.forEach { category ->
                         Chip(category)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
+            // About Section
             item {
-                // About section
                 Text(
                     text = "About",
                     style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
                 )
                 ExpandableText(
                     text = author!!.about,
-                    minimizedMaxLines = 5 // Max lines when collapsed
+                    minimizedMaxLines = 4 // Max lines when collapsed
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // Books section (sample data)
             item {
                 Text(
                     text = "Books",
                     style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
                 )
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                ) {
-                    items(listOf(
-                        BookDetail("The Alchemist", "Paulo Coelho", 4.5f, true),
-                        BookDetail("1984", "George Orwell", 4.6f, false),
-                        BookDetail("Moby Dick", "Herman Melville", 4.1f, false)
-                    )) { book ->
-                        BookCard(
-                            title = book.title,
-                            author = book.author,
-                            rating = book.rating,
-                            isFavorite = book.isFavorite,
-                            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/7/78/Image.jpg",
-                            onFavoriteClick = {
-                                // Toggle favorite status
-                                book.isFavorite = !book.isFavorite
-                            },
-                            onClick = {
-                                // Navigate to book detail screen
-                                navController.navigate("bookDetail/${book.title}")
-                            }
-                        )
+            }
+
+            // Books section from API
+            if (books != null && books!!.isNotEmpty()) {
+                item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        items(books!!) { book ->
+                            BookCard(
+                                title = book.book_name,
+                                author = book.author_name,
+                                rating = book.average_rating,
+                                isFavorite = false,
+                                imageUrl = book.book_image,
+                                onFavoriteClick = {
+                                    // Handle favorite action
+                                },
+                                onClick = {
+                                    // Navigate to book detail screen
+                                    navController.navigate("book/${book.book_name}")
+                                }
+                            )
+                        }
                     }
+                }
+            } else {
+                // Show fallback message if no books are found
+                item {
+                    Text(
+                        text = "No books available by this author.",
+                        modifier = Modifier.padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
     }
 }
+
 
 // Sample Chip composable for category display
 @Composable

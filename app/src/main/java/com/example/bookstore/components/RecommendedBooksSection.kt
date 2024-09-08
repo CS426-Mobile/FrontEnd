@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,20 +26,23 @@ import com.example.bookstore.viewmodel.BookViewModel
 @Composable
 fun RecommendedBooksSection(navController: NavHostController, bookViewModel: BookViewModel) {
     var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
-//    var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isDataFetched by remember { mutableStateOf(false) } // New state to track whether data was fetched
 
-    // Fetch books from the ViewModel, but only once
-    LaunchedEffect(Unit) {
-          bookViewModel.get10Books { success, result ->
-            if (success && result != null && result.isNotEmpty()) {
-                books = result
-            } else if (result.isNullOrEmpty()) {
-                errorMessage = "No Books found"
-            } else {
-                errorMessage = "Failed to load books"
+    // Fetch books from the ViewModel only once
+    LaunchedEffect(isDataFetched) {
+        if (!isDataFetched) {  // Ensure the API call is only made once
+            bookViewModel.get10Books { success, result ->
+                if (success && result != null && result.isNotEmpty()) {
+                    books = result
+                    errorMessage = null
+                } else if (result.isNullOrEmpty()) {
+                    errorMessage = "No Books found"
+                } else {
+                    errorMessage = "Failed to load books"
+                }
+                isDataFetched = true  // Mark as fetched
             }
-//                isLoading = false
         }
     }
 
@@ -53,10 +55,17 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
         )
 
         when {
-//            isLoading -> {
-//                // Show loading indicator while fetching data
-//                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
-//            }
+            !isDataFetched -> {
+                // Show placeholder while loading
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    items(3) { // Show 3 placeholder items
+                        BookCardPlaceholder()
+                    }
+                }
+            }
             errorMessage != null -> {
                 // Show error message if data fetch fails
                 Text(
@@ -74,18 +83,16 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                     modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     items(books!!) { book ->
-                        var isFavorite by remember { mutableStateOf(false) } // Example to manage favorite state
-                        val averageRating =
-                        // Each book card
+                        var isFavorite by remember { mutableStateOf(false) } // Manage favorite state locally
                         BookCard(
                             title = book.book_name,
                             author = book.author_name,
-                            rating = book.average_rating, // Placeholder rating
+                            rating = book.average_rating,
                             isFavorite = isFavorite,
                             imageUrl = book.book_image,
                             onFavoriteClick = {
                                 isFavorite = !isFavorite
-                                // Call API to add/remove from favorite (implementation later)
+                                // API call to add/remove from favorite can be done here
                             },
                             onClick = {
                                 // Navigate to book detail screen
@@ -94,14 +101,6 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                         )
                     }
                 }
-            }
-            else -> {
-                // Show message if no books are found
-                Text(
-                    text = "No recommended books available at the moment.",
-                    modifier = Modifier.padding(16.dp),
-                    textAlign = TextAlign.Center
-                )
             }
         }
     }

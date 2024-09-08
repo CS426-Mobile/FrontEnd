@@ -93,6 +93,18 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // Get books by author
+    fun getBooksByAuthor(authorName: String, onResult: (Boolean, List<SimpleBookResponse>?) -> Unit) {
+        viewModelScope.launch {
+            val result = bookRepository.getBooksByAuthor(authorName)
+            result.onSuccess { books ->
+                onResult(true, books)
+            }.onFailure {
+                onResult(false, null)
+            }
+        }
+    }
+
     fun getRelatedBooks(bookName: String, onResult: (Boolean, List<SimpleBookResponse>?) -> Unit) {
         viewModelScope.launch {
             val result = bookRepository.getRelatedBooks(bookName)

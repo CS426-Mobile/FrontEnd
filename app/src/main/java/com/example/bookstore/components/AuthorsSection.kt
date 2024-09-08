@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -24,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +52,7 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
         authorViewModel.getTop5PopularAuthors { success, result ->
             if (success && result != null && result.isNotEmpty()) {
                 authors = result
+                errorMessage = null
             } else if (result.isNullOrEmpty()) {
                 errorMessage = "No authors found"
             } else {
@@ -81,11 +86,17 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
             )
         }
 
-        // Main content section
         when {
             isLoading -> {
-                // Display loading animation
-                CircularProgressIndicator(color = Color.Gray, modifier = Modifier.padding(16.dp))
+                // Show placeholder while loading
+                LazyRow(
+                    modifier = Modifier.padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(5) { // Show 5 placeholder items
+                        AuthorItemPlaceholder()
+                    }
+                }
             }
             errorMessage != null -> {
                 // Show error message
@@ -124,6 +135,39 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
 }
 
 @Composable
+fun AuthorItemPlaceholder() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(8.dp)
+    ) {
+        // Placeholder image with a diameter of 100.dp
+        Box(
+            modifier = Modifier
+                .size(100.dp)  // Set the size to 100.dp diameter
+                .clip(CircleShape)
+                .background(Color.Gray)  // Placeholder color
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        // Placeholder text constrained to the width of the image
+        Box(
+            modifier = Modifier
+                .widthIn(max = 100.dp)  // Constrain the width to match the image diameter
+                .padding(horizontal = 4.dp)
+        ) {
+            Text(
+                text = "Loading...",
+                color = Color.Gray,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 1,  // Limit to one line
+                overflow = TextOverflow.Ellipsis  // Truncate with "..."
+            )
+        }
+    }
+}
+
+@Composable
 fun AuthorItem(author: AuthorResponse, onClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -131,26 +175,36 @@ fun AuthorItem(author: AuthorResponse, onClick: () -> Unit) {
             .clickable { onClick() }
             .padding(8.dp)
     ) {
+        // Circular image with a diameter of 100.dp
         Image(
             painter = rememberAsyncImagePainter(author.author_image),
             contentDescription = null,
             modifier = Modifier
-                .size(80.dp)
-                .background(Color.Gray),
-            contentScale = ContentScale.Crop
+                .size(100.dp)  // Set the size to 100.dp diameter
+                .clip(CircleShape)  // Clip the image into a circle
+                .background(Color.Gray),  // Optional background color
+            contentScale = ContentScale.Crop  // Crop the image to fit the circle
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = author.author_name,
-            color = Color.Black,
-            fontSize = 12.sp,
-            modifier = Modifier.padding(horizontal = 4.dp),
-            textAlign = TextAlign.Center,
-            maxLines = 1,  // Limit to one line
-            overflow = TextOverflow.Ellipsis  // Truncate with "..."
-        )
+        // Text constrained to the width of the image
+        Box(
+            modifier = Modifier
+                .widthIn(max = 100.dp)  // Constrain the width to match the image diameter
+                .padding(horizontal = 4.dp)
+        ) {
+            Text(
+                text = author.author_name,
+                color = Color.Black,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 1,  // Limit to one line
+                overflow = TextOverflow.Ellipsis  // Truncate with "..."
+            )
+        }
     }
 }
+
+
 
 
 

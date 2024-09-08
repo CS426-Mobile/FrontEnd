@@ -103,6 +103,10 @@ interface ApiService {
     @GET("/books/author/{author_name}/count/")
     suspend fun getNumBooksByAuthor(@Path("author_name") authorName: String): Response<BookCountResponse>
 
+    // Get books by author
+    @GET("/books/author/{author_name}/")
+    suspend fun getBooksByAuthor(@Path("author_name") authorName: String): Response<List<SimpleBookResponse>>
+
     // Get categories of books by an author
     @GET("/books/author/{author_name}/categories/")
     suspend fun getAuthorCategories(@Path("author_name") authorName: String): Response<AuthorCategoriesResponse>
