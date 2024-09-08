@@ -54,7 +54,7 @@ fun ListOrder(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = "Order", navController = navController, )
+            CustomTopAppBar(title = "Order", navController = navController, isCart = true)
         },
         content = { paddingValues ->
             if (orders.isEmpty()) {
@@ -94,6 +94,8 @@ fun ListOrder(navController: NavHostController) {
 
 @Composable
 fun OrderCard(order: Order) {
+    val totalPrice = order.listBookOrder.sumOf({ it.price })
+    val totalBooks = order.listBookOrder.size
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,27 +107,27 @@ fun OrderCard(order: Order) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+
             Text(text = "Order ID: ${order.id}", fontWeight = FontWeight.Bold)
-            Text(text = "Total: $${order.totalPrice}", fontWeight = FontWeight.Medium)
-            Text(text = "Books: ${order.totalBooks}", color = Color.Gray)
+            Text(text = "Total: $${totalPrice}", fontWeight = FontWeight.Medium)
+            Text(text = "Books: ${totalBooks}", color = Color.Gray)
         }
     }
 }
 
 fun sampleOrders(): List<Order> {
     return listOf(
-        Order("12345",  54, 3),
-        Order("12346",  75, 5),
-        Order("12347", 30, 2),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12348",  60, 4),
-        Order("12349",  40, 1)
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
+        Order("12345",  sampleFavoriteBooks()),
     )
 }
 

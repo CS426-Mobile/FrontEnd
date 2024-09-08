@@ -74,6 +74,10 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             }
         }
 
+        composable(Screen.Author.route){
+//            AuthorDetailScreen(navController)
+        }
+
         // implement later
         composable(Screen.Author.route) {
             CartScreen(navController)
@@ -81,7 +85,7 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Book.route) {
             BookDetailScreen(navController)
         }
-        composable(Screen.Order.route) {
+        composable(Screen.ListOrder.route) {
             ListOrder(navController)
         }
         composable(Screen.Favorite.route) {
@@ -93,7 +97,23 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Account.route) {
             AccountScreen(navController)
         }
-
+        composable(Screen.Cart.route){
+            CartScreen(navController)
+        }
+        composable(Screen.ListAuthor.route){
+            ListAuthor(navController)
+        }
+        composable(Screen.Order.route){
+            // them order detail vao
+            OrderDetail(navController, Order("3f2wg2244", listOf(
+                BookDetail("Abstract Art in The World", "Armando Newman", 4.5f, true))))
+        }
+        composable(Screen.Search.route){
+            SearchScreen(navController)
+        }
+        composable(Screen.Success.route){
+            PurchaseSuccessScreen(navController)
+        }
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
         Log.d("Navigation", "Navigated to ${destination.route}")
