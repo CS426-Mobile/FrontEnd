@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -72,6 +73,13 @@ fun BookCard(
                         .fillMaxWidth()
                         .height(181.dp), // Set the image height
                     contentScale = ContentScale.Crop // Crop the image to fit
+                )
+
+                // Semi-transparent gray blur layer
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()  // Fill the size of the image
+                        .background(Color(0x4D000000))  // Semi-transparent gray color (50% opacity)
                 )
 
                 IconButton(

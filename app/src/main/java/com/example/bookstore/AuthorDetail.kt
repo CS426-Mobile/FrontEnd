@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -147,15 +149,24 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                             painter = rememberAsyncImagePainter(author!!.author_image), // Fetch the image from the URL
                             contentDescription = "Author Avatar",
                             modifier = Modifier
-                                .size(86.dp)
-                                .clip(CircleShape)
+                                .size(100.dp)  // Set the size to 100.dp diameter
+                                .clip(CircleShape)  // Clip the image into a circle
+                                .background(Color.Gray),  // Optional background color
+                            contentScale = ContentScale.Crop  // Crop the image to fit the circle
                         )
-
-                        Text(
-                            text = author!!.author_name,
-                            style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold),
-                            color = mainColor // Orange color for author name
-                        )
+                        Box(
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = author!!.author_name,
+                                style = MaterialTheme.typography.h5.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 28.sp // Adjust the line height (spacing between lines)
+                                ),
+                                color = mainColor,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

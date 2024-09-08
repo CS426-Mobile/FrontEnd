@@ -234,7 +234,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String? = null)
                                 author = book.author,
                                 rating = book.rating,
                                 isFavorite = book.isFavorite,
-                                imageUrl = "https://upload.wikimedia.org/wikipedia/commons/7/78/Image.jpg",
+                                imageUrl = "http://books.google.com/books/content?id=mh0bU6NXrBgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
                                 onFavoriteClick = { /* Thêm vào yêu thích */ },
                                 onClick = { /* ... */ }
                             )
