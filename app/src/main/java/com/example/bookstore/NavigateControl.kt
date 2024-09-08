@@ -20,6 +20,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.bookstore.components.BookDetail
+import com.example.bookstore.components.Order
 import com.example.bookstore.ui.theme.mainColor
 
 val NavHostController.canGoBack: Boolean
@@ -73,7 +75,6 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
                 AuthorDetailScreen(navController, authorName)
             }
         }
-
         composable(
             route = "book/{book_name}",
             arguments = listOf(navArgument("book_name") {
@@ -94,7 +95,7 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Book.route) {
             BookDetailScreen(navController)
         }
-        composable(Screen.Order.route) {
+        composable(Screen.ListOrder.route) {
             ListOrder(navController)
         }
         composable(Screen.Favorite.route) {
@@ -106,7 +107,25 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Account.route) {
             AccountScreen(navController)
         }
-
+        composable(Screen.Cart.route){
+            CartScreen(navController)
+        }
+        composable(Screen.ListAuthor.route){
+            ListAuthor(navController)
+        }
+        composable(Screen.Order.route){
+            // them order detail vao
+            OrderDetail(navController, Order("3f2wg2244", listOf(
+                BookDetail("Abstract Art in The World", "Armando Newman", 4.5f, true)
+            ))
+            )
+        }
+        composable(Screen.Search.route){
+            SearchScreen(navController)
+        }
+        composable(Screen.Success.route){
+            PurchaseSuccessScreen(navController)
+        }
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
         Log.d("Navigation", "Navigated to ${destination.route}")
@@ -155,7 +174,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
 sealed class BottomNavItem(var title: String, var icon: Int, var route: String) {
     object Home : BottomNavItem("Home", R.drawable.ic_home, Screen.Home.route)
-    object Order : BottomNavItem("Order", R.drawable.ic_cart, Screen.Order.route)
+    object Order : BottomNavItem("Order", R.drawable.ic_cart, Screen.ListOrder.route)
     object Favorite : BottomNavItem("Favorite", R.drawable.ic_favo, Screen.Favorite.route)
     object Account : BottomNavItem("Account", R.drawable.ic_account, Screen.Account.route)
 }
