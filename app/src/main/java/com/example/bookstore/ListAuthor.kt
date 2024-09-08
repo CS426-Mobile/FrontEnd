@@ -39,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.AuthorHorizontalItem
+import com.example.bookstore.components.CustomTopAppBar
 
 @Composable
 fun ListAuthor(navController: NavHostController){
@@ -67,7 +69,7 @@ fun ListAuthor(navController: NavHostController){
 
                 LazyColumn {
                     items(listAuthor) { author ->
-                        AuthorItem(
+                        AuthorHorizontalItem(
                             author = author,
                             onFollowToggle = { /* Toggle Follow/Unfollow */ },
                             onButtonFollow = { /*author.isFollowing = !author.isFollowing*/ }

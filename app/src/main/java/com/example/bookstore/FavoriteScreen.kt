@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.BookCardHorizontal
 import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
 

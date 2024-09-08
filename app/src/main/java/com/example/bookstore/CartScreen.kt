@@ -1,5 +1,6 @@
 package com.example.bookstore
 
+import android.system.Os.remove
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.BookCardHorizontal
+import com.example.bookstore.components.BookDetail
+import com.example.bookstore.components.CartItem
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.ui.theme.mainColor
 
@@ -92,7 +96,7 @@ fun CartScreen(navController: NavHostController) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text("43 Bourke Street, Newbridge NSW 837 Raffles...", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
-                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Arrow")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Arrow")
                 }
 
                 // Thông tin phí giao hàng và tổng tiền

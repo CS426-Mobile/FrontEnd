@@ -43,6 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.components.AuthorItem
+import com.example.bookstore.components.BookCardHorizontal
+import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.network.AuthorResponse
 import com.example.bookstore.ui.theme.mainColor
 
@@ -86,11 +89,11 @@ fun SearchScreen(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                LazyRow{
-                    items (filteredAuthors) {author ->
-                        AuthorCircle(author = author, onClick = { /* Handle author click */ })
-                    }
-                }
+//                LazyRow{
+//                    items (filteredAuthors) {author ->
+//                        AuthorItem(author = author, onClick = { /* Handle author click */ })
+//                    }
+//                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
