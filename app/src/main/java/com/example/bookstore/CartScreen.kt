@@ -20,7 +20,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -51,7 +51,7 @@ fun CartScreen(navController: NavHostController) {
     var cartItems = sampleCartItems()
 
     // Tính tổng số tiền cần thanh toán
-    val totalPrice = cartItems.sumOf { it.price}
+    val totalPrice = cartItems.sumOf { it.price }
     val deliveryFee = 5
 
     Scaffold(
@@ -78,7 +78,7 @@ fun CartScreen(navController: NavHostController) {
                             }
                         })
                         if (cartItems.indexOf(book) < cartItems.size - 1) {
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                 }
@@ -91,31 +91,53 @@ fun CartScreen(navController: NavHostController) {
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().clickable { /* Điều hướng đến màn hình địa chỉ */ }
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { /* Điều hướng đến màn hình địa chỉ */ }
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("43 Bourke Street, Newbridge NSW 837 Raffles...", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text(
+                            "43 Bourke Street, Newbridge NSW 837 Raffles...",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
                     }
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Arrow")
                 }
 
                 // Thông tin phí giao hàng và tổng tiền
-                Divider(modifier = Modifier.padding(vertical = 20.dp))
-                Row(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text("Delivery Fee", color = Color.Gray)
                     Text("$${deliveryFee}")
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text("Total Price", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("$${totalPrice + deliveryFee}", fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                    Text(
+                        "$${totalPrice + deliveryFee}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "${cartItems.size} items",
                         color = Color.Gray,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
-                    Text("Include taxes",color = Color.Gray, modifier = Modifier.padding(vertical = 4.dp))
+                    Text(
+                        "Include taxes",
+                        color = Color.Gray,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
                 }
 
 
@@ -173,9 +195,8 @@ fun CartItemCard(
             }
         }
     }
-    Divider()
+    HorizontalDivider()
 }
-
 
 
 fun sampleCartItems(): List<BookDetail> {
@@ -185,7 +206,6 @@ fun sampleCartItems(): List<BookDetail> {
         BookDetail("Peace in His Life", "Armando Newman", 3.9f, true)
     )
 }
-
 
 
 @Preview(showBackground = true)

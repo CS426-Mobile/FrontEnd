@@ -88,12 +88,8 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             }
         }
 
-        // implement later
         composable(Screen.Author.route) {
             CartScreen(navController)
-        }
-        composable(Screen.Book.route) {
-            BookDetailScreen(navController)
         }
         composable(Screen.ListOrder.route) {
             ListOrder(navController)

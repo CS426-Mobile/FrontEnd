@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -30,11 +31,12 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,219 +50,223 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
+import com.example.bookstore.components.ExpandableText
+import com.example.bookstore.network.AuthorResponse
+import com.example.bookstore.network.BookResponse
+import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
+import com.example.bookstore.viewmodel.AuthorViewModel
+import com.example.bookstore.viewmodel.BookViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun BookDetailScreen(navController: NavHostController, bookName: String? = null) {
-    val books = listOf(
-        BookDetail(
-            title = "The Alchemist",
-            author = "Paulo Coelho",
-            rating = 4.5f,
-            isFavorite = true,
-        ),
-        BookDetail(
-            title = "To Kill a Mockingbird",
-            author = "Harper Lee",
-            rating = 4.8f,
-            isFavorite = false,
-        ),
-        BookDetail(
-            title = "1984",
-            author = "George Orwell",
-            rating = 4.6f,
-            isFavorite = false,
-        ),
-        BookDetail(
-            title = "Pride and Prejudice",
-            author = "Jane Austen",
-            rating = 4.5f,
-            isFavorite = false,
-        ),
-        BookDetail(
-            title = "The Great Gatsby",
-            author = "F. Scott Fitzgerald",
-            rating = 4.3f,
-            isFavorite = true,
-        ),
-        BookDetail(
-            title = "Moby Dick",
-            author = "Herman Melville",
-            rating = 4.1f,
-            isFavorite = false,
-        )
-    )
+fun BookDetailScreen(navController: NavHostController, bookName: String?, bookViewModel: BookViewModel = viewModel()) {
+    val authorViewModel: AuthorViewModel = viewModel()
+    var book by remember { mutableStateOf<BookResponse?>(null) }
+    var author by remember { mutableStateOf<AuthorResponse?>(null) }
+    var relatedBooks by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    val scrollState = rememberLazyListState()
+    // Fetch book and author details
+    LaunchedEffect(bookName) {
+        if (bookName != null) {
+            bookViewModel.getBookInfo(bookName) { success, result ->
+                if (success && result != null) {
+                    book = result
+                    authorViewModel.getAuthorInfo(result.author_name) { authorSuccess, authorResult ->
+                        if (authorSuccess && authorResult != null) {
+                            author = authorResult
+                        } else {
+                            errorMessage = "Failed to load author information."
+                        }
+                    }
+                    bookViewModel.getRelatedBooks(bookName) { relatedSuccess, relatedResult ->
+                        if (relatedSuccess && relatedResult != null) {
+                            relatedBooks = relatedResult
+                        } else {
+                            errorMessage = "Failed to load related books."
+                        }
+                    }
+                } else {
+                    errorMessage = "Failed to load book information."
+                }
+            }
+        }
+    }
 
-    Scaffold (
+    Scaffold(
         topBar = {
-            CustomTopAppBar(title = "Book", navController = navController, isBack = true)
+            CustomTopAppBar(title = "Book Detail", navController = navController, isBack = true)
         },
         content = { paddingValues ->
-            LazyColumn(
-                state = scrollState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
-            ) {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_cart), // Thay bằng hình bìa sách của bạn
-                            contentDescription = "Book Cover",
-                            modifier = Modifier.size(153.dp, 230.dp)
-                        )
+            if (errorMessage != null) {
+                // Show error message
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = errorMessage!!, color = Color.Gray, fontSize = 16.sp)
+                }
+            } else if (book != null) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                ) {
+                    // Book Details Section
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = book!!.book_image),
+                                contentDescription = "Book Cover",
+                                modifier = Modifier.size(153.dp, 230.dp)
+                            )
 
-                        Column(
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 8.dp)
+                            ) {
+                                Text(
+                                    text = book!!.book_name,
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                    color = mainColor,
+                                    fontSize = 22.sp
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color.Yellow)
+                                    Text(
+                                        text = String.format("%.1f", book!!.average_rating) + " (${book!!.num_5_star} ratings)",
+                                        color = Color.Gray
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "$${book!!.price}",
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        }
+                    }
+
+                    // Author Section
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = author?.author_image),
+                                contentDescription = "Author Avatar",
+                                modifier = Modifier.size(45.dp)
+                            )
+                            Column(modifier = Modifier.padding(start = 8.dp)) {
+                                Text(author?.author_name ?: "Unknown Author", fontWeight = FontWeight.Bold)
+                                Text(
+                                    "${author?.num_follower ?: 0} Followers",
+                                    color = Color.Gray
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            Button(onClick = { /* Handle follow action */ }) {
+                                Text("Follow", color = Color.White)
+                            }
+                        }
+                    }
+
+                    // Description Section
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Text(
+                            text = "Description",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        ExpandableText(text = book!!.book_description)
+                    }
+
+                    // Product Information Section
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Text(
+                            text = "Product Information",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        ProductInformationRow("Publication Date", book!!.public_date)
+                        ProductInformationRow("Language", book!!.book_language)
+                        ProductInformationRow("Weight", "${book!!.book_weight} oz")
+                        ProductInformationRow("Pages", "${book!!.book_page}")
+                    }
+
+                    // Rating Section
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Text(
+                            text = "Customer Reviews",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        RatingSection(ratings = listOf(book!!.num_5_star, book!!.num_4_star, book!!.num_3_star, book!!.num_2_star, book!!.num_1_star)) // Use your ratings data
+                    }
+
+                    // Related Books Section
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Text(
+                            text = "Related Books",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                        )
+                        LazyRow {
+                            items(relatedBooks ?: emptyList()) { relatedBook ->
+                                BookCard(
+                                    title = relatedBook.book_name,
+                                    author = relatedBook.author_name,
+                                    rating = relatedBook.average_rating,
+                                    isFavorite = false, // Adjust as needed
+                                    imageUrl = relatedBook.book_image,
+                                    onFavoriteClick = { /* Handle favorite */ },
+                                    onClick = { /* Navigate to book detail */ }
+                                )
+                            }
+                        }
+                    }
+
+                    // Add to Cart Button
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                // Add to cart logic
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 8.dp),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                "Battle of 1917",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 22.sp
-                            )
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color.Yellow)
-                                Text(text = String.format("%.1f", calculateAverageRating(listOf(123, 45, 30, 15, 5))) + " (${listOf(123, 45, 30, 15, 5).sum()} ratings)", color = Color.Gray)
-                            }
-                            FlowRow(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Chip(text = "Drama")
-                                Chip(text = "Romance")
-                                Chip(text = "Mysteries")
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("In Stock", color = Color.Green, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                "$9.99",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-                        IconButton(onClick = { /* Thêm vào yêu thích */ }) {
-                            Icon(Icons.Default.FavoriteBorder, contentDescription = "Add to Favorite")
-                        }
-                    }
-                }
-
-                // Phần thứ hai: Tác giả và thông tin
-                item {
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_account), // Thay bằng hình avatar tác giả
-                            contentDescription = "Author Avatar",
-                            modifier = Modifier.size(45.dp)
-                        )
-                        Column(modifier = Modifier.padding(start = 8.dp)) {
-                            Text("Gerard Fabian", fontWeight = FontWeight.Bold)
-                            Text(
-                                "78.5K Followers",
-                                color = Color.Gray,
-                                style = MaterialTheme.typography.body2
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Button(
-                            onClick = { /* Follow tác giả */ },
+                                .padding(vertical = 8.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = mainColor)
                         ) {
-                            Text("Follow", color = Color.White)
+                            Text("Add to Cart", color = Color.White)
                         }
-                    }
-                }
-
-                // Phần thứ ba: Mô tả sách
-                var textDescription =
-                    "From athe glamorous San Francisco social scene of the 1920s, through war and the social changes of the ’60s  to the rise of Silicon Valley today, this extraordinary novel takes us on a family odyssey that is both heartbreaking and exhilarating, showing how the roots of misfortune and strength can trace through generations."
-                item {
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Description", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    ExpandableText(textDescription)
-                }
-
-                // Phần thứ tư: Thông tin chi tiết sách
-                item {
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Product Information", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    ProductInformationRow("Publication Date", "May 1, 2016")
-                    ProductInformationRow("Language", "English")
-                    ProductInformationRow("Weight", "15.7 ounces")
-                    ProductInformationRow("Pages", "374")
-                }
-
-                // Phần thứ năm: Đánh giá khách hàng
-                item {
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Customer Reviews", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    RatingSection(ratings = listOf(123, 45, 30, 15, 5))
-                }
-
-                // Phần cuối: Các sách liên quan
-                item {
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Related Books", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    LazyRow {
-                        items(books) { book ->
-                            BookCard(
-                                title = book.title,
-                                author = book.author,
-                                rating = book.rating,
-                                isFavorite = book.isFavorite,
-                                imageUrl = "http://books.google.com/books/content?id=mh0bU6NXrBgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-                                onFavoriteClick = { /* Thêm vào yêu thích */ },
-                                onClick = { /* ... */ }
-                            )
-                        }
-                    }
-                }
-
-                // Nút thêm vào giỏ hàng
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = {
-                            // Them vo gio hang
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = mainColor)
-                    ) {
-                        Text("Add to Cart", color = Color.White)
                     }
                 }
             }
         }
     )
 }
+
 
 @Composable
 fun ProductInformationRow(label: String, value: String) {
@@ -273,22 +279,6 @@ fun ProductInformationRow(label: String, value: String) {
         Text(label, color = Color.Gray)
         Text(value, fontWeight = FontWeight.Bold)
     }
-}
-
-
-@Composable
-fun ProductInfoRow(label: String, value: String) {
-    Row(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text(text = label, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
-        Text(text = value, modifier = Modifier.weight(1f), color = Color.Gray)
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun BookDetailScreenPreview() {
-    BookDetailScreen(navController = rememberNavController())
 }
 
 @Composable
@@ -388,36 +378,6 @@ fun RatingRow(stars: Int, count: Int) {
             text = count.toString(),
             color = Color.Gray
         )
-    }
-}
-
-@Composable
-fun ExpandableText(
-    text: String,
-    minimizedMaxLines: Int = 4 // Số dòng tối đa khi thu gọn
-) {
-    var isExpanded by remember { mutableStateOf(false) } // Trạng thái mở rộng hoặc thu gọn
-
-    Column(modifier = Modifier.padding(8.dp)) {
-        // Văn bản hiển thị
-        Text(
-            text = text,
-            maxLines = if (isExpanded) Int.MAX_VALUE else minimizedMaxLines, // Hiển thị toàn bộ hoặc giới hạn
-            style = MaterialTheme.typography.body2,
-            overflow = TextOverflow.Ellipsis // Cắt đoạn văn khi vượt quá số dòng
-        )
-
-        // Chỉ hiển thị nút "Read more" hoặc "Show less" khi văn bản vượt quá số dòng tối đa
-        if (text.length > 200) { // Điều chỉnh độ dài theo ý muốn
-            Text(
-                text = if (isExpanded) "Show less" else "Read more",
-                color = Color.Gray,
-                modifier = Modifier
-                    .clickable { isExpanded = !isExpanded }
-                    .padding(top = 4.dp),
-                style = MaterialTheme.typography.caption
-            )
-        }
     }
 }
 

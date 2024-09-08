@@ -46,7 +46,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
         // Section title
         Text(
             text = "Recommended",

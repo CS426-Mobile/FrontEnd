@@ -19,7 +19,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -79,12 +79,13 @@ fun OrderDetail(navController: NavHostController, orderDetail: Order) {
                 ) {
                     items(orderDetail.listBookOrder) { book ->
                         BookCardHorizontal(book = book, onFavoriteClick = {
-                            orderDetail.listBookOrder = orderDetail.listBookOrder.toMutableList().apply {
-                                remove(book)
-                            }
+                            orderDetail.listBookOrder =
+                                orderDetail.listBookOrder.toMutableList().apply {
+                                    remove(book)
+                                }
                         })
                         if (orderDetail.listBookOrder.indexOf(book) < orderDetail.listBookOrder.size - 1) {
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                 }
@@ -97,30 +98,52 @@ fun OrderDetail(navController: NavHostController, orderDetail: Order) {
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().clickable { /* Điều hướng đến màn hình địa chỉ */ }
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { /* Điều hướng đến màn hình địa chỉ */ }
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("43 Bourke Street, Newbridge NSW 837 Raffles...", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text(
+                            "43 Bourke Street, Newbridge NSW 837 Raffles...",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
                     }
                 }
 
                 // Thông tin phí giao hàng và tổng tiền
-                Divider(modifier = Modifier.padding(vertical = 20.dp))
-                Row(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text("Delivery Fee", color = Color.Gray)
                     Text("$${deliveryFee}")
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text("Total Price", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("$${totalPrice + deliveryFee}", fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                    Text(
+                        "$${totalPrice + deliveryFee}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "${orderDetail.listBookOrder.size} items",
                         color = Color.Gray,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
-                    Text("Include taxes",color = Color.Gray, modifier = Modifier.padding(vertical = 4.dp))
+                    Text(
+                        "Include taxes",
+                        color = Color.Gray,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
                 }
             }
         }

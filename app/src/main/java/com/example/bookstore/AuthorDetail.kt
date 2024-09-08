@@ -52,6 +52,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
+import com.example.bookstore.components.ExpandableText
 import com.example.bookstore.network.AuthorResponse
 import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
@@ -238,7 +239,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                             )
                             ExpandableText(
                                 text = author!!.about,
-                                minimizedMaxLines = 6 // Số dòng tối đa khi thu gọn
+                                minimizedMaxLines = 4 // Số dòng tối đa khi thu gọn
                             )
 
                             Spacer(modifier = Modifier.height(16.dp))
