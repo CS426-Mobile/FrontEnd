@@ -162,7 +162,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
 sealed class BottomNavItem(var title: String, var icon: Int, var route: String) {
     object Home : BottomNavItem("Home", R.drawable.ic_home, Screen.Home.route)
-    object Order : BottomNavItem("Order", R.drawable.ic_cart, Screen.Order.route)
+    object Order : BottomNavItem("Order", R.drawable.ic_cart, Screen.ListOrder.route)
     object Favorite : BottomNavItem("Favorite", R.drawable.ic_favo, Screen.Favorite.route)
     object Account : BottomNavItem("Account", R.drawable.ic_account, Screen.Account.route)
 }
