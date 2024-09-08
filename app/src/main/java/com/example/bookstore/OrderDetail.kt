@@ -42,7 +42,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
-fun OrderDetail(navController: NavHostController, orderDetail: Order) {
+fun OrderDetail(navController: NavHostController, orderID: String?) {
+    var orderDetail =  Order("4dsf2ge",sampleCartItems())
 
     // Tính tổng số tiền cần thanh toán
     val totalPrice = orderDetail.listBookOrder.sumOf {it.price}
@@ -76,7 +77,7 @@ fun OrderDetail(navController: NavHostController, orderDetail: Order) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(orderDetail.listBookOrder) { book ->
-                        BookCardHorizontal(book = book, onFavoriteClick = {
+                        BookCardHorizontal(book = book, navController = navController, onFavoriteClick = {
                             orderDetail.listBookOrder = orderDetail.listBookOrder.toMutableList().apply {
                                 remove(book)
                             }
@@ -128,5 +129,5 @@ fun OrderDetail(navController: NavHostController, orderDetail: Order) {
 @Preview(showBackground = true)
 @Composable
 fun OrderDetailPreview() {
-    OrderDetail(navController = rememberNavController(), Order("4dsf2ge",sampleCartItems()))
+    OrderDetail(navController = rememberNavController(), "aa")
 }

@@ -70,7 +70,7 @@ fun FavoriteScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(favoriteBooks) { book ->
-                        BookCardHorizontal(book = book, onFavoriteClick = {
+                        BookCardHorizontal(book = book, navController = navController, onFavoriteClick = {
                             favoriteBooks = favoriteBooks.toMutableList().apply {
                                 remove(book)
                             }

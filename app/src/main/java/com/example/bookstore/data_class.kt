@@ -39,16 +39,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.bookstore.network.AuthorResponse
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
-fun BookCardHorizontal(book: BookDetail, onFavoriteClick: () -> Unit) {
+fun BookCardHorizontal(book: BookDetail, navController: NavHostController, onFavoriteClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                navController.navigate(route = Screen.Book.passBookName(book.title))
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Hiển thị bìa sách
@@ -85,12 +90,14 @@ fun BookCardHorizontal(book: BookDetail, onFavoriteClick: () -> Unit) {
 
 
 @Composable
-fun BookCard(book: BookDetail,  onFavoriteClick: () -> Unit
-) {
+fun BookCard(book: BookDetail, navController: NavHostController,  onFavoriteClick: () -> Unit) {
     Card(
         modifier = Modifier
             .width(144.dp) // Kích thước thẻ sách
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                navController.navigate(route = Screen.Book.passBookName(book.title))
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -168,15 +175,16 @@ fun BookCard(book: BookDetail,  onFavoriteClick: () -> Unit
 }
 
 // Composable hiển thị thông tin một tác giả
-// onFollowToggle: chuyen sang author screen
 // onButtonFollow: bam nut follow / unfollow
 @Composable
-fun AuthorItem(author: Author, onFollowToggle: () -> Unit, onButtonFollow: () -> Unit) {
+fun AuthorItem(author: Author, navController: NavHostController, onButtonFollow: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { onFollowToggle() },
+            .clickable {
+                navController.navigate(route = Screen.Author.passAuthorName(author.name))
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Hình đại diện tác giả
@@ -232,11 +240,13 @@ fun AuthorItem(author: Author, onFollowToggle: () -> Unit, onButtonFollow: () ->
 }
 
 @Composable
-fun AuthorCircle(author: Author, onClick: () -> Unit) {
+fun AuthorCircle(author: Author, navController: NavHostController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clickable { onClick() }
+            .clickable {
+                navController.navigate(route = Screen.Author.passAuthorName(author.name))
+            }
             .padding(8.dp)
     ) {
         Image(
@@ -307,6 +317,7 @@ fun BookcardPreview(){
         589F,
         true,
             14.0),
+        rememberNavController(),
         onFavoriteClick = {
 
         }
@@ -322,6 +333,7 @@ fun BookcardPreviewa(){
         589F,
         true,
             10.0),
+        rememberNavController(),
         onFavoriteClick = {
 
         }

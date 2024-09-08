@@ -227,6 +227,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                                         rating = book.rating,
                                         isFavorite = book.isFavorite
                                     ),
+                                    navController = navController,
                                     onFavoriteClick = {
                                         // Thay đổi trạng thái isFavorite khi nhấn vào
                                         book.isFavorite = !book.isFavorite

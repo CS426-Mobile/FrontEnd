@@ -69,7 +69,7 @@ import java.sql.Time
     ExperimentalFoundationApi::class
 )
 @Composable
-fun BookDetailScreen(navController: NavHostController) {
+fun BookDetailScreen(navController: NavHostController, bookName: String?) {
     val books = listOf(
         BookDetail(
             title = "The Alchemist",
@@ -183,33 +183,24 @@ fun BookDetailScreen(navController: NavHostController) {
                 }
 
                 // Phần thứ hai: Tác giả và thông tin
-                item {
+
+                item{
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_account), // Thay bằng hình avatar tác giả
-                            contentDescription = "Author Avatar",
-                            modifier = Modifier.size(45.dp)
+                    AuthorItem(author = Author(
+                        name = "Averie Stecanella",
+                        followers = "8.2M", // Có thể format kiểu String để phù hợp hơn với hiển thị
+                        books = 873,
+                        isFollowing = false,
+                        categories = listOf("Drama", "Mysteries & Thrillers", "Biographies", "Romance", "Fantasy", "Horror"),
+                        about = "Averie is an American writer, best known for her romance novels. She is the bestselling author alive and the fourth bestselling fiction author of all time, with over 800 million copies sold. She has written 179 books, in her own time and style, which have gained a massive readership and critical acclaim.",
+                        booksList = listOf(
+                            Book("Jan Rombouts Een Renaisan", "Mercatorfonds"),
+                            Book("Believe in Eternal Dark", "Laura Jones"),
+                            Book("The Secret About Us", "Elizabeth McKean"),
+                            Book("Love in the Time of War", "Michael Foster"),
+                            Book("Shadows of the Past", "Alice Munro")
                         )
-                        Column(modifier = Modifier.padding(start = 8.dp)) {
-                            Text("Gerard Fabian", fontWeight = FontWeight.Bold)
-                            Text(
-                                "78.5K Followers",
-                                color = Color.Gray,
-                                style = MaterialTheme.typography.body2
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Button(
-                            onClick = { /* Follow tác giả */ },
-                            colors = ButtonDefaults.buttonColors(containerColor = mainColor)
-                        ) {
-                            Text("Follow", color = Color.White)
-                        }
-                    }
+                    ), navController = navController, onButtonFollow = {})
                 }
 
                 // Phần thứ ba: Mô tả sách
@@ -251,7 +242,8 @@ fun BookDetailScreen(navController: NavHostController) {
                                     rating = book.rating,
                                     isFavorite = book.isFavorite
                                 ),
-                                onFavoriteClick = { /* Thêm vào yêu thích */ }
+                                navController = navController,
+                                onFavoriteClick = {}
                             )
                         }
                     }
@@ -303,7 +295,7 @@ fun ProductInfoRow(label: String, value: String) {
 @Preview(showBackground = true)
 @Composable
 fun BookDetailScreenPreview() {
-    BookDetailScreen(navController = rememberNavController())
+    BookDetailScreen(navController = rememberNavController(), "adaa")
 }
 
 @Composable
@@ -447,6 +439,7 @@ fun BookCardPreview() {
         author = "Mercatorfonds",
         rating = 4.5f,
         isFavorite = isFavorite),
+        navController = rememberNavController(),
         onFavoriteClick = { isFavorite = !isFavorite } // Thay đổi trạng thái khi nhấn vào
     )
 }

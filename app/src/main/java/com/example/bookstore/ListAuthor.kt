@@ -69,7 +69,7 @@ fun ListAuthor(navController: NavHostController){
                     items(listAuthor) { author ->
                         AuthorItem(
                             author = author,
-                            onFollowToggle = { /* Toggle Follow/Unfollow */ },
+                            navController = navController,
                             onButtonFollow = { /*author.isFollowing = !author.isFollowing*/ }
                         )
                     }

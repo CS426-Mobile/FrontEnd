@@ -67,7 +67,7 @@ fun CartScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(cartItems) { book ->
-                        BookCardHorizontal(book = book, onFavoriteClick = {
+                        BookCardHorizontal(book = book, navController = navController,  onFavoriteClick = {
                             cartItems = cartItems.toMutableList().apply {
                                 remove(book)
                             }

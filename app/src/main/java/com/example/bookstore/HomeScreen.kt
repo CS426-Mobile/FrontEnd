@@ -250,7 +250,7 @@ fun HomeScreen(navController: NavHostController) {
 //                        }
 //                    }
 //                )
-                FeaturedBooksSection(books)
+                FeaturedBooksSection(books, navController)
             }
         }
     }
@@ -517,7 +517,7 @@ enum class SortType {
 }
 
 @Composable
-fun FeaturedBooksSection(books: List<BookDetail>) {
+fun FeaturedBooksSection(books: List<BookDetail>, navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -541,6 +541,7 @@ fun FeaturedBooksSection(books: List<BookDetail>) {
                                     author = book.author,
                                     rating = book.rating,
                                     isFavorite = book.isFavorite),
+                                    navController = navController,
                                     onFavoriteClick = { /* Handle favorite click */ }
                                 )
                             }
