@@ -78,7 +78,7 @@ fun BookCardHorizontal(book: BookDetail, onFavoriteClick: () -> Unit) {
                     tint = Color.Red
                 )
             }
-            Text("$ 10.00", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text("$ ${book.price}", fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -266,6 +266,7 @@ data class BookDetail(
     var author: String,
     var rating: Float,
     var isFavorite: Boolean,
+    var price: Double = 0.0
 )
 
 // Mẫu dữ liệu tác giả
@@ -286,8 +287,7 @@ data class Account(
 
 data class Order(
     val id: String,
-    val totalPrice: Int,
-    val totalBooks: Int
+    var listBookOrder: List<BookDetail>
 )
 
 data class CartItem(
@@ -305,7 +305,8 @@ fun BookcardPreview(){
         "ajdnfafdas",
         "nfkajsndfkajnfa",
         589F,
-        true),
+        true,
+            14.0),
         onFavoriteClick = {
 
         }
@@ -319,7 +320,8 @@ fun BookcardPreviewa(){
         "ajdnfafdas",
         "nfkajsndfkajnfa",
         589F,
-        true),
+        true,
+            10.0),
         onFavoriteClick = {
 
         }

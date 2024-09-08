@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +46,7 @@ fun CartScreen(navController: NavHostController) {
     var cartItems = sampleCartItems()
 
     // Tính tổng số tiền cần thanh toán
-    val totalPrice = cartItems.sumOf { it.price * it.quantity }
+    val totalPrice = cartItems.sumOf { it.price}
     val deliveryFee = 5
 
     Scaffold(
@@ -62,16 +63,18 @@ fun CartScreen(navController: NavHostController) {
             ) {
                 // LazyColumn cho danh sách các sách
                 LazyColumn(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(cartItems) { item ->
-                        CartItemCard(item = item, onRemoveItem = { removedItem ->
-                            cartItems = cartItems.filter { it.id != removedItem.id }
-                        }, onQuantityChange = { updatedItem, newQuantity ->
-                            cartItems = cartItems.map {
-                                if (it.id == updatedItem.id) it.copy(quantity = newQuantity) else it
+                    items(cartItems) { book ->
+                        BookCardHorizontal(book = book, onFavoriteClick = {
+                            cartItems = cartItems.toMutableList().apply {
+                                remove(book)
                             }
                         })
+                        if (cartItems.indexOf(book) < cartItems.size - 1) {
+                            Divider()
+                        }
                     }
                 }
 
@@ -103,7 +106,7 @@ fun CartScreen(navController: NavHostController) {
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(
-                        text = "${cartItems.sumOf {it.quantity}} items",
+                        text = "${cartItems.size} items",
                         color = Color.Gray,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
@@ -170,11 +173,11 @@ fun CartItemCard(
 
 
 
-fun sampleCartItems(): List<CartItem> {
+fun sampleCartItems(): List<BookDetail> {
     return listOf(
-        CartItem(1, "Battle of 1917", 12, 1),
-        CartItem(2, "A Tale of Ben Hur", 20, 1),
-        CartItem(3, "Valles Marineris", 17, 1)
+        BookDetail("The Secret About Us", "Elizabeth McKean", 4.2f, true),
+        BookDetail("The Happiness", "Kate Kirkwood", 4.7f, true),
+        BookDetail("Peace in His Life", "Armando Newman", 3.9f, true)
     )
 }
 

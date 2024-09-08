@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,12 +42,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
-fun OrderDetail(navController: NavHostController) {
-    // Dữ liệu mẫu cho các sách trong giỏ hàng
-    var cartItems = sampleCartItems()
+fun OrderDetail(navController: NavHostController, orderDetail: Order) {
 
     // Tính tổng số tiền cần thanh toán
-    val totalPrice = cartItems.sumOf { it.price * it.quantity }
+    val totalPrice = orderDetail.listBookOrder.sumOf {it.price}
     val deliveryFee = 5
 
     Scaffold(
@@ -60,18 +60,30 @@ fun OrderDetail(navController: NavHostController) {
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .padding(bottom = 20.dp)
             ) {
+                Text(
+//                    text = "Hello ${account.name}!",
+                    text = "Order ID: ${orderDetail.id}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 32.sp,
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
                 // LazyColumn cho danh sách các sách
                 LazyColumn(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(cartItems) { item ->
-                        CartItemCard(item = item, onRemoveItem = { removedItem ->
-                            cartItems = cartItems.filter { it.id != removedItem.id }
-                        }, onQuantityChange = { updatedItem, newQuantity ->
-                            cartItems = cartItems.map {
-                                if (it.id == updatedItem.id) it.copy(quantity = newQuantity) else it
+                    items(orderDetail.listBookOrder) { book ->
+                        BookCardHorizontal(book = book, onFavoriteClick = {
+                            orderDetail.listBookOrder = orderDetail.listBookOrder.toMutableList().apply {
+                                remove(book)
                             }
                         })
+                        if (orderDetail.listBookOrder.indexOf(book) < orderDetail.listBookOrder.size - 1) {
+                            Divider()
+                        }
                     }
                 }
 
@@ -102,7 +114,7 @@ fun OrderDetail(navController: NavHostController) {
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(
-                        text = "${cartItems.sumOf {it.quantity}} items",
+                        text = "${orderDetail.listBookOrder.size} items",
                         color = Color.Gray,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
@@ -116,5 +128,5 @@ fun OrderDetail(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun OrderDetailPreview() {
-    OrderDetail(navController = rememberNavController())
+    OrderDetail(navController = rememberNavController(), Order("4dsf2ge",sampleCartItems()))
 }
