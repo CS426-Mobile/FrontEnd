@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.Author
+import com.example.bookstore.components.AuthorHorizontalItem
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.ui.theme.mainColor
 
@@ -164,7 +165,7 @@ fun AccountScreen(navController: NavHostController) {
 
                     var listAuthor = getFollowedAuthors()
                     items(listAuthor) { author ->
-                            AuthorItem(
+                            AuthorHorizontalItem(
                                 author = author,
                                 onFollowToggle = { /* Toggle Follow/Unfollow */ },
                                 onButtonFollow = { /*author.isFollowing = !author.isFollowing*/ }

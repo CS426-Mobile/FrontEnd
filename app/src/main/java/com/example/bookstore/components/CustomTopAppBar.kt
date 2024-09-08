@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.bookstore.R
 import com.example.bookstore.Screen
+import com.example.bookstore.canGoBack
 import com.example.bookstore.ui.theme.textColor
 
 @Composable
 fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = false, navController: NavHostController) {
     TopAppBar(
-        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         backgroundColor = Color.White,
         contentColor = Color.Black,
         elevation = 0.dp
@@ -48,7 +48,11 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
                 if (isBack) {
                     IconButton(
                         // onClick = { navController.navigateUp() }
-                        onClick = { navController.popBackStack() },
+                        onClick = {
+                            if (navController.canGoBack) {
+                                navController.popBackStack()
+                            }
+                        },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
                         Icon(
