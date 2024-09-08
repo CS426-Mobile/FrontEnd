@@ -99,10 +99,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                                     isFavorite = !isFavorite
                                     // Call API to add/remove favorite (implementation later)
                                 },
-                                onClick = {
-                                    // Navigate to book detail screen
-                                    navController.navigate("book/${book.book_name}")
-                                }
+                                navController = navController
                             )
                         }
                     }

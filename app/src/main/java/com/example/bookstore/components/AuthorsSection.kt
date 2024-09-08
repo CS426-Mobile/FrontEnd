@@ -117,7 +117,7 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
                     items(authors!!) { author ->
                         AuthorItem(
                             author = author,
-                            onClick = { navController.navigate("author/${author.author_name}") }
+                            navController = navController
                         )
                     }
                 }

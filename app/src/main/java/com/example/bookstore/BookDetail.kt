@@ -54,6 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.bookstore.components.AuthorHorizontalItem
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
@@ -166,29 +167,11 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?, bookVi
                     }
 
                     // Author Section
+
+                    // Remember to add calling API following or not
                     item {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = author?.author_image),
-                                contentDescription = "Author Avatar",
-                                modifier = Modifier.size(45.dp)
-                            )
-                            Column(modifier = Modifier.padding(start = 8.dp)) {
-                                Text(author?.author_name ?: "Unknown Author", fontWeight = FontWeight.Bold)
-                                Text(
-                                    "${author?.num_follower ?: 0} Followers",
-                                    color = Color.Gray
-                                )
-                            }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Button(onClick = { /* Handle follow action */ }) {
-                                Text("Follow", color = Color.White)
-                            }
-                        }
+                        AuthorHorizontalItem(authorName = author!!.author_name, numFollower = author!!.num_follower, authorImage = author!!.author_image, following = true, navController = navController, onButtonFollow = {})
                     }
 
                     // Description Section
@@ -240,7 +223,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?, bookVi
                                     isFavorite = false, // Adjust as needed
                                     imageUrl = relatedBook.book_image,
                                     onFavoriteClick = { /* Handle favorite */ },
-                                    onClick = { /* Navigate to book detail */ }
+                                    navController = navController
                                 )
                             }
                         }
@@ -393,7 +376,7 @@ fun BookCardPreview() {
         isFavorite = isFavorite,
         imageUrl = "https://upload.wikimedia.org/wikipedia/commons/7/78/Image.jpg",
         onFavoriteClick = { isFavorite = !isFavorite }, // Thay đổi trạng thái khi nhấn vào
-        onClick = {}
+        navController = rememberNavController()
     )
 }
 

@@ -14,22 +14,16 @@ interface ApiService {
     @GET("/user/get_user_info_from_cookies/")
     suspend fun getUserInfo(): Response<UserInfoResponse>
 
-    @POST("/user/update_address_with_email/")
-    suspend fun updateAddressByEmail(@Body request: UpdateAddressRequest): Response<Map<String, String>>
-
-    @GET("/user/get_address/{user_email}/")
-    suspend fun getAddressByEmail(@Path("user_email") userEmail: String): Response<Map<String, String>>
-
-    @POST("/update_address/")
+    @POST("/user/update_address/")
     suspend fun updateAddress(@Body updateAddressRequest: UpdateAddressRequest): Response<UpdateAddressResponse>
 
-    @POST("/update_address_with_email/")
+    @POST("/user/update_address_with_email/")
     suspend fun updateAddressWithEmail(@Body updateAddressWithEmailRequest: UpdateAddressWithEmailRequest): Response<UpdateAddressResponse>
 
-    @GET("/get_address/{user_email}/")
+    @GET("/user/address/{user_email}/")
     suspend fun getAddress(@Path("user_email") userEmail: String): Response<GetAddressResponse>
 
-    @POST("/change_password/")
+    @POST("/user/change_password/")
     suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest): Response<ChangePasswordResponse>
 
     @POST("/logout/")
@@ -95,6 +89,19 @@ interface ApiService {
         @Query("price_sort") priceSort: String = "none"
     ): Response<List<BookCategoryResponse>>
 
+    // Get books by matching string in the book name
+    @GET("/books/matching_string/")
+    suspend fun getBooksByMatchingString(
+        @Query("category_name") categoryName: String = "",
+        @Query("book_input") bookInput: String = "",
+        @Query("rating_optional") ratingOptional: String = "all",
+        @Query("price_optional") priceOptional: String = "no",
+        @Query("price_min") priceMin: Double = 0.0,
+        @Query("price_max") priceMax: Double = 99999999.0,
+        @Query("rating_sort") ratingSort: String = "none",
+        @Query("price_sort") priceSort: String = "none"
+    ): Response<List<BookCategoryResponse>>
+
     // Get book information by name
     @GET("/book/{book_name}/")
     suspend fun getBookInfo(@Path("book_name") bookName: String): Response<BookResponse>
@@ -114,4 +121,17 @@ interface ApiService {
     // Get related books by book name
     @GET("/books/related/{book_name}/")
     suspend fun getRelatedBooks(@Path("book_name") bookName: String): Response<List<SimpleBookResponse>>
+
+    // CustomerService APIs
+    // Insert a customer favorite
+    @POST("/favorite/insert/")
+    suspend fun insertCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<Map<String, String>>
+
+    // Delete a customer favorite
+    @HTTP(method = "DELETE", path = "/favorite/delete/", hasBody = true)
+    suspend fun deleteCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<Map<String, String>>
+
+    // Query customer favorites by user email
+    @GET("/favorite/query/")
+    suspend fun queryCustomerFavorite(@Query("user_email") userEmail: String): Response<List<CustomerFavoriteResponse>>
 }

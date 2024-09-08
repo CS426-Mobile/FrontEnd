@@ -268,10 +268,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                                             onFavoriteClick = {
                                                 // Handle favorite action
                                             },
-                                            onClick = {
-                                                // Navigate to book detail screen
-                                                navController.navigate("book/${book.book_name}")
-                                            }
+                                            navController = navController
                                         )
                                     }
                                 }

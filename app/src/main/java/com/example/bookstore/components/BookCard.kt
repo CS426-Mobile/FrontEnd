@@ -35,8 +35,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Book
+import com.example.bookstore.Screen
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -47,14 +49,14 @@ fun BookCard(
     isFavorite: Boolean,
     imageUrl: String,
     onFavoriteClick: () -> Unit,
-    onClick: () -> Unit
+    navController: NavHostController
 ) {
     Card(
         modifier = Modifier
             .width(144.dp)
             .height(240.dp)
             .padding(8.dp)
-            .clickable { onClick() },  // Handle book click
+            .clickable { navController.navigate(route = Screen.Book.passBookName(title)) },  // Handle book click
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {

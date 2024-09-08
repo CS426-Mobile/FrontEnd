@@ -84,7 +84,7 @@ fun ListOrder(navController: NavHostController) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp) // Khoảng cách giữa các cột
                 ) {
                     items(orders) { order ->
-                        OrderCard(order = order)
+                        OrderCard(order = order, navController = navController)
                     }
                 }
             }
@@ -93,13 +93,16 @@ fun ListOrder(navController: NavHostController) {
 }
 
 @Composable
-fun OrderCard(order: Order) {
+fun OrderCard(order: Order, navController: NavHostController) {
     val totalPrice = order.listBookOrder.sumOf({ it.price })
     val totalBooks = order.listBookOrder.size
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .clickable {
+                navController.navigate(route = Screen.Order.passOrderID(order.id))
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(

@@ -72,7 +72,7 @@ fun CartScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(cartItems) { book ->
-                        BookCardHorizontal(book = book, onFavoriteClick = {
+                        BookCardHorizontal(book = book, navController = navController,onFavoriteClick = {
                             cartItems = cartItems.toMutableList().apply {
                                 remove(book)
                             }
@@ -156,48 +156,6 @@ fun CartScreen(navController: NavHostController) {
         }
     )
 }
-
-@Composable
-fun CartItemCard(
-    item: CartItem,
-    onRemoveItem: (CartItem) -> Unit,
-    onQuantityChange: (CartItem, Int) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_shopping), // Thay bằng hình bìa sách thực tế
-            contentDescription = "Book Cover",
-            modifier = Modifier.size(54.dp, 81.dp)
-        )
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .weight(1f)
-        ) {
-            Text(item.title, fontWeight = FontWeight.Bold)
-            Text("$${item.price}", color = Color.Gray)
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = {
-                if (item.quantity > 1) onQuantityChange(item, item.quantity - 1)
-                else onRemoveItem(item)
-            }) {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease Quantity")
-            }
-            Text(item.quantity.toString(), modifier = Modifier.padding(horizontal = 8.dp))
-            IconButton(onClick = { onQuantityChange(item, item.quantity + 1) }) {
-                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase Quantity")
-            }
-        }
-    }
-    HorizontalDivider()
-}
-
 
 fun sampleCartItems(): List<BookDetail> {
     return listOf(

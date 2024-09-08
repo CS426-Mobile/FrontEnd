@@ -167,7 +167,7 @@ fun AccountScreen(navController: NavHostController) {
                     items(listAuthor) { author ->
                             AuthorHorizontalItem(
                                 author = author,
-                                onFollowToggle = { /* Toggle Follow/Unfollow */ },
+                                navController = navController,
                                 onButtonFollow = { /*author.isFollowing = !author.isFollowing*/ }
                             )
                     }

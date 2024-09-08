@@ -91,7 +91,7 @@ fun SearchScreen(navController: NavHostController) {
 
 //                LazyRow{
 //                    items (filteredAuthors) {author ->
-//                        AuthorItem(author = author, onClick = { /* Handle author click */ })
+//                        AuthorItem(author = author, navController)
 //                    }
 //                }
 
@@ -113,7 +113,7 @@ fun SearchScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(filteredBooks) { book ->
-                        BookCardHorizontal(book = book, onFavoriteClick = {
+                        BookCardHorizontal(book = book, navController = navController, onFavoriteClick = {
                             filteredBooks = filteredBooks.toMutableList().apply {
                                 remove(book)
                             }

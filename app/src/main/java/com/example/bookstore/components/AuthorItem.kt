@@ -22,15 +22,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.bookstore.Screen
 import com.example.bookstore.network.AuthorResponse
 
 @Composable
-fun AuthorItem(author: AuthorResponse, onClick: () -> Unit) {
+fun AuthorItem(author: AuthorResponse, navController: NavHostController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clickable { onClick() }
+            .clickable { navController.navigate(route = Screen.Author.passAuthorName(author.author_name)) }
             .padding(8.dp)
     ) {
         // Circular image with a diameter of 100.dp

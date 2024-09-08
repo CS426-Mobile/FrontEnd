@@ -64,10 +64,8 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Home.route) { HomeScreen(navController)}
         // Add AuthorDetailScreen with a dynamic author_name argument
         composable(
-            route = "author/{author_name}",
-            arguments = listOf(navArgument("author_name") {
-                type = NavType.StringType
-            })
+            route = Screen.Author.route,
+            arguments = listOf(navArgument("author_name") { type = NavType.StringType })
         ) { backStackEntry ->
             // Extract the author_name argument from the back stack
             val authorName = backStackEntry.arguments?.getString("author_name")
@@ -76,21 +74,21 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             }
         }
         composable(
-            route = "book/{book_name}",
-            arguments = listOf(navArgument("book_name") {
-                type = NavType.StringType
-            })
+            route = Screen.Order.route, // Định nghĩa route có argument
+            arguments = listOf(navArgument("orderID") { type = NavType.StringType }) // Khai báo loại argument
         ) { backStackEntry ->
-            // Extract the author_name argument from the back stack
-            val bookName = backStackEntry.arguments?.getString("book_name")
-            if (bookName != null) {
-                BookDetailScreen(navController, bookName)
-            }
+            val orderID = backStackEntry.arguments?.getString("orderID") // Lấy giá trị argument
+            OrderDetail(navController, orderID) // Truyền argument vào hàm
         }
 
-        composable(Screen.Author.route) {
-            CartScreen(navController)
+        composable(
+            route = Screen.Book.route, // Định nghĩa route có argument
+            arguments = listOf(navArgument("bookName") { type = NavType.StringType }) // Khai báo loại argument
+        ) { backStackEntry ->
+            val bookName = backStackEntry.arguments?.getString("bookName") // Lấy giá trị argument
+            BookDetailScreen(navController, bookName) // Truyền argument vào hàm
         }
+
         composable(Screen.ListOrder.route) {
             ListOrder(navController)
         }
@@ -106,16 +104,9 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Cart.route){
             CartScreen(navController)
         }
-        composable(Screen.ListAuthor.route){
-            ListAuthor(navController)
-        }
-        composable(Screen.Order.route){
-            // them order detail vao
-            OrderDetail(navController, Order("3f2wg2244", listOf(
-                BookDetail("Abstract Art in The World", "Armando Newman", 4.5f, true)
-            ))
-            )
-        }
+//        composable(Screen.ListAuthor.route){
+//            ListAuthor(navController)
+//        }
         composable(Screen.Search.route){
             SearchScreen(navController)
         }
