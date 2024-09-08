@@ -83,9 +83,9 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
 
         composable(
             route = Screen.Book.route, // Định nghĩa route có argument
-            arguments = listOf(navArgument("bookName") { type = NavType.StringType }) // Khai báo loại argument
+            arguments = listOf(navArgument("book_name") { type = NavType.StringType }) // Khai báo loại argument
         ) { backStackEntry ->
-            val bookName = backStackEntry.arguments?.getString("bookName") // Lấy giá trị argument
+            val bookName = backStackEntry.arguments?.getString("book_name") // Lấy giá trị argument
             BookDetailScreen(navController, bookName) // Truyền argument vào hàm
         }
 

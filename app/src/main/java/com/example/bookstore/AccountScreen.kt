@@ -163,14 +163,14 @@ fun AccountScreen(navController: NavHostController) {
 
                     // Phần tác giả đã theo dõi
 
-                    var listAuthor = getFollowedAuthors()
-                    items(listAuthor) { author ->
-                            AuthorHorizontalItem(
-                                author = author,
-                                navController = navController,
-                                onButtonFollow = { /*author.isFollowing = !author.isFollowing*/ }
-                            )
-                    }
+//                    var listAuthor = getFollowedAuthors()
+//                    items(listAuthor) { author ->
+//                            AuthorHorizontalItem(
+//                                author = author,
+//                                navController = navController,
+//                                onButtonFollow = { /*author.isFollowing = !author.isFollowing*/ }
+//                            )
+//                    }
                 }
             }
         }

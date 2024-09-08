@@ -15,7 +15,7 @@ sealed class Screen(val route: String){
             return "author_screen/$authorName"
         }
     }
-    object Book: Screen(route = "book_screen/{bookName}") {
+    object Book: Screen(route = "book_screen/{book_name}") {
         fun passBookName(bookName: String): String {
             return "book_screen/$bookName"
         }

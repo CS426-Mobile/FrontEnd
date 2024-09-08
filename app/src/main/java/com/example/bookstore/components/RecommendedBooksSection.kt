@@ -94,10 +94,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                                 isFavorite = !isFavorite
                                 // API call to add/remove from favorite can be done here
                             },
-                            onClick = {
-                                // Navigate to book detail screen
-                                navController.navigate("book/${book.book_name}")
-                            }
+                            navController = navController
                         )
                     }
                 }

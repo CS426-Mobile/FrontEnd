@@ -56,7 +56,7 @@ fun BookCard(
             .width(144.dp)
             .height(240.dp)
             .padding(8.dp)
-            .clickable { navController.navigate(route = Screen.Book.passBookName(title)) },  // Handle book click
+            .clickable { navController.navigate(route = Screen.Book.passBookName(title)) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {

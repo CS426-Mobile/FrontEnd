@@ -83,7 +83,7 @@ fun BookCardHorizontal(book: BookDetail, navController: NavHostController, onFav
 // Composable hiển thị thông tin một tác giả
 // onButtonFollow: bam nut follow / unfollow
 @Composable
-fun AuthorHorizontalItem(authorName: String, numFollower: Int, authorImage: String, following: Boolean = true, navController: NavHostController, onButtonFollow: () -> Unit) {
+fun AuthorHorizontalItem(authorName: String, numFollower: Int?, authorImage: String?, following: Boolean = true, navController: NavHostController, onButtonFollow: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,14 +94,16 @@ fun AuthorHorizontalItem(authorName: String, numFollower: Int, authorImage: Stri
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Hình đại diện tác giả
-        Image(
-            painter = rememberAsyncImagePainter(authorImage),
-            contentDescription = null,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+        if (authorImage != null) {
+            Image(
+                painter = rememberAsyncImagePainter(authorImage),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -113,11 +115,11 @@ fun AuthorHorizontalItem(authorName: String, numFollower: Int, authorImage: Stri
                 fontSize = 15.sp
             )
             androidx.compose.material3.Text(
-                text = "${numFollower} Followers",
+                text = "${numFollower ?: 0} Followers",
                 color = Color.Gray,
                 fontSize = 13.sp
             )
-//            androidx.compose.material3.Text(text = if (author.categories.size > 2) {
+////            androidx.compose.material3.Text(text = if (author.categories.size > 2) {
 //                "${author.categories[0]}, ${author.categories[1]}, ${author.categories.size - 2} more"
 //            } else {
 //                buildString {
@@ -142,7 +144,7 @@ fun AuthorHorizontalItem(authorName: String, numFollower: Int, authorImage: Stri
         ) {
             Text(
                 if (following) "Following" else "Follow",
-                color = if (following) Color.Gray else Color.White
+                color = if (following) Color.Black else Color.White
             )
         }
     }

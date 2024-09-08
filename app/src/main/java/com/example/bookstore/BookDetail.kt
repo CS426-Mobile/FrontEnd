@@ -66,9 +66,9 @@ import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun BookDetailScreen(navController: NavHostController, bookName: String?, bookViewModel: BookViewModel = viewModel()) {
+fun BookDetailScreen(navController: NavHostController, bookName: String?) {
+    val bookViewModel: BookViewModel = viewModel()
     val authorViewModel: AuthorViewModel = viewModel()
     var book by remember { mutableStateOf<BookResponse?>(null) }
     var author by remember { mutableStateOf<AuthorResponse?>(null) }
@@ -169,9 +169,17 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?, bookVi
                     // Author Section
 
                     // Remember to add calling API following or not
-                    item {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        AuthorHorizontalItem(authorName = author!!.author_name, numFollower = author!!.num_follower, authorImage = author!!.author_image, following = true, navController = navController, onButtonFollow = {})
+                    if (author != null) {
+                        item {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                            AuthorHorizontalItem(
+                                authorName = author!!.author_name,
+                                numFollower = author?.num_follower,
+                                authorImage = author?.author_image,
+                                following = true,
+                                navController = navController,
+                                onButtonFollow = {})
+                        }
                     }
 
                     // Description Section
