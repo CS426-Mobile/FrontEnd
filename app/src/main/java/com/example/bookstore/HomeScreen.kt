@@ -7,13 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,20 +23,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,22 +52,18 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.FeaturedBooksSection
 import com.example.bookstore.components.RecommendedBooksSection
-import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
-import com.example.bookstore.ui.theme.textColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel
 import kotlinx.coroutines.launch
@@ -256,12 +246,13 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
         ),
         shape = RoundedCornerShape(32.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth() // Make the search bar shorter (80% of the width)
             .padding(start = 8.dp, end = 8.dp)
             .onFocusChanged { focusState -> isFocused.value = focusState.isFocused }
             .focusRequester(focusRequester)
     )
 }
+
 
 @Composable
 fun rememberNestedScrollConnection(onScroll: (Float) -> Unit): NestedScrollConnection {
@@ -280,7 +271,7 @@ fun CategoriesSection(
     selectedCategories: List<String>,
     onCategorySelected: (String) -> Unit
 ) {
-    Text(text = "Categories", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.h6)
+    Text(text = "Categories", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold))
     LazyRow {
         items(listOf("All", "Romance", "Fiction", "Education", "Manga")) { category ->
             Text(

@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,13 +75,13 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
         ) {
             Text(
                 text = "Popular Authors",
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = "See all",
+                text = "See all >",
                 color = Color.Gray,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 modifier = Modifier
                     .clickable { navController.navigate(Screen.Author.route) }
             )

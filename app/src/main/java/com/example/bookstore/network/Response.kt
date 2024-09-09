@@ -41,7 +41,7 @@ data class BookResponse(
     val book_name: String,
     val author_name: String,
     val book_image: String,
-    val price: Double,
+    val price: Float,
     val num_1_star: Int,
     val num_2_star: Int,
     val num_3_star: Int,
@@ -50,7 +50,7 @@ data class BookResponse(
     val book_description: String,
     val public_date: String, // Date in "yyyy-MM-dd" format
     val book_language: String,
-    val book_weight: Double,
+    val book_weight: Float,
     val book_page: Int,
     val average_rating: Float
 )
@@ -78,7 +78,7 @@ data class AuthorCategoriesResponse(
     val categories: List<String>
 )
 
-// CustomerFavorite Response
+// Customer Favorite Response
 data class CustomerFavoriteResponse(
     val book_name: String,
     val author_name: String,
@@ -89,3 +89,19 @@ data class CustomerFavoriteResponse(
 
 data class UpdateFavoriteResponse(val message: String)
 
+// Customer Cart Response
+data class CustomerCartResponse(
+    val book_name: String,
+    val author_name: String,
+    val book_image: String,
+    val average_rating: Float,
+    val price: Float,
+    val num_books: Int
+)
+
+data class UpdateCartResponse(val message: String)
+
+// Total Price Response
+data class TotalPriceResponse(
+    val total_price: Float,
+)

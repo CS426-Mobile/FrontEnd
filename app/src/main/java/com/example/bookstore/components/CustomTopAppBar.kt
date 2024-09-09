@@ -38,7 +38,7 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
             Text(
                 text = title,
                 style = MaterialTheme.typography.h6,
-                fontSize = 24.sp,
+                fontSize = 22.sp,
                 color = textColor
             )
 

@@ -2,11 +2,13 @@ package com.example.bookstore.components
 
 import com.example.bookstore.R
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,17 +44,19 @@ fun BookCardHorizontal(book: CustomerFavoriteResponse, navController: NavHostCon
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(8.dp)
             .clickable {
                 navController.navigate(route = Screen.Book.passBookName(book.book_name))
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Hiển thị bìa sách
+        // Book image
         Image(
-            painter = painterResource(id = R.drawable.ic_cart), // Thay thế bằng nguồn bìa sách của bạn
+            painter = rememberAsyncImagePainter(model = book.book_image), // Load image from URL
             contentDescription = "Book Cover",
-            modifier = Modifier.size(54.dp, 81.dp)
+            modifier = Modifier.size(54.dp, 81.dp),
+            contentScale = ContentScale.Crop // Crop the image to fit
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -64,9 +68,7 @@ fun BookCardHorizontal(book: CustomerFavoriteResponse, navController: NavHostCon
             RatingBar(rating = book.average_rating ?: 0f)
         }
 
-        // Biểu tượng trái tim để quản lý trạng thái yêu thích va gia tien
         Column(
-
         ){
             IconButton(onClick = onFavoriteClick) {
                 Icon(

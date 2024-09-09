@@ -122,7 +122,7 @@ interface ApiService {
     @GET("/books/related/{book_name}/")
     suspend fun getRelatedBooks(@Path("book_name") bookName: String): Response<List<SimpleBookResponse>>
 
-    // CustomerService APIs
+    // Customer Favorite APIs
     // Insert a customer favorite
     @POST("/favorite/insert/")
     suspend fun insertCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<UpdateFavoriteResponse>
@@ -141,4 +141,29 @@ interface ApiService {
         @Query("user_email") userEmail: String,
         @Query("book_name") bookName: String
     ): Response<UpdateFavoriteResponse>
+
+    // Customer Cart APIs
+    // Insert a book into the customer cart
+    @POST("/cart/insert/")
+    suspend fun insertCustomerCartBook(@Body request: CustomerCartRequest): Response<UpdateCartResponse>
+
+    // Delete a book from the customer cart
+    @HTTP(method = "DELETE", path = "/cart/delete/", hasBody = true)
+    suspend fun deleteCustomerCartBook(@Body request: CustomerCartRequest): Response<UpdateCartResponse>
+
+    // Increase the number of books in the cart
+    @POST("/cart/increase/")
+    suspend fun increaseNumBooks(@Body request: CustomerCartRequest): Response<UpdateCartResponse>
+
+    // Decrease the number of books in the cart
+    @POST("/cart/decrease/")
+    suspend fun decreaseNumBooks(@Body request: CustomerCartRequest): Response<UpdateCartResponse>
+
+    // Calculate the total price of the cart
+    @GET("/cart/total_price/")
+    suspend fun calculateTotalPrice(@Query("user_email") userEmail: String): Response<TotalPriceResponse>
+
+    // Query all customer cart books for a user
+    @GET("/cart/query/")
+    suspend fun queryCustomerCartBooks(@Query("user_email") userEmail: String): Response<List<CustomerCartResponse>>
 }

@@ -1,6 +1,7 @@
 package com.example.bookstore
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,6 +56,7 @@ fun AccountScreen(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(Color.White)
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
@@ -70,7 +72,9 @@ fun AccountScreen(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LazyColumn {
+                LazyColumn (
+                    modifier = Modifier.background(Color.White)
+                ) {
 
                 // Phần địa chỉ
                     item {

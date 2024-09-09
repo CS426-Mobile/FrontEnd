@@ -215,22 +215,6 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
 
                     LazyColumn(
                     ) {
-                        item {
-                            Text(
-                                text = "Categories",
-                                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                            )
-                            FlowRow(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                categories?.forEach { category ->
-                                    Chip(category)
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
 
                         item {
                             Text(
@@ -275,6 +259,23 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                                     textAlign = TextAlign.Center
                                 )
                             }
+                        }
+
+                        item {
+                            Text(
+                                text = "Categories",
+                                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                            )
+                            FlowRow(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                categories?.forEach { category ->
+                                    Chip(category)
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }

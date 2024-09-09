@@ -95,9 +95,9 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Favorite.route) {
             FavoriteScreen(navController)
         }
-//        composable(Screen.Cart.route) {
-//            CartScreen(navController)
-//        }
+        composable(Screen.Cart.route) {
+            CartScreen(navController)
+        }
         composable(Screen.Account.route) {
             AccountScreen(navController)
         }

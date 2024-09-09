@@ -1,14 +1,10 @@
 package com.example.bookstore
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,21 +16,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,19 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.components.AuthorHorizontalItem
 import com.example.bookstore.components.BookCard
-import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.ExpandableText
 import com.example.bookstore.network.AuthorResponse
@@ -65,17 +53,24 @@ import com.example.bookstore.network.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel
+import com.example.bookstore.viewmodel.CustomerCartViewModel
+import com.example.bookstore.viewmodel.UserViewModel
 
 @Composable
 fun BookDetailScreen(navController: NavHostController, bookName: String?) {
     val bookViewModel: BookViewModel = viewModel()
     val authorViewModel: AuthorViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
+    val customerCartViewModel: CustomerCartViewModel = viewModel()
+
     var book by remember { mutableStateOf<BookResponse?>(null) }
     var author by remember { mutableStateOf<AuthorResponse?>(null) }
     var relatedBooks by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var userEmail by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
 
-    // Fetch book and author details
+    // Fetch book, author details, and user email
     LaunchedEffect(bookName) {
         if (bookName != null) {
             bookViewModel.getBookInfo(bookName) { success, result ->
@@ -100,6 +95,16 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                 }
             }
         }
+
+        // Fetch the user email from UserViewModel
+        userViewModel.getUserInfo { success, userInfo, error ->
+            if (success && userInfo != null) {
+                userEmail = userInfo.user_email
+            } else {
+                errorMessage = error ?: "Failed to fetch user info."
+            }
+            isLoading = false
+        }
     }
 
     Scaffold(
@@ -107,145 +112,179 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
             CustomTopAppBar(title = "Book Detail", navController = navController, isBack = true)
         },
         content = { paddingValues ->
-            if (errorMessage != null) {
-                // Show error message
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = errorMessage!!, color = Color.Gray, fontSize = 16.sp)
-                }
-            } else if (book != null) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp)
-                ) {
-                    // Book Details Section
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = book!!.book_image),
-                                contentDescription = "Book Cover",
-                                modifier = Modifier.size(153.dp, 230.dp)
-                            )
-
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 8.dp)
-                            ) {
-                                Text(
-                                    text = book!!.book_name,
-                                    style = MaterialTheme.typography.h6,
-                                    fontWeight = FontWeight.Bold,
-                                    color = mainColor,
-                                    fontSize = 22.sp
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color.Yellow)
-                                    Text(
-                                        text = String.format("%.1f", book!!.average_rating) + " (${book!!.num_5_star} ratings)",
-                                        color = Color.Gray
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(
-                                    text = "$${book!!.price}",
-                                    style = MaterialTheme.typography.h6,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (errorMessage != null) {
+                    // Show error message
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = errorMessage!!, color = Color.Gray, fontSize = 16.sp)
                     }
-
-                    // Author Section
-
-                    // Remember to add calling API following or not
-                    if (author != null) {
-                        item {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                            AuthorHorizontalItem(
-                                authorName = author!!.author_name,
-                                numFollower = author?.num_follower,
-                                authorImage = author?.author_image,
-                                following = true,
-                                navController = navController,
-                                onButtonFollow = {})
-                        }
+                } else if (isLoading) {
+                    // Show loading indicator
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color.Gray)
                     }
-
-                    // Description Section
-                    item {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text(
-                            text = "Description",
-                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                        )
-                        ExpandableText(text = book!!.book_description)
-                    }
-
-                    // Product Information Section
-                    item {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text(
-                            text = "Product Information",
-                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                        )
-                        ProductInformationRow("Publication Date", book!!.public_date)
-                        ProductInformationRow("Language", book!!.book_language)
-                        ProductInformationRow("Weight", "${book!!.book_weight} oz")
-                        ProductInformationRow("Pages", "${book!!.book_page}")
-                    }
-
-                    // Rating Section
-                    item {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text(
-                            text = "Customer Reviews",
-                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                        )
-                        RatingSection(ratings = listOf(book!!.num_5_star, book!!.num_4_star, book!!.num_3_star, book!!.num_2_star, book!!.num_1_star)) // Use your ratings data
-                    }
-
-                    // Related Books Section
-                    item {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text(
-                            text = "Related Books",
-                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                        )
-                        LazyRow {
-                            items(relatedBooks ?: emptyList()) { relatedBook ->
-                                BookCard(
-                                    book = relatedBook,
-                                    navController = navController
-                                )
-                            }
-                        }
-                    }
-
-                    // Add to Cart Button
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = {
-                                // Add to cart logic
-                            },
+                } else if (book != null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 80.dp)  // Leave space for the fixed button at the bottom
+                    ) {
+                        LazyColumn(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = mainColor)
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                                .padding(16.dp)
                         ) {
-                            Text("Add to Cart", color = Color.White)
+                            // Book Details Section
+                            item {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(model = book!!.book_image),
+                                        contentDescription = "Book Cover",
+                                        modifier = Modifier.size(153.dp, 230.dp)
+                                    )
+
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = book!!.book_name,
+                                            style = MaterialTheme.typography.h6,
+                                            fontWeight = FontWeight.Bold,
+                                            color = mainColor,
+                                            fontSize = 22.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color(0xFFFFC107))
+                                            Text(
+                                                text = String.format("%.1f", book!!.average_rating) + " (${book!!.num_5_star} ratings)",
+                                                color = Color.Gray,
+                                                fontSize = 15.sp,
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(
+                                            text = "$${book!!.price}",
+                                            style = MaterialTheme.typography.h6,
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Author Section
+                            if (author != null) {
+                                item {
+                                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                    AuthorHorizontalItem(
+                                        authorName = author!!.author_name,
+                                        numFollower = author?.num_follower,
+                                        authorImage = author?.author_image,
+                                        following = true,
+                                        navController = navController,
+                                        onButtonFollow = {})
+                                }
+                            }
+
+                            // Description Section
+                            item {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Description",
+                                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                                )
+                                ExpandableText(text = book!!.book_description)
+                            }
+
+                            // Product Information Section
+                            item {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Product Information",
+                                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                                )
+                                ProductInformationRow("Publication Date", book!!.public_date)
+                                ProductInformationRow("Language", book!!.book_language)
+                                ProductInformationRow("Weight", "${book!!.book_weight} ounces")
+                                ProductInformationRow("Pages", "${book!!.book_page}")
+                            }
+
+                            // Rating Section
+                            item {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Customer Reviews",
+                                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                                )
+                                RatingSection(
+                                    ratings = listOf(
+                                        book!!.num_5_star,
+                                        book!!.num_4_star,
+                                        book!!.num_3_star,
+                                        book!!.num_2_star,
+                                        book!!.num_1_star
+                                    )
+                                )
+                            }
+
+                            // Related Books Section
+                            item {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Related Books",
+                                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                                )
+                                LazyRow {
+                                    items(relatedBooks ?: emptyList()) { relatedBook ->
+                                        BookCard(
+                                            book = relatedBook,
+                                            navController = navController
+                                        )
+                                    }
+                                }
+                            }
                         }
+                    }
+
+                    // Add to Cart Button fixed at the bottom
+                    Button(
+                        onClick = {
+                            if (userEmail != null) {
+                                customerCartViewModel.increaseNumBooks(userEmail!!, book!!.book_name) { success, message ->
+                                    if (success) {
+                                        // Show success message or navigate to cart
+                                        navController.navigate(Screen.Cart.route)
+                                    } else {
+                                        errorMessage = message ?: "Failed to add to cart."
+                                    }
+                                }
+                            } else {
+                                errorMessage = "User email not available."
+                            }
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = mainColor)
+                    ) {
+                        Text("Add to Cart", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }

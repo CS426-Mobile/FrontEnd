@@ -1,5 +1,6 @@
 package com.example.bookstore
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bookstore.components.BookCardHorizontal
@@ -76,6 +78,7 @@ fun FavoriteScreen(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(Color.White)
                             .padding(paddingValues),
                         contentAlignment = Alignment.Center
                     ) {
@@ -87,12 +90,15 @@ fun FavoriteScreen(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(Color.White)
                             .padding(paddingValues),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = errorMessage!!,
                             color = Color.Gray,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(16.dp),
                             textAlign = TextAlign.Center
                         )
                     }
@@ -117,6 +123,7 @@ fun FavoriteScreen(navController: NavHostController) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(Color.White)
                             .padding(paddingValues),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)

@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,9 +50,9 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
     Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
         // Section title
         Text(
-            text = "Recommended",
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.h6
+            text = "Recommended Books",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
         )
 
         when {
@@ -59,7 +60,6 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                 // Show placeholder while loading
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     items(3) { // Show 3 placeholder items
                         BookCardPlaceholder()
@@ -80,7 +80,6 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                 // Show books in a LazyRow
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     items(books!!) { book ->
                         var isFavorite by remember { mutableStateOf(false) } // Manage favorite state locally

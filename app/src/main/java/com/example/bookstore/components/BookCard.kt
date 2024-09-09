@@ -101,6 +101,7 @@ fun BookCard(
             .width(144.dp)
             .height(240.dp)
             .padding(8.dp)
+            .background(color = Color.White)
             .clickable { navController.navigate(route = Screen.Book.passBookName(book.book_name)) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
@@ -109,8 +110,8 @@ fun BookCard(
             // Book image placeholder
             Box(
                 modifier = Modifier
-                    .size(144.dp, 169.dp)
-                    .background(Color.LightGray)
+                    .size(144.dp, 160.dp)
+                    .background(color = Color.White)
             ) {
                 // Book image
                 Image(
@@ -118,7 +119,7 @@ fun BookCard(
                     contentDescription = "Book Cover",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(181.dp), // Set the image height
+                        .height(160.dp), // Set the image height
                     contentScale = ContentScale.Crop // Crop the image to fit
                 )
 
@@ -152,7 +153,7 @@ fun BookCard(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = Color.Yellow,
+                        tint = Color(0xFFFFC107),
                         modifier = Modifier.size(24.dp)
                     )
                     androidx.compose.material3.Text(
@@ -165,17 +166,17 @@ fun BookCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Book title
             androidx.compose.material3.Text(
                 text = book.book_name,
                 style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                maxLines = 2,
+                modifier = Modifier.padding(horizontal = 4.dp),
                 textAlign = TextAlign.Center
             )
 
@@ -186,7 +187,7 @@ fun BookCard(
                 color = Color.Gray,
                 fontSize = 11.sp,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(horizontal = 4.dp),
                 textAlign = TextAlign.Center
             )
         }
@@ -207,24 +208,17 @@ fun BookCardPlaceholder() {
             // Placeholder image
             Box(
                 modifier = Modifier
-                    .size(144.dp, 169.dp)
-                    .background(Color.LightGray)
+                    .size(144.dp, 160.dp)
+                    .background(color = Color.White)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             // Placeholder text
             Text(
                 text = "Loading...",
                 style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Author",
-                style = MaterialTheme.typography.caption,
                 color = Color.Gray,
-                fontSize = 11.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.padding(horizontal = 8.dp),
                 textAlign = TextAlign.Center
             )
