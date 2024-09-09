@@ -1,5 +1,34 @@
 // ApiService.kt
-import com.example.bookstore.network.*
+import com.example.bookstore.model.AuthorCategoriesResponse
+import com.example.bookstore.model.AuthorRequest
+import com.example.bookstore.model.AuthorResponse
+import com.example.bookstore.model.BookCategoryResponse
+import com.example.bookstore.model.BookCountResponse
+import com.example.bookstore.model.BookResponse
+import com.example.bookstore.model.ChangePasswordRequest
+import com.example.bookstore.model.ChangePasswordResponse
+import com.example.bookstore.model.CustomerCartRequest
+import com.example.bookstore.model.CustomerCartResponse
+import com.example.bookstore.model.CustomerFavoriteRequest
+import com.example.bookstore.model.CustomerFavoriteResponse
+import com.example.bookstore.model.CustomerFollowRequest
+import com.example.bookstore.model.CustomerFollowResponse
+import com.example.bookstore.model.GetAddressResponse
+import com.example.bookstore.model.LoginRequest
+import com.example.bookstore.model.LoginResponse
+import com.example.bookstore.model.LogoutResponse
+import com.example.bookstore.model.NumFollowerResponse
+import com.example.bookstore.model.RegisterRequest
+import com.example.bookstore.model.RegisterResponse
+import com.example.bookstore.model.SimpleAuthorResponse
+import com.example.bookstore.model.SimpleBookResponse
+import com.example.bookstore.model.TotalPriceResponse
+import com.example.bookstore.model.UpdateAddressRequest
+import com.example.bookstore.model.UpdateAddressResponse
+import com.example.bookstore.model.UpdateAddressWithEmailRequest
+import com.example.bookstore.model.UpdateCartResponse
+import com.example.bookstore.model.UpdateFavoriteResponse
+import com.example.bookstore.model.UserInfoResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -166,4 +195,16 @@ interface ApiService {
     // Query all customer cart books for a user
     @GET("/cart/query/")
     suspend fun queryCustomerCartBooks(@Query("user_email") userEmail: String): Response<List<CustomerCartResponse>>
+
+    // Query authors that a user follows
+    @GET("/followers/author/query/")
+    suspend fun queryCustomerFollow(@Query("user_email") userEmail: String): Response<List<CustomerFollowResponse>>
+
+    // Toggle follow/unfollow status of an author
+    @POST("/followers/toggle/")
+    suspend fun toggleFollow(@Body request: CustomerFollowRequest): Response<RegisterResponse>
+
+    // Get the number of followers for an author
+    @GET("/followers/author/count/")
+    suspend fun getNumFollowersForAuthor(@Query("author_name") authorName: String): Response<NumFollowerResponse>
 }

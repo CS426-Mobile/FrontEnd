@@ -2,31 +2,18 @@
 package com.example.bookstore.repository
 
 import android.util.Log
-import com.example.bookstore.data.UserDao
-import com.example.bookstore.model.UserEntity
-import com.example.bookstore.network.ChangePasswordRequest
-import com.example.bookstore.network.LoginRequest
-import com.example.bookstore.network.RegisterRequest
+import com.example.bookstore.model.ChangePasswordRequest
+import com.example.bookstore.model.LoginRequest
+import com.example.bookstore.model.RegisterRequest
 import com.example.bookstore.network.RetrofitInstance
-import com.example.bookstore.network.UpdateAddressRequest
-import com.example.bookstore.network.UpdateAddressWithEmailRequest
-import com.example.bookstore.network.UserInfo
+import com.example.bookstore.model.UpdateAddressRequest
+import com.example.bookstore.model.UpdateAddressWithEmailRequest
+import com.example.bookstore.model.UserInfo
 import org.json.JSONObject
 
-class UserRepository(private val userDao: UserDao) {
+class UserRepository() {
 
-    // Room Database operations
-    suspend fun insertUser(user: UserEntity) {
-        userDao.insertUser(user)
-    }
 
-    suspend fun getUser(email: String, password: String): UserEntity? {
-        return userDao.getUser(email, password)
-    }
-
-    suspend fun getUserByEmail(email: String): UserEntity? {
-        return userDao.getUserByEmail(email)
-    }
 
     // API operations with error messages
     suspend fun loginUser(email: String, password: String): Result<String> {
@@ -70,8 +57,6 @@ class UserRepository(private val userDao: UserDao) {
             if (response.isSuccessful) {
                 val registerResponse = response.body()
                 if (registerResponse != null && registerResponse.message == "Account was created successfully") {
-                    // Save user to Room database if registration is successful
-                    insertUser(UserEntity(email = email, password = password))
                     Result.success(registerResponse.message)
                 } else {
                     Result.failure(Exception(registerResponse?.message ?: "Registration failed with code${response.code()}."))

@@ -1,6 +1,5 @@
 package com.example.bookstore.components
 
-import com.example.bookstore.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,7 +33,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Book
 import com.example.bookstore.RatingBar
 import com.example.bookstore.Screen
-import com.example.bookstore.network.CustomerFavoriteResponse
+import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
@@ -121,19 +118,6 @@ fun AuthorHorizontalItem(authorName: String, numFollower: Int?, authorImage: Str
                 color = Color.Gray,
                 fontSize = 13.sp
             )
-////            androidx.compose.material3.Text(text = if (author.categories.size > 2) {
-//                "${author.categories[0]}, ${author.categories[1]}, ${author.categories.size - 2} more"
-//            } else {
-//                buildString {
-//                    for (i in author.categories.indices) {
-//                        append(author.categories[i])
-//                        if (i < author.categories.size - 1) {
-//                            append(", ")
-//                        }
-//                    }
-//                }
-//            },
-//                color = Color.Gray)
         }
 
         Button(

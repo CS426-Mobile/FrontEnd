@@ -1,5 +1,5 @@
 // Response.kt
-package com.example.bookstore.network
+package com.example.bookstore.model
 
 // User Response
 data class LoginResponse(val message: String)
@@ -104,4 +104,15 @@ data class UpdateCartResponse(val message: String)
 // Total Price Response
 data class TotalPriceResponse(
     val total_price: Float,
+)
+
+// Customer Follow Response
+data class CustomerFollowResponse(
+    val author_name: String,
+    val author_image: String,
+    val num_follower: Int
+)
+
+data class NumFollowerResponse(
+    val num_follower: Int
 )

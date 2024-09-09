@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Screen
-import com.example.bookstore.network.AuthorResponse
+import com.example.bookstore.model.AuthorResponse
 
 @Composable
 fun AuthorItem(author: AuthorResponse, navController: NavHostController) {

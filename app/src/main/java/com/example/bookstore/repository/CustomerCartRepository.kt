@@ -1,8 +1,8 @@
 // CustomerCartRepository.kt
 package com.example.bookstore.repository
 
-import com.example.bookstore.network.CustomerCartRequest
-import com.example.bookstore.network.CustomerCartResponse
+import com.example.bookstore.model.CustomerCartRequest
+import com.example.bookstore.model.CustomerCartResponse
 import com.example.bookstore.network.RetrofitInstance
 
 class CustomerCartRepository {

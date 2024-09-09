@@ -1,8 +1,8 @@
 // CustomerFavoriteRepository.kt
 package com.example.bookstore.repository
 
-import com.example.bookstore.network.CustomerFavoriteRequest
-import com.example.bookstore.network.CustomerFavoriteResponse
+import com.example.bookstore.model.CustomerFavoriteRequest
+import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.network.RetrofitInstance
 
 class CustomerFavoriteRepository {

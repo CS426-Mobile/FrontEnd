@@ -4,9 +4,9 @@ package com.example.bookstore.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstore.network.BookCategoryResponse
-import com.example.bookstore.network.BookResponse
-import com.example.bookstore.network.SimpleBookResponse
+import com.example.bookstore.model.BookCategoryResponse
+import com.example.bookstore.model.BookResponse
+import com.example.bookstore.model.SimpleBookResponse
 import com.example.bookstore.repository.BookRepository
 import kotlinx.coroutines.launch
 

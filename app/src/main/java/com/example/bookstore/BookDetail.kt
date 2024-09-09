@@ -47,9 +47,9 @@ import com.example.bookstore.components.AuthorHorizontalItem
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.ExpandableText
-import com.example.bookstore.network.AuthorResponse
-import com.example.bookstore.network.BookResponse
-import com.example.bookstore.network.SimpleBookResponse
+import com.example.bookstore.model.AuthorResponse
+import com.example.bookstore.model.BookResponse
+import com.example.bookstore.model.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel

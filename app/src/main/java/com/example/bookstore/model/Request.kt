@@ -1,5 +1,5 @@
 // Request.kt
-package com.example.bookstore.network
+package com.example.bookstore.model
 
 // User Request
 data class LoginRequest(
@@ -63,4 +63,10 @@ data class CustomerFavoriteRequest(
 data class CustomerCartRequest(
     val user_email: String,
     val book_name: String
+)
+
+// Customer Follow Request
+data class CustomerFollowRequest(
+    val author_name: String,
+    val user_email: String
 )

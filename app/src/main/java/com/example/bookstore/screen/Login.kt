@@ -56,7 +56,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.HomeActivity
 import com.example.bookstore.R
 import com.example.bookstore.components.CustomTextField
-import com.example.bookstore.model.UserEntity
 import com.example.bookstore.ui.theme.blurOrange
 import com.example.bookstore.ui.theme.errorColor
 import com.example.bookstore.ui.theme.mainColor
@@ -406,8 +405,6 @@ fun SignUpUI(
                     if (password == confirmPassword) {
                         isLoading = true
                         errorMessage = ""
-                        // insert User into local DB
-                        userViewModel.insertUser(UserEntity(email, password))
                         // insert User into API
                         Log.d("Register Account: ", email)
                         userViewModel.registerUser(email, password, confirmPassword) { success, message ->

@@ -3,12 +3,9 @@ package com.example.bookstore.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstore.data.BookStoreDatabase
-import com.example.bookstore.network.CustomerFavoriteResponse
+import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.repository.CustomerFavoriteRepository
-import com.example.bookstore.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class CustomerFavoriteViewModel(application: Application) : AndroidViewModel(application)  {

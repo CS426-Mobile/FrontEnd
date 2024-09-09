@@ -4,8 +4,7 @@ package com.example.bookstore.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstore.network.CustomerCartResponse
-import com.example.bookstore.repository.BookRepository
+import com.example.bookstore.model.CustomerCartResponse
 import com.example.bookstore.repository.CustomerCartRepository
 import kotlinx.coroutines.launch
 

@@ -44,7 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Screen
-import com.example.bookstore.network.SimpleBookResponse
+import com.example.bookstore.model.SimpleBookResponse
 import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
 import com.example.bookstore.viewmodel.UserViewModel
 

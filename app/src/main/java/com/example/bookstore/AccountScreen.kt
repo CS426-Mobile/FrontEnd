@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
@@ -62,7 +63,6 @@ fun AccountScreen(navController: NavHostController) {
             ) {
                 // Phần lời chào và tên người dùng
                 Text(
-//                    text = "Hello ${account.name}!",
                     text = "Hello Bao!",
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp,
@@ -137,7 +137,7 @@ fun AccountScreen(navController: NavHostController) {
                         ListItem(
                             icon = {
                                 Icon(
-                                    Icons.Default.ExitToApp,
+                                    Icons.AutoMirrored.Filled.ExitToApp,
                                     contentDescription = "Sign Out",
                                     tint = mainColor
                                 )

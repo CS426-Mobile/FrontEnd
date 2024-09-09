@@ -123,7 +123,7 @@ fun PurchaseSuccessScreen(navController: NavHostController) {
                 // Nút "Back to Shop"
                 Button(
                     onClick = {
-
+                        navController.navigate(Screen.Home.route)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

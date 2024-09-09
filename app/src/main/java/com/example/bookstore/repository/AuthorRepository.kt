@@ -1,10 +1,10 @@
 // AuthorRepository.kt
 package com.example.bookstore.repository
 
-import com.example.bookstore.network.AuthorResponse
-import com.example.bookstore.network.AuthorRequest
+import com.example.bookstore.model.AuthorResponse
+import com.example.bookstore.model.AuthorRequest
 import com.example.bookstore.network.RetrofitInstance
-import com.example.bookstore.network.SimpleAuthorResponse
+import com.example.bookstore.model.SimpleAuthorResponse
 
 class AuthorRepository {
 

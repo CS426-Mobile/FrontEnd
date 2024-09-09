@@ -5,9 +5,7 @@ import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookstore.data.BookStoreDatabase
-import com.example.bookstore.model.UserEntity
-import com.example.bookstore.network.UserInfo
+import com.example.bookstore.model.UserInfo
 import com.example.bookstore.repository.UserRepository
 import kotlinx.coroutines.launch
 
@@ -16,14 +14,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val userRepository: UserRepository
 
     init {
-        val userDao = BookStoreDatabase.getDatabase(application).userDao()
-        userRepository = UserRepository(userDao)
-    }
-
-    fun insertUser(user: UserEntity) {
-        viewModelScope.launch {
-            userRepository.insertUser(user)
-        }
+        userRepository = UserRepository()
     }
 
     fun loginUser(email: String, password: String, onResult: (Boolean, String?) -> Unit) {

@@ -1,10 +1,10 @@
 // BookRepository.kt
 package com.example.bookstore.repository
 
-import com.example.bookstore.network.BookCategoryResponse
-import com.example.bookstore.network.BookResponse
+import com.example.bookstore.model.BookCategoryResponse
+import com.example.bookstore.model.BookResponse
 import com.example.bookstore.network.RetrofitInstance
-import com.example.bookstore.network.SimpleBookResponse
+import com.example.bookstore.model.SimpleBookResponse
 
 class BookRepository {
 

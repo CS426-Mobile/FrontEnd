@@ -41,8 +41,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.BookCardHorizontal
 import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
-import com.example.bookstore.network.CustomerCartResponse
-import com.example.bookstore.network.CustomerFavoriteResponse
+import com.example.bookstore.model.CustomerCartResponse
+import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.CustomerCartViewModel
 import com.example.bookstore.viewmodel.UserViewModel
@@ -229,7 +229,7 @@ fun CartScreen(navController: NavHostController) {
 
                             // Buy button
                             Button(
-                                onClick = { /* Handle Buy button click */ },
+                                onClick = { navController.navigate(Screen.Success.route) },
                                 colors = ButtonDefaults.buttonColors(containerColor = mainColor),
                                 modifier = Modifier
                                     .fillMaxWidth()

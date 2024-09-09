@@ -32,7 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bookstore.components.BookCardHorizontal
 import com.example.bookstore.components.CustomTopAppBar
-import com.example.bookstore.network.CustomerFavoriteResponse
+import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
 import com.example.bookstore.viewmodel.UserViewModel
 
