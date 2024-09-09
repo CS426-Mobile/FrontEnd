@@ -260,14 +260,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                                 ) {
                                     items(books!!) { book ->
                                         BookCard(
-                                            title = book.book_name,
-                                            author = book.author_name,
-                                            rating = book.average_rating,
-                                            isFavorite = false,
-                                            imageUrl = book.book_image,
-                                            onFavoriteClick = {
-                                                // Handle favorite action
-                                            },
+                                            book = book,
                                             navController = navController
                                         )
                                     }

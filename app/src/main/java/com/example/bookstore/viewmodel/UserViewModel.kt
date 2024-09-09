@@ -26,20 +26,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getUser(email: String, password: String, onResult: (UserEntity?) -> Unit) {
-        viewModelScope.launch {
-            val user = userRepository.getUser(email, password)
-            onResult(user)
-        }
-    }
-
-    fun getUserByEmail(email: String, onResult: (UserEntity?) -> Unit) {
-        viewModelScope.launch {
-            val user = userRepository.getUserByEmail(email)
-            onResult(user)
-        }
-    }
-
     fun loginUser(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             val result = userRepository.loginUser(email, password)

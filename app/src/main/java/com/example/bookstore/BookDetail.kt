@@ -225,12 +225,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                         LazyRow {
                             items(relatedBooks ?: emptyList()) { relatedBook ->
                                 BookCard(
-                                    title = relatedBook.book_name,
-                                    author = relatedBook.author_name,
-                                    rating = relatedBook.average_rating,
-                                    isFavorite = false, // Adjust as needed
-                                    imageUrl = relatedBook.book_image,
-                                    onFavoriteClick = { /* Handle favorite */ },
+                                    book = relatedBook,
                                     navController = navController
                                 )
                             }
@@ -370,21 +365,5 @@ fun RatingRow(stars: Int, count: Int) {
             color = Color.Gray
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BookCardPreview() {
-    var isFavorite by remember { mutableStateOf(false) }
-
-    BookCard(
-        title = "Jan Rombouts Een Renaissann",
-        author = "Mercatorfonds",
-        rating = 4.5f,
-        isFavorite = isFavorite,
-        imageUrl = "https://upload.wikimedia.org/wikipedia/commons/7/78/Image.jpg",
-        onFavoriteClick = { isFavorite = !isFavorite }, // Thay đổi trạng thái khi nhấn vào
-        navController = rememberNavController()
-    )
 }
 

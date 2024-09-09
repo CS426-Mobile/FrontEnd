@@ -1,84 +1,146 @@
 package com.example.bookstore
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.BookCardHorizontal
-import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
+import com.example.bookstore.network.CustomerFavoriteResponse
+import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
+import com.example.bookstore.viewmodel.UserViewModel
 
 @Composable
 fun FavoriteScreen(navController: NavHostController) {
-    // Dữ liệu mẫu cho danh sách sách ưa thích
-    var favoriteBooks = sampleFavoriteBooks()
+    val userViewModel: UserViewModel = viewModel()
+    val customerFavoriteViewModel: CustomerFavoriteViewModel = viewModel()
+    var userEmail by remember { mutableStateOf<String?>(null) }
+    var favoriteBooks by remember { mutableStateOf<List<CustomerFavoriteResponse>?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    // Fetch user info (email) and favorite books
+    LaunchedEffect(Unit) {
+        userViewModel.getUserInfo { success, userInfo, error ->
+            if (success && userInfo != null) {
+                userEmail = userInfo.user_email
+
+                // Fetch favorite books after getting the user's email
+                customerFavoriteViewModel.queryCustomerFavorite(userEmail!!) { success, result ->
+                    if (success && result != null) {
+                        favoriteBooks = result
+                    } else {
+                        errorMessage = "Failed to load favorite books."
+                    }
+                    isLoading = false
+                }
+            } else {
+                errorMessage = error ?: "Failed to fetch user info."
+                isLoading = false
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             CustomTopAppBar(title = "Favorites", navController = navController, isCart = true)
         },
         content = { paddingValues ->
-            if (favoriteBooks.isEmpty()) {
-                // Hiển thị thông báo khi không có sách ưa thích
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No favorite books.",
-//                        style = MaterialTheme.typography.h6,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
+            when {
+                isLoading -> {
+                    // Show loading indicator
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color.Gray)
+                    }
                 }
-            } else {
-                // Hiển thị danh sách sách ưa thích
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(favoriteBooks) { book ->
-                        BookCardHorizontal(book = book, navController = navController,onFavoriteClick = {
-                            favoriteBooks = favoriteBooks.toMutableList().apply {
-                                remove(book)
+                errorMessage != null -> {
+                    // Show error message
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = errorMessage!!,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                favoriteBooks.isNullOrEmpty() -> {
+                    // Show message if no favorite books are available
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No favorite books.",
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                else -> {
+                    // Display list of favorite books
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(favoriteBooks!!) { book ->
+                            BookCardHorizontal(
+                                book = book,
+                                navController = navController,
+                                onFavoriteClick = {
+                                    // Remove book from favorite list and delete from API
+                                    customerFavoriteViewModel.deleteCustomerFavorite(userEmail!!, book.book_name) { success, _ ->
+                                        if (success) {
+                                            favoriteBooks = favoriteBooks!!.toMutableList().apply {
+                                                remove(book)
+                                            }
+                                        } else {
+                                            errorMessage = "Failed to remove favorite book."
+                                        }
+                                    }
+                                }
+                            )
+                            if (favoriteBooks!!.indexOf(book) < favoriteBooks!!.size - 1) {
+                                HorizontalDivider()
                             }
-                        })
-                        if (favoriteBooks.indexOf(book) < favoriteBooks.size - 1) {
-                            HorizontalDivider()
                         }
                     }
                 }
@@ -86,7 +148,6 @@ fun FavoriteScreen(navController: NavHostController) {
         }
     )
 }
-
 
 @Composable
 fun RatingBar(rating: Float) {
@@ -104,21 +165,4 @@ fun RatingBar(rating: Float) {
         }
         Text(text = " ${rating.toInt()}") // Hiển thị số lượng đánh giá
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FavoriteScreenPreview() {
-    FavoriteScreen(navController = rememberNavController())
-}
-
-fun sampleFavoriteBooks(): List<BookDetail> {
-    return listOf(
-        BookDetail("Abstract Art in The World", "Armando Newman", 4.5f, true),
-        BookDetail("Leila’s Story", "Marcy Arkinson", 4.0f, true),
-        BookDetail("Where is The Queen", "Scott Brian", 3.5f, true),
-        BookDetail("The Secret About Us", "Elizabeth McKean", 4.2f, true),
-        BookDetail("The Happiness", "Kate Kirkwood", 4.7f, true),
-        BookDetail("Peace in His Life", "Armando Newman", 3.9f, true)
-    )
 }

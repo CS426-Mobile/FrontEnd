@@ -73,13 +73,13 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
                 AuthorDetailScreen(navController, authorName)
             }
         }
-        composable(
-            route = Screen.Order.route, // Định nghĩa route có argument
-            arguments = listOf(navArgument("orderID") { type = NavType.StringType }) // Khai báo loại argument
-        ) { backStackEntry ->
-            val orderID = backStackEntry.arguments?.getString("orderID") // Lấy giá trị argument
-            OrderDetail(navController, orderID) // Truyền argument vào hàm
-        }
+//        composable(
+//            route = Screen.Order.route, // Định nghĩa route có argument
+//            arguments = listOf(navArgument("orderID") { type = NavType.StringType }) // Khai báo loại argument
+//        ) { backStackEntry ->
+//            val orderID = backStackEntry.arguments?.getString("orderID") // Lấy giá trị argument
+//            OrderDetail(navController, orderID) // Truyền argument vào hàm
+//        }
 
         composable(
             route = Screen.Book.route, // Định nghĩa route có argument
@@ -89,27 +89,24 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             BookDetailScreen(navController, bookName) // Truyền argument vào hàm
         }
 
-        composable(Screen.ListOrder.route) {
-            ListOrder(navController)
-        }
+//        composable(Screen.ListOrder.route) {
+//            ListOrder(navController)
+//        }
         composable(Screen.Favorite.route) {
             FavoriteScreen(navController)
         }
-        composable(Screen.Cart.route) {
-            CartScreen(navController)
-        }
+//        composable(Screen.Cart.route) {
+//            CartScreen(navController)
+//        }
         composable(Screen.Account.route) {
             AccountScreen(navController)
-        }
-        composable(Screen.Cart.route){
-            CartScreen(navController)
         }
 //        composable(Screen.ListAuthor.route){
 //            ListAuthor(navController)
 //        }
-        composable(Screen.Search.route){
-            SearchScreen(navController)
-        }
+//        composable(Screen.Search.route){
+//            SearchScreen(navController)
+//        }
         composable(Screen.Success.route){
             PurchaseSuccessScreen(navController)
         }

@@ -125,13 +125,20 @@ interface ApiService {
     // CustomerService APIs
     // Insert a customer favorite
     @POST("/favorite/insert/")
-    suspend fun insertCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<Map<String, String>>
+    suspend fun insertCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<UpdateFavoriteResponse>
 
     // Delete a customer favorite
     @HTTP(method = "DELETE", path = "/favorite/delete/", hasBody = true)
-    suspend fun deleteCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<Map<String, String>>
+    suspend fun deleteCustomerFavorite(@Body request: CustomerFavoriteRequest): Response<UpdateFavoriteResponse>
 
     // Query customer favorites by user email
     @GET("/favorite/query/")
     suspend fun queryCustomerFavorite(@Query("user_email") userEmail: String): Response<List<CustomerFavoriteResponse>>
+
+    // Query if a customer favorite exists
+    @GET("/favorite/query_exist/")
+    suspend fun queryCustomerFavoriteExist(
+        @Query("user_email") userEmail: String,
+        @Query("book_name") bookName: String
+    ): Response<UpdateFavoriteResponse>
 }

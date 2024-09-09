@@ -2,7 +2,6 @@ package com.example.bookstore.components
 
 import com.example.bookstore.R
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,16 +34,17 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Book
 import com.example.bookstore.RatingBar
 import com.example.bookstore.Screen
+import com.example.bookstore.network.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable
-fun BookCardHorizontal(book: BookDetail, navController: NavHostController, onFavoriteClick: () -> Unit) {
+fun BookCardHorizontal(book: CustomerFavoriteResponse, navController: NavHostController, onFavoriteClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
-                navController.navigate(route = Screen.Book.passBookName(book.title))
+                navController.navigate(route = Screen.Book.passBookName(book.book_name))
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -59,9 +59,9 @@ fun BookCardHorizontal(book: BookDetail, navController: NavHostController, onFav
 
         // Hiển thị thông tin sách
         Column(modifier = Modifier.weight(1f)) {
-            androidx.compose.material3.Text(text = book.title, fontWeight = FontWeight.Bold)
-            androidx.compose.material3.Text(text = book.author, color = Color.Gray)
-            RatingBar(rating = book.rating)
+            androidx.compose.material3.Text(text = book.book_name, fontWeight = FontWeight.Bold)
+            androidx.compose.material3.Text(text = book.author_name, color = Color.Gray)
+            RatingBar(rating = book.average_rating ?: 0f)
         }
 
         // Biểu tượng trái tim để quản lý trạng thái yêu thích va gia tien
@@ -75,7 +75,7 @@ fun BookCardHorizontal(book: BookDetail, navController: NavHostController, onFav
                     tint = Color.Red
                 )
             }
-            Text("$ ${book.price}", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text("$ ${book.price ?: 0f}", fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

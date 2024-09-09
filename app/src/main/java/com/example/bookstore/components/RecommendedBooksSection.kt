@@ -85,15 +85,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                     items(books!!) { book ->
                         var isFavorite by remember { mutableStateOf(false) } // Manage favorite state locally
                         BookCard(
-                            title = book.book_name,
-                            author = book.author_name,
-                            rating = book.average_rating,
-                            isFavorite = isFavorite,
-                            imageUrl = book.book_image,
-                            onFavoriteClick = {
-                                isFavorite = !isFavorite
-                                // API call to add/remove from favorite can be done here
-                            },
+                            book = book,
                             navController = navController
                         )
                     }

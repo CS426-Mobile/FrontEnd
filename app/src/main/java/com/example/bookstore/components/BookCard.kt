@@ -26,6 +26,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,28 +40,68 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.bookstore.Book
 import com.example.bookstore.Screen
+import com.example.bookstore.network.SimpleBookResponse
+import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
+import com.example.bookstore.viewmodel.UserViewModel
 
 @SuppressLint("DefaultLocale")
 @Composable
 fun BookCard(
-    title: String,
-    author: String,
-    rating: Float,
-    isFavorite: Boolean,
-    imageUrl: String,
-    onFavoriteClick: () -> Unit,
-    navController: NavHostController
+    book: SimpleBookResponse,
+    navController: NavHostController,
 ) {
+    val customerFavoriteViewModel: CustomerFavoriteViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
+    var isFavorite by remember { mutableStateOf(false) }
+    var userEmail by remember { mutableStateOf<String?>(null) }
+
+    // Fetch the user's email once when the card is displayed
+    LaunchedEffect(Unit) {
+        userViewModel.getUserInfo { success, userInfo, _ ->
+            if (success && userInfo != null) {
+                userEmail = userInfo.user_email
+
+                // Check if the book is in the user's favorites
+                customerFavoriteViewModel.queryCustomerFavoriteExist(userEmail!!, book.book_name) { favoriteSuccess, _ ->
+                    if (favoriteSuccess) {
+                        isFavorite = true
+                    }
+                }
+            }
+        }
+    }
+
+    // Handle favorite toggle
+    fun toggleFavorite() {
+        userEmail?.let { email ->
+            if (isFavorite) {
+                // Remove from favorites
+                customerFavoriteViewModel.deleteCustomerFavorite(email, book.book_name) { success, _ ->
+                    if (success) {
+                        isFavorite = false
+                    }
+                }
+            } else {
+                // Add to favorites
+                customerFavoriteViewModel.insertCustomerFavorite(email, book.book_name) { success, _ ->
+                    if (success) {
+                        isFavorite = true
+                    }
+                }
+            }
+        }
+    }
+
     Card(
         modifier = Modifier
             .width(144.dp)
             .height(240.dp)
             .padding(8.dp)
-            .clickable { navController.navigate(route = Screen.Book.passBookName(title)) },
+            .clickable { navController.navigate(route = Screen.Book.passBookName(book.book_name)) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -69,7 +114,7 @@ fun BookCard(
             ) {
                 // Book image
                 Image(
-                    painter = rememberAsyncImagePainter(model = imageUrl), // Load image from URL
+                    painter = rememberAsyncImagePainter(model = book.book_image), // Load image from URL
                     contentDescription = "Book Cover",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -81,11 +126,12 @@ fun BookCard(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()  // Fill the size of the image
-                        .background(Color(0x4D000000))  // Semi-transparent gray color (50% opacity)
+                        .background(Color(0x4D000000))  // Semi-transparent gray color (30% opacity)
                 )
 
+                // Favorite icon
                 IconButton(
-                    onClick = onFavoriteClick,
+                    onClick = { toggleFavorite() },
                     modifier = Modifier.align(Alignment.TopEnd)
                 ) {
                     Icon(
@@ -109,8 +155,8 @@ fun BookCard(
                         tint = Color.Yellow,
                         modifier = Modifier.size(24.dp)
                     )
-                    Text(
-                        text = String.format("%.1f", rating),
+                    androidx.compose.material3.Text(
+                        text = String.format("%.1f", book.average_rating),
                         style = MaterialTheme.typography.caption,
                         color = Color.White,
                         fontSize = 14.sp,
@@ -122,8 +168,8 @@ fun BookCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Book title
-            Text(
-                text = title,
+            androidx.compose.material3.Text(
+                text = book.book_name,
                 style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
@@ -134,8 +180,8 @@ fun BookCard(
             )
 
             // Author name
-            Text(
-                text = author,
+            androidx.compose.material3.Text(
+                text = book.author_name,
                 style = MaterialTheme.typography.caption,
                 color = Color.Gray,
                 fontSize = 11.sp,
@@ -146,7 +192,6 @@ fun BookCard(
         }
     }
 }
-
 
 @Composable
 fun BookCardPlaceholder() {

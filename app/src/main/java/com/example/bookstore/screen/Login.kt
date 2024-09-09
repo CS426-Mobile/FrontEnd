@@ -133,7 +133,6 @@ fun SignInUI(
     val isFormValid = email.isNotBlank() && password.isNotBlank()
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
 
     Box(

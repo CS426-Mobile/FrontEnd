@@ -90,15 +90,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                         for (book in bookRow) {
                             var isFavorite by remember { mutableStateOf(false) }  // Handle favorite state
                             BookCard(
-                                title = book.book_name,
-                                author = book.author_name,
-                                rating = book.average_rating,
-                                isFavorite = isFavorite,
-                                imageUrl = book.book_image,
-                                onFavoriteClick = {
-                                    isFavorite = !isFavorite
-                                    // Call API to add/remove favorite (implementation later)
-                                },
+                                book = book,
                                 navController = navController
                             )
                         }
