@@ -150,13 +150,14 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                                     Image(
                                         painter = rememberAsyncImagePainter(model = book!!.book_image),
                                         contentDescription = "Book Cover",
-                                        modifier = Modifier.size(153.dp, 230.dp)
+                                        modifier = Modifier.size(153.dp, 230.dp).padding(8.dp)
                                     )
 
                                     Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(start = 8.dp)
+                                            .align(Alignment.CenterVertically)
                                     ) {
                                         Text(
                                             text = book!!.book_name,
@@ -189,14 +190,10 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                             // Author Section
                             if (author != null) {
                                 item {
-                                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                                     AuthorHorizontalItem(
-                                        authorName = author!!.author_name,
-                                        numFollower = author?.num_follower,
-                                        authorImage = author?.author_image,
-                                        following = true,
+                                        author = author!!,
                                         navController = navController,
-                                        onButtonFollow = {})
+                                    )
                                 }
                             }
 

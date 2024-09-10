@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -52,54 +53,74 @@ import com.example.bookstore.model.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel
+import com.example.bookstore.viewmodel.CustomerFollowViewModel
+import com.example.bookstore.viewmodel.UserViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
     val authorViewModel: AuthorViewModel = viewModel()
+    val customerFollowViewModel: CustomerFollowViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
     val bookViewModel: BookViewModel = viewModel()
 
-    // Local state to hold author data, books, and categories
+    // Local state to hold author data, books, categories, and follow status
     var author by remember { mutableStateOf<AuthorResponse?>(null) }
     var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
     var numBooks by remember { mutableStateOf<Int?>(null) }
     var categories by remember { mutableStateOf<List<String>?>(null) }
+    var isFollowing by remember { mutableStateOf<Boolean?>(null) }
+    var userEmail by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var numFollower by remember { mutableStateOf(0) }
 
-    // Fetch author information, number of books, and categories
+    // Fetch author information, number of books, categories, and follow status
     LaunchedEffect(authorName) {
-        // Fetch author info
-        authorViewModel.getAuthorInfo(authorName) { success, result ->
-            if (success && result != null) {
-                author = result
+        // Fetch user info to get the user's email
+        userViewModel.getUserInfo { success, userInfo, _ ->
+            if (success && userInfo != null) {
+                userEmail = userInfo.user_email
 
-                // Fetch number of books by this author
-                bookViewModel.getNumBooksByAuthor(authorName) { bookSuccess, numBooksResult ->
-                    if (bookSuccess && numBooksResult != null) {
-                        numBooks = numBooksResult
-                    } else {
-                        errorMessage = "Failed to load number of books."
-                    }
+                // Fetch author info
+                authorViewModel.getAuthorInfo(authorName) { success, result ->
+                    if (success && result != null) {
+                        author = result
+                        numFollower = author!!.num_follower
 
-                    // Fetch author categories
-                    bookViewModel.getAuthorCategories(authorName) { categorySuccess, categoriesResult ->
-                        if (categorySuccess && categoriesResult != null) {
-                            categories = categoriesResult
-                        }
-
-                        // Fetch books by this author after loading author info
-                        bookViewModel.getBooksByAuthor(authorName) { booksSuccess, booksResult ->
-                            if (booksSuccess && booksResult != null) {
-                                books = booksResult
+                        // Fetch follow status
+                        customerFollowViewModel.queryFollow(authorName, userEmail!!) { followSuccess, following ->
+                            if (followSuccess) {
+                                isFollowing = following
                             }
-                            isLoading = false
+
+                            // Fetch number of books by this author
+                            bookViewModel.getNumBooksByAuthor(authorName) { bookSuccess, numBooksResult ->
+                                if (bookSuccess && numBooksResult != null) {
+                                    numBooks = numBooksResult
+                                }
+
+                                // Fetch author categories
+                                bookViewModel.getAuthorCategories(authorName) { categorySuccess, categoriesResult ->
+                                    if (categorySuccess && categoriesResult != null) {
+                                        categories = categoriesResult
+                                    }
+
+                                    // Fetch books by this author
+                                    bookViewModel.getBooksByAuthor(authorName) { booksSuccess, booksResult ->
+                                        if (booksSuccess && booksResult != null) {
+                                            books = booksResult
+                                        }
+                                        isLoading = false
+                                    }
+                                }
+                            }
                         }
+                    } else {
+                        errorMessage = "Failed to load author information."
+                        isLoading = false
                     }
                 }
-            } else {
-                errorMessage = "Failed to load author information."
-                isLoading = false
             }
         }
     }
@@ -172,7 +193,7 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "${author!!.num_follower} Followers",
+                            text = "${numFollower} Followers",
                             style = MaterialTheme.typography.body1,
                             color = Color.Gray
                         )
@@ -182,26 +203,40 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
                             color = Color.Gray
                         )
 
+                        // Follow Button
                         Button(
                             onClick = {
-                                /* Handle follow/unfollow action */
-//                                author = author.copy(isFollowing = !author.isFollowing)
+                                userEmail?.let { email ->
+                                    if (isFollowing == true) {
+                                        // Unfollow the author
+                                        customerFollowViewModel.toggleFollow(email, author!!.author_name) { success, _ ->
+                                            if (success) {
+                                                isFollowing = false
+                                                numFollower = numFollower - 1
+                                            }
+                                        }
+                                    } else {
+                                        // Follow the author
+                                        customerFollowViewModel.toggleFollow(email, author!!.author_name) { success, _ ->
+                                            if (success) {
+                                                isFollowing = true
+                                                numFollower = numFollower + 1
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (author!!.num_follower > 0) mainColor else Color.Gray,
+                                containerColor = if (isFollowing == true) Color.Gray else mainColor,
                                 contentColor = Color.White
                             ),
-//                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = if (author.isFollowing) Color.Gray else mainColor,
-//                                contentColor = Color.White
-//                            ),
-                            shape = RoundedCornerShape(24.dp)
+                            shape = RoundedCornerShape(24.dp),
+                            modifier = Modifier.width(116.dp) // Set width for consistency
                         ) {
-                            Text("Follow", color = Color.White)
-//                            Text(
-//                                if (author.isFollowing) "Following" else "Follow",
-//                                color = if (author.isFollowing) Color.Gray else Color.White
-//                            )
+                            Text(
+                                text = if (isFollowing == true) "Following" else "Follow",
+                                color = Color.White
+                            )
                         }
                     }
 
