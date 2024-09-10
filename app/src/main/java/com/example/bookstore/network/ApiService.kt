@@ -5,6 +5,7 @@ import com.example.bookstore.model.AuthorResponse
 import com.example.bookstore.model.BookCategoryResponse
 import com.example.bookstore.model.BookCountResponse
 import com.example.bookstore.model.BookResponse
+import com.example.bookstore.model.CategoryResponse
 import com.example.bookstore.model.ChangePasswordRequest
 import com.example.bookstore.model.ChangePasswordResponse
 import com.example.bookstore.model.CustomerCartRequest
@@ -215,4 +216,9 @@ interface ApiService {
         @Query("author_name") authorName: String,
         @Query("user_email") userEmail: String
     ): Response<QueryFollowResponse>
+
+    // Category APIs
+    // Fetch all categories
+    @GET("/categories/")
+    suspend fun getAllCategories(): Response<List<CategoryResponse>>
 }

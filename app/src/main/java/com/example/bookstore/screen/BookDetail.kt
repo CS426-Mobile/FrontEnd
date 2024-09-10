@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.bookstore.Screen
 import com.example.bookstore.components.AuthorHorizontalItem
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.CustomTopAppBar

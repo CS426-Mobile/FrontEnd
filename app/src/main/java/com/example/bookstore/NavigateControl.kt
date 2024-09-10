@@ -23,6 +23,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bookstore.screen.AuthorDetailScreen
+import com.example.bookstore.screen.BookDetailScreen
+import com.example.bookstore.screen.FavoriteScreen
+import com.example.bookstore.screen.PurchaseSuccessScreen
 import com.example.bookstore.ui.theme.mainColor
 
 val NavHostController.canGoBack: Boolean
@@ -102,9 +106,9 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         composable(Screen.Account.route) {
             AccountScreen(navController)
         }
-//        composable(Screen.ListAuthor.route){
-//            ListAuthor(navController)
-//        }
+        composable(Screen.ListAuthor.route){
+            ListAuthor(navController)
+        }
 //        composable(Screen.Search.route){
 //            SearchScreen(navController)
 //        }

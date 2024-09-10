@@ -78,7 +78,7 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
                 color = Color.Gray,
                 fontSize = 14.sp,
                 modifier = Modifier
-                    .clickable { navController.navigate(Screen.Author.route) }
+                    .clickable { navController.navigate(Screen.ListAuthor.route) }
             )
         }
 

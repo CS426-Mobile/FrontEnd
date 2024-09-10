@@ -120,3 +120,9 @@ data class NumFollowerResponse(
 data class QueryFollowResponse(
     val follow: Boolean
 )
+
+// Category Response
+data class CategoryResponse(
+    val category_name: String
+)
+

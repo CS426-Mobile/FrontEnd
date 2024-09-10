@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.R
+import com.example.bookstore.Screen
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable

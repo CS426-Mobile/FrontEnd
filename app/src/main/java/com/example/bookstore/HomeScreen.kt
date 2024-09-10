@@ -7,11 +7,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -137,14 +139,18 @@ fun HomeScreen(navController: NavHostController) {
         ) {
             // Recommended Books Section
             item {
-                    if (selectedCategories.isEmpty())
+                    if (selectedCategories.isEmpty()) {
                         RecommendedBooksSection(navController = navController, bookViewModel = bookViewModel)
+                        AuthorsSection(navController = navController, authorViewModel = authorViewModel)
+                    }
             }
 
             stickyHeader {
                 Column(
                     modifier = Modifier.background(Color.White) // Ensure sticky header stays visible
                 ) {
+
+
                     CategoriesSection(
                         selectedCategories = selectedCategories,
                         onCategorySelected = { category ->
@@ -177,25 +183,8 @@ fun HomeScreen(navController: NavHostController) {
                 }
             }
 
-            item {
-                if (selectedCategories.isEmpty())
-                    AuthorsSection(navController = navController, authorViewModel = authorViewModel)
-            }
-
             // Featured Books Section
             item {
-//                FilterBar(
-//                    isFilterActive = isFilterActive,
-//                    navController = navController,
-//                    sortType = sortType,
-//                    onSortClick = {
-//                        sortType = when (sortType) {
-//                            SortType.NONE -> SortType.ASCENDING
-//                            SortType.ASCENDING -> SortType.DESCENDING
-//                            SortType.DESCENDING -> SortType.NONE
-//                        }
-//                    }
-//                )
                 FeaturedBooksSection(navController = navController, bookViewModel = bookViewModel)
             }
         }
@@ -251,6 +240,7 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
             .onFocusChanged { focusState -> isFocused.value = focusState.isFocused }
             .focusRequester(focusRequester)
     )
+    Spacer(modifier = Modifier.width(16.dp))
 }
 
 
@@ -265,27 +255,43 @@ fun rememberNestedScrollConnection(onScroll: (Float) -> Unit): NestedScrollConne
         }
     }
 }
-
 @Composable
 fun CategoriesSection(
     selectedCategories: List<String>,
     onCategorySelected: (String) -> Unit
 ) {
-    Text(text = "Categories", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold))
-    LazyRow {
+    // Section title
+    Text(
+        text = "Categories",
+        modifier = Modifier.padding(16.dp),
+        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+    )
+
+    val lighterMainColor = mainColor.copy(alpha = 0.2f) // Lighter main color for unselected items
+
+    // Categories list with spacing
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp), // Padding between boxes
+        modifier = Modifier.padding(horizontal = 16.dp) // Overall padding for the section
+    ) {
         items(listOf("All", "Romance", "Fiction", "Education", "Manga")) { category ->
-            Text(
-                text = category,
+            Box(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .clickable { onCategorySelected(category) }
-                    .background(if (selectedCategories.contains(category)) mainColor else Color.Transparent)
-                    .padding(16.dp)
-                    .clip(shape = RoundedCornerShape(24.dp)),
-                color = if (selectedCategories.contains(category)) Color.White else Color.Black
-            )
+                    .background(if (selectedCategories.contains(category)) mainColor else lighterMainColor)
+                    .padding(horizontal = 12.dp, vertical = 8.dp) // Padding inside the box
+            ) {
+                Text(
+                    text = category,
+                    color = if (selectedCategories.contains(category)) Color.White else Color.Black,
+                )
+            }
         }
     }
+
+    // Add white space below the categories section
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable

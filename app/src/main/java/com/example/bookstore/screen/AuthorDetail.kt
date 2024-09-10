@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -316,10 +316,11 @@ fun AuthorDetailScreen(navController: NavHostController, authorName: String) {
 // Sample Chip composable for category display
 @Composable
 fun Chip(text: String) {
+    val lighterMainColor = mainColor.copy(alpha = 0.2f) // Adjust the alpha for a lighter color
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFF0F0F0))
+            .background(lighterMainColor)
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Text(text = text, color = Color.Black)
