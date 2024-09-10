@@ -6,10 +6,14 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,14 +40,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Book
 import com.example.bookstore.Screen
+import com.example.bookstore.model.AuthorResponse
 import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
+import com.example.bookstore.viewmodel.CustomerFollowViewModel
+import com.example.bookstore.viewmodel.UserViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -123,56 +132,139 @@ fun BookCardHorizontal(
 // Composable hiển thị thông tin một tác giả
 // onButtonFollow: bam nut follow / unfollow
 @Composable
-fun AuthorHorizontalItem(authorName: String, numFollower: Int?, authorImage: String?, following: Boolean = true, navController: NavHostController, onButtonFollow: () -> Unit) {
+fun AuthorHorizontalItem(
+    author: AuthorResponse,
+    navController: NavHostController
+) {
+    val customerFollowViewModel: CustomerFollowViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
+    var isFollowing by remember { mutableStateOf<Boolean?>(null) }
+    var userEmail by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var numFollower by remember { mutableStateOf(author.num_follower) }
+
+
+    LaunchedEffect(Unit) {
+        // Fetch user info to get email
+        userViewModel.getUserInfo { success, userInfo, _ ->
+            if (success && userInfo != null) {
+                userEmail = userInfo.user_email
+
+                // Check if user is following the author
+                customerFollowViewModel.queryFollow(author.author_name, userEmail!!) { success, following ->
+                    if (success) {
+                        isFollowing = following
+                    }
+                    isLoading = false // Data fetching is complete
+                }
+            } else {
+                isLoading = false // Data fetching is complete
+            }
+        }
+    }
+
+    // Handle follow/unfollow toggle
+    fun toggleFollow() {
+        userEmail?.let { email ->
+            if (isFollowing == true) {
+                // Unfollow the author
+                customerFollowViewModel.toggleFollow(email, author.author_name) { success, _ ->
+                    if (success) {
+                        isFollowing = false
+                        numFollower = numFollower - 1
+                    }
+                }
+            } else {
+                // Follow the author
+                customerFollowViewModel.toggleFollow(email, author.author_name) { success, _ ->
+                    if (success) {
+                        isFollowing = true
+                        numFollower = numFollower + 1
+                    }
+                }
+            }
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .fillMaxHeight()
+            .padding(10.dp)
+            .shadow(
+                elevation = 14.dp,
+                //shape = RoundedCornerShape(16.dp),
+                ambientColor = mainColor.copy(alpha = 0.8f),  // Blur shadow
+                spotColor = mainColor.copy(alpha = 1f)
+            )
+            .background(Color.White, shape = RoundedCornerShape(16.dp))
             .clickable {
-                navController.navigate(route = Screen.Author.passAuthorName(authorName))
-            },
+            navController.navigate(route = Screen.Author.passAuthorName(author.author_name))
+        },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Hình đại diện tác giả
-        if (authorImage != null) {
-            Image(
-                painter = rememberAsyncImagePainter(authorImage),
-                contentDescription = null,
+        Spacer(modifier = Modifier.width(8.dp))
+
+        // Author information or placeholder
+        if (isLoading) {
+            Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-        }
+                    .weight(1f)
+                    .height(80.dp)
+                    .fillMaxSize(),  // Make the box fill the available space
+                contentAlignment = Alignment.Center // Center the content both vertically and horizontally
+            ) {
+                Text(
+                    text = "Loading author...",
+                    fontSize = 15.sp,
+                    color = Color.Gray,
+                )
+            }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        } else {
+            // Author image
+            author.author_image?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp)
+                        //.clip(CircleShape)
+                        .padding(8.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
-        // Thông tin tác giả
-        Column(modifier = Modifier.weight(1f)) {
-            androidx.compose.material3.Text(
-                text = authorName,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            androidx.compose.material3.Text(
-                text = "${numFollower ?: 0} Followers",
-                color = Color.Gray,
-                fontSize = 13.sp
-            )
-        }
+            Column(modifier = Modifier.weight(1f).padding(8.dp)) {
+                Text(
+                    text = author.author_name,
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = "${numFollower ?: 0} Followers",
+                    color = Color.Gray,
+                    fontSize = 13.sp
+                )
+            }
 
-        Button(
-            onClick = onButtonFollow,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (following) Color.Gray else mainColor,
-                contentColor = Color.White
-            ),
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            Text(
-                if (following) "Following" else "Follow",
-                color = if (following) Color.Black else Color.White
-            )
+            Button(
+                onClick = { toggleFollow() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isFollowing == true) Color(0xFFB0B0B0) else mainColor,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(24.dp),
+                modifier = Modifier.width(116.dp) // Set a fixed width to accommodate both "Follow" and "Following"
+            ) {
+                Text(
+                    text = if (isFollowing == true) "Following" else "Follow",
+                    color = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }

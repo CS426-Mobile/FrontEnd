@@ -50,4 +50,16 @@ class CustomerFollowViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
+    // Query follow status of an author by user
+    fun queryFollow(authorName: String, userEmail: String, onResult: (Boolean, Boolean?) -> Unit) {
+        viewModelScope.launch {
+            val result = customerFollowRepository.queryFollow(authorName, userEmail)
+            result.onSuccess { isFollowing ->
+                onResult(true, isFollowing)
+            }.onFailure {
+                onResult(false, null)
+            }
+        }
+    }
 }

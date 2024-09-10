@@ -18,6 +18,7 @@ import com.example.bookstore.model.LoginRequest
 import com.example.bookstore.model.LoginResponse
 import com.example.bookstore.model.LogoutResponse
 import com.example.bookstore.model.NumFollowerResponse
+import com.example.bookstore.model.QueryFollowResponse
 import com.example.bookstore.model.RegisterRequest
 import com.example.bookstore.model.RegisterResponse
 import com.example.bookstore.model.SimpleAuthorResponse
@@ -207,4 +208,11 @@ interface ApiService {
     // Get the number of followers for an author
     @GET("/followers/author/count/")
     suspend fun getNumFollowersForAuthor(@Query("author_name") authorName: String): Response<NumFollowerResponse>
+
+    // Query follow status of an author by user
+    @GET("/followers/query/")
+    suspend fun queryFollow(
+        @Query("author_name") authorName: String,
+        @Query("user_email") userEmail: String
+    ): Response<QueryFollowResponse>
 }

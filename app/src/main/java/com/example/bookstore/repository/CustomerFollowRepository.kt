@@ -52,4 +52,20 @@ class CustomerFollowRepository {
             Result.failure(Exception("Network or HTTP error: ${e.message}"))
         }
     }
+
+    // Query follow status of an author by user
+    suspend fun queryFollow(authorName: String, userEmail: String): Result<Boolean> {
+        return try {
+            val response = RetrofitInstance.api.queryFollow(authorName, userEmail)
+            if (response.isSuccessful) {
+                response.body()?.follow?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("No follow status found"))
+            } else {
+                Result.failure(Exception("Failed to query follow status. Code: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network or HTTP error: ${e.message}"))
+        }
+    }
 }
