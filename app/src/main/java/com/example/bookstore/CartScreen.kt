@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,6 +46,7 @@ import com.example.bookstore.model.CustomerCartResponse
 import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.CustomerCartViewModel
+import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
 import com.example.bookstore.viewmodel.UserViewModel
 
 @Composable
@@ -55,6 +57,7 @@ fun CartScreen(navController: NavHostController) {
     var userEmail by remember { mutableStateOf<String?>(null) }
     var cartItems by remember { mutableStateOf<List<CustomerCartResponse>?>(null) }
     var totalPrice by remember { mutableStateOf(0f) }
+    var numItems by remember { mutableStateOf(0) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     val deliveryFee = 5f
@@ -69,6 +72,7 @@ fun CartScreen(navController: NavHostController) {
                 customerCartViewModel.queryCustomerCartBooks(userEmail!!) { cartSuccess, cartResult ->
                     if (cartSuccess && cartResult != null) {
                         cartItems = cartResult
+                        numItems = cartItems!!.size
                     } else {
                         errorMessage = "Failed to load cart items."
                     }
@@ -144,41 +148,47 @@ fun CartScreen(navController: NavHostController) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(vertical = 8.dp)
                                 .padding(bottom = 20.dp)
                         ) {
                             // LazyColumn for cart items
                             LazyColumn(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                modifier = Modifier.weight(1f)
+                                    .background(Color.White)
                             ) {
                                 items(cartItems!!) { book ->
                                     BookCardHorizontal(
                                         book = CustomerFavoriteResponse(book.book_name, book.author_name, book.book_image, book.average_rating, book.price), navController = navController,
                                         onFavoriteClick = {
-                                            cartItems = cartItems!!.toMutableList().apply {
-                                                remove(book)
+                                            customerCartViewModel.deleteCustomerCartBook(userEmail!!, book.book_name) { success, _ ->
+                                                if (success) {
+                                                    // Update total price dynamically
+                                                    customerCartViewModel.calculateTotalPrice(userEmail!!) { priceSuccess, priceResult ->
+                                                        if (priceSuccess && priceResult != null) {
+                                                            totalPrice = priceResult
+                                                            numItems = numItems - 1
+                                                        }
+                                                    }
+                                                }
                                             }
-
-                                            // Update total price dynamically
-                                            totalPrice = totalPrice
-                                        }
+                                        },
+                                        favoriteScreen = false
                                     )
-                                    if (cartItems!!.indexOf(book) < cartItems!!.size - 1) {
-                                        HorizontalDivider()
-                                    }
                                 }
                             }
 
+                            Spacer(modifier = Modifier.height(12.dp))
                             // Delivery Address section
                             Text(
                                 text = "Delivery Address",
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                fontSize = 13.sp
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                fontSize = 13.sp,
+                                color = Color.Gray
                             )
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
                                     .clickable { /* Navigate to address screen */ }
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
@@ -192,16 +202,16 @@ fun CartScreen(navController: NavHostController) {
                             }
 
                             // Delivery Fee and Total Price section
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
+                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Delivery Fee", color = Color.Gray)
+                                Text("Delivery Fee", color = Color.Gray, fontSize = 13.sp)
                                 Text("$${deliveryFee}")
                             }
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text("Total Price", fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -212,18 +222,16 @@ fun CartScreen(navController: NavHostController) {
                                 )
                             }
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "${cartItems!!.size} items",
+                                    text = "${numItems} items",
                                     color = Color.Gray,
-                                    modifier = Modifier.padding(vertical = 4.dp)
                                 )
                                 Text(
                                     text = "Include taxes",
                                     color = Color.Gray,
-                                    modifier = Modifier.padding(vertical = 4.dp)
                                 )
                             }
 

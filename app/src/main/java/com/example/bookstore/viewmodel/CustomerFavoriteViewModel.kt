@@ -2,6 +2,7 @@
 package com.example.bookstore.viewmodel
 
 import android.app.Application
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookstore.model.CustomerFavoriteResponse

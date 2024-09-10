@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -125,51 +124,24 @@ fun FavoriteScreen(navController: NavHostController) {
                             .fillMaxSize()
                             .background(Color.White)
                             .padding(paddingValues),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(favoriteBooks!!) { book ->
                             BookCardHorizontal(
                                 book = book,
                                 navController = navController,
                                 onFavoriteClick = {
-                                    // Remove book from favorite list and delete from API
+                                    // Remove the clicked book from the favorite list and delete from API
                                     customerFavoriteViewModel.deleteCustomerFavorite(userEmail!!, book.book_name) { success, _ ->
                                         if (success) {
-                                            favoriteBooks = favoriteBooks!!.toMutableList().apply {
-                                                remove(book)
-                                            }
-                                        } else {
-                                            errorMessage = "Failed to remove favorite book."
+
                                         }
                                     }
                                 }
                             )
-                            if (favoriteBooks!!.indexOf(book) < favoriteBooks!!.size - 1) {
-                                HorizontalDivider()
-                            }
                         }
                     }
                 }
             }
         }
     )
-}
-
-@Composable
-fun RatingBar(rating: Float) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        for (i in 1..5) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                tint = if (i <= rating) Color(0xFFFFC107) // Vàng cho sao được tô
-                else if (i - rating < 1) Color(0xFFFFC107).copy(alpha = 0.5f) // Màu vàng nhạt cho sao tô một phần
-                else Color.Gray
-            )
-        }
-        Text(text = " ${rating.toInt()}") // Hiển thị số lượng đánh giá
-    }
 }

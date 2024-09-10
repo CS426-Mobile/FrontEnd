@@ -47,7 +47,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
         // Section title
         Text(
             text = "Recommended Books",
@@ -59,7 +59,8 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
             !isDataFetched -> {
                 // Show placeholder while loading
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(3) { // Show 3 placeholder items
                         BookCardPlaceholder()
@@ -79,7 +80,8 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
             books != null && books!!.isNotEmpty() -> {
                 // Show books in a LazyRow
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(books!!) { book ->
                         var isFavorite by remember { mutableStateOf(false) } // Manage favorite state locally

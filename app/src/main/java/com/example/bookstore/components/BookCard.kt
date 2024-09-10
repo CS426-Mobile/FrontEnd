@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +47,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstore.Screen
 import com.example.bookstore.model.SimpleBookResponse
+import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
 import com.example.bookstore.viewmodel.UserViewModel
 
@@ -98,19 +101,28 @@ fun BookCard(
 
     Card(
         modifier = Modifier
-            .width(144.dp)
+            .width(150.dp)
             .height(240.dp)
             .padding(8.dp)
-            .background(color = Color.White)
+            .shadow(
+                elevation = 16.dp,
+                shape = RoundedCornerShape(16.dp),
+                ambientColor = mainColor.copy(alpha = 1f),  // Blur shadow
+                spotColor = mainColor.copy(alpha = 1f)
+            )
+            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
             .clickable { navController.navigate(route = Screen.Book.passBookName(book.book_name)) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .background(color = Color.White)
+                .fillMaxHeight()
+        ) {
             // Book image placeholder
             Box(
                 modifier = Modifier
-                    .size(144.dp, 160.dp)
+                    .size(150.dp, 160.dp)
                     .background(color = Color.White)
             ) {
                 // Book image
@@ -156,7 +168,7 @@ fun BookCard(
                         tint = Color(0xFFFFC107),
                         modifier = Modifier.size(24.dp)
                     )
-                    androidx.compose.material3.Text(
+                    Text(
                         text = String.format("%.1f", book.average_rating),
                         style = MaterialTheme.typography.caption,
                         color = Color.White,
@@ -169,25 +181,25 @@ fun BookCard(
             Spacer(modifier = Modifier.height(2.dp))
 
             // Book title
-            androidx.compose.material3.Text(
+            Text(
                 text = book.book_name,
                 style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 4.dp).background(color = Color.White),
                 textAlign = TextAlign.Center
             )
 
             // Author name
-            androidx.compose.material3.Text(
+            Text(
                 text = book.author_name,
                 style = MaterialTheme.typography.caption,
                 color = Color.Gray,
                 fontSize = 11.sp,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 4.dp).background(color = Color.White),
                 textAlign = TextAlign.Center
             )
         }
@@ -198,28 +210,37 @@ fun BookCard(
 fun BookCardPlaceholder() {
     Card(
         modifier = Modifier
-            .width(144.dp)
+            .width(150.dp)
             .height(240.dp)
-            .padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+            .padding(8.dp)
+            .shadow(
+                elevation = 24.dp,
+                shape = RoundedCornerShape(16.dp),
+                ambientColor = mainColor.copy(alpha = 1f),  // Blur shadow
+                spotColor = mainColor.copy(alpha = 1f)
+            )
+            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .background(color = Color.White)
+                .fillMaxHeight()
+        ) {
             // Placeholder image
             Box(
                 modifier = Modifier
-                    .size(144.dp, 160.dp)
-                    .background(color = Color.White)
+                    .size(150.dp, 160.dp)
+                    .background(color = Color.Gray)
             )
             Spacer(modifier = Modifier.height(16.dp))
             // Placeholder text
             Text(
                 text = "Loading...",
                 style = MaterialTheme.typography.body2,
-                fontWeight = FontWeight.Bold,
                 color = Color.Gray,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(horizontal = 8.dp).background(color = Color.White),
                 textAlign = TextAlign.Center
             )
         }

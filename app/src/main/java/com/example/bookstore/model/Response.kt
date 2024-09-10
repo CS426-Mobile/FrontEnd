@@ -116,3 +116,7 @@ data class CustomerFollowResponse(
 data class NumFollowerResponse(
     val num_follower: Int
 )
+
+data class QueryFollowResponse(
+    val follow: Boolean
+)

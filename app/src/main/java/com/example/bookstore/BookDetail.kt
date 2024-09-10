@@ -133,7 +133,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(bottom = 80.dp)  // Leave space for the fixed button at the bottom
+                            .padding(bottom = 70.dp)  // Leave space for the fixed button at the bottom
                     ) {
                         LazyColumn(
                             modifier = Modifier
@@ -248,7 +248,12 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                                     text = "Related Books",
                                     style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
                                 )
-                                LazyRow {
+                                LazyRow (
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp)
+                                ) {
                                     items(relatedBooks ?: emptyList()) { relatedBook ->
                                         BookCard(
                                             book = relatedBook,
@@ -257,6 +262,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                                     }
                                 }
                             }
+
                         }
                     }
 
