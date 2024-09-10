@@ -59,10 +59,10 @@ fun BookCard(
 ) {
     val customerFavoriteViewModel: CustomerFavoriteViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
-    var isFavorite by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf<Boolean?>(null) }
     var userEmail by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
 
-    // Fetch the user's email once when the card is displayed
     LaunchedEffect(Unit) {
         userViewModel.getUserInfo { success, userInfo, _ ->
             if (success && userInfo != null) {
@@ -72,8 +72,13 @@ fun BookCard(
                 customerFavoriteViewModel.queryCustomerFavoriteExist(userEmail!!, book.book_name) { favoriteSuccess, _ ->
                     if (favoriteSuccess) {
                         isFavorite = true
+                    } else {
+                        isFavorite = false
                     }
+                    isLoading = false // Data fetching is complete
                 }
+            } else {
+                isLoading = false // Data fetching is complete
             }
         }
     }
@@ -81,7 +86,7 @@ fun BookCard(
     // Handle favorite toggle
     fun toggleFavorite() {
         userEmail?.let { email ->
-            if (isFavorite) {
+            if (isFavorite == true) {
                 // Remove from favorites
                 customerFavoriteViewModel.deleteCustomerFavorite(email, book.book_name) { success, _ ->
                     if (success) {
@@ -99,109 +104,115 @@ fun BookCard(
         }
     }
 
-    Card(
-        modifier = Modifier
-            .width(150.dp)
-            .height(240.dp)
-            .padding(8.dp)
-            .shadow(
-                elevation = 16.dp,
-                shape = RoundedCornerShape(16.dp),
-                ambientColor = mainColor.copy(alpha = 1f),  // Blur shadow
-                spotColor = mainColor.copy(alpha = 1f)
-            )
-            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
-            .clickable { navController.navigate(route = Screen.Book.passBookName(book.book_name)) },
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+    if (isLoading) {
+        // Show the placeholder while loading
+        BookCardPlaceholder()
+    } else {
+        // Show the actual card once the data is fetched
+        Card(
             modifier = Modifier
-                .background(color = Color.White)
-                .fillMaxHeight()
-        ) {
-            // Book image placeholder
-            Box(
-                modifier = Modifier
-                    .size(150.dp, 160.dp)
-                    .background(color = Color.White)
-            ) {
-                // Book image
-                Image(
-                    painter = rememberAsyncImagePainter(model = book.book_image), // Load image from URL
-                    contentDescription = "Book Cover",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp), // Set the image height
-                    contentScale = ContentScale.Crop // Crop the image to fit
+                .width(150.dp)
+                .height(240.dp)
+                .padding(8.dp)
+                .shadow(
+                    elevation = 16.dp,
+                    shape = RoundedCornerShape(16.dp),
+                    ambientColor = mainColor.copy(alpha = 1f),  // Blur shadow
+                    spotColor = mainColor.copy(alpha = 1f)
                 )
-
-                // Semi-transparent gray blur layer
+                .background(color = Color.White, shape = RoundedCornerShape(16.dp))
+                .clickable { navController.navigate(route = Screen.Book.passBookName(book.book_name)) },
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(color = Color.White)
+                    .fillMaxHeight()
+            ) {
+                // Book image placeholder
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()  // Fill the size of the image
-                        .background(Color(0x4D000000))  // Semi-transparent gray color (30% opacity)
+                        .size(150.dp, 160.dp)
+                        .background(color = Color.White)
+                ) {
+                    // Book image
+                    Image(
+                        painter = rememberAsyncImagePainter(model = book.book_image), // Load image from URL
+                        contentDescription = "Book Cover",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp), // Set the image height
+                        contentScale = ContentScale.Crop // Crop the image to fit
+                    )
+
+                    // Semi-transparent gray blur layer
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()  // Fill the size of the image
+                            .background(Color(0x4D000000))  // Semi-transparent gray color (30% opacity)
+                    )
+
+                    // Favorite icon
+                    IconButton(
+                        onClick = { toggleFavorite() },
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                            tint = if (isFavorite == true) Color.Red else Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    // Rating
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = String.format("%.1f", book.average_rating),
+                            style = MaterialTheme.typography.caption,
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                // Book title
+                Text(
+                    text = book.book_name,
+                    style = MaterialTheme.typography.body2,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
+                    modifier = Modifier.padding(horizontal = 4.dp).background(color = Color.White),
+                    textAlign = TextAlign.Center
                 )
 
-                // Favorite icon
-                IconButton(
-                    onClick = { toggleFavorite() },
-                    modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = if (isFavorite) Color.Red else Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                // Rating
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFC107),
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = String.format("%.1f", book.average_rating),
-                        style = MaterialTheme.typography.caption,
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
+                // Author name
+                Text(
+                    text = book.author_name,
+                    style = MaterialTheme.typography.caption,
+                    color = Color.Gray,
+                    fontSize = 11.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 4.dp).background(color = Color.White),
+                    textAlign = TextAlign.Center
+                )
             }
-
-            Spacer(modifier = Modifier.height(2.dp))
-
-            // Book title
-            Text(
-                text = book.book_name,
-                style = MaterialTheme.typography.body2,
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-                modifier = Modifier.padding(horizontal = 4.dp).background(color = Color.White),
-                textAlign = TextAlign.Center
-            )
-
-            // Author name
-            Text(
-                text = book.author_name,
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray,
-                fontSize = 11.sp,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 4.dp).background(color = Color.White),
-                textAlign = TextAlign.Center
-            )
         }
     }
 }
