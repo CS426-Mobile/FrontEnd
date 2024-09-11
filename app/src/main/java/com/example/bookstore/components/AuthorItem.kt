@@ -40,7 +40,7 @@ fun AuthorItem(author: AuthorResponse, navController: NavHostController) {
             painter = rememberAsyncImagePainter(author.author_image),
             contentDescription = null,
             modifier = Modifier
-                .size(100.dp)  // Set the size to 100.dp diameter
+                .size(90.dp)  // Set the size to 100.dp diameter
                 .clip(CircleShape)  // Clip the image into a circle
                 .background(Color.Gray),  // Optional background color
             contentScale = ContentScale.Crop  // Crop the image to fit the circle
@@ -49,13 +49,13 @@ fun AuthorItem(author: AuthorResponse, navController: NavHostController) {
         // Text constrained to the width of the image
         Box(
             modifier = Modifier
-                .widthIn(max = 100.dp)  // Constrain the width to match the image diameter
+                .widthIn(max = 90.dp)  // Constrain the width to match the image diameter
                 .padding(horizontal = 4.dp)
         ) {
             Text(
                 text = author.author_name,
                 color = Color.Black,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 1,  // Limit to one line
                 overflow = TextOverflow.Ellipsis  // Truncate with "..."

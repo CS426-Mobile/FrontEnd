@@ -29,18 +29,6 @@ class AuthorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // Add a new author
-    fun addAuthor(authorRequest: AuthorRequest, onResult: (Boolean, String?) -> Unit) {
-        viewModelScope.launch {
-            val result = authorRepository.addAuthor(authorRequest)
-            result.onSuccess {
-                onResult(true, it)
-            }.onFailure {
-                onResult(false, it.message)
-            }
-        }
-    }
-
     // Get all authors
     fun getAllAuthors(onResult: (Boolean, List<AuthorResponse>?) -> Unit) {
         viewModelScope.launch {

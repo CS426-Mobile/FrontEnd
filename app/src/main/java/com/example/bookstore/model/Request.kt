@@ -70,3 +70,8 @@ data class CustomerFollowRequest(
     val author_name: String,
     val user_email: String
 )
+
+// Order Request
+data class OrderRequest(
+    val user_email: String
+)

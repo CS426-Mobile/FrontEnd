@@ -74,29 +74,30 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         ) { backStackEntry ->
             // Extract the author_name argument from the back stack
             val authorName = backStackEntry.arguments?.getString("author_name")
-            if (authorName != null) {
+            if (authorName != null)
                 AuthorDetailScreen(navController, authorName)
-            }
         }
-//        composable(
-//            route = Screen.Order.route, // Định nghĩa route có argument
-//            arguments = listOf(navArgument("orderID") { type = NavType.StringType }) // Khai báo loại argument
-//        ) { backStackEntry ->
-//            val orderID = backStackEntry.arguments?.getString("orderID") // Lấy giá trị argument
-//            OrderDetail(navController, orderID) // Truyền argument vào hàm
-//        }
+        composable(
+            route = Screen.Order.route, // Định nghĩa route có argument
+            arguments = listOf(navArgument("order_code") { type = NavType.StringType }) // Khai báo loại argument
+        ) { backStackEntry ->
+            val orderCode = backStackEntry.arguments?.getString("order_code") // Lấy giá trị argument
+            if (orderCode != null)
+                OrderDetail(navController, orderCode) // Truyền argument vào hàm
+        }
 
         composable(
             route = Screen.Book.route, // Định nghĩa route có argument
             arguments = listOf(navArgument("book_name") { type = NavType.StringType }) // Khai báo loại argument
         ) { backStackEntry ->
             val bookName = backStackEntry.arguments?.getString("book_name") // Lấy giá trị argument
-            BookDetailScreen(navController, bookName) // Truyền argument vào hàm
+            if (bookName != null)
+                BookDetailScreen(navController, bookName) // Truyền argument vào hàm
         }
 
-//        composable(Screen.ListOrder.route) {
-//            ListOrder(navController)
-//        }
+        composable(Screen.ListOrder.route) {
+            ListOrder(navController)
+        }
         composable(Screen.Favorite.route) {
             FavoriteScreen(navController)
         }

@@ -1,5 +1,7 @@
 package com.example.bookstore
 
+import com.example.bookstore.model.OrderResponse
+
 sealed class Screen(val route: String){
     object Home: Screen(route = "home_screen")
     object Account: Screen(route = "account_screen")
@@ -20,9 +22,9 @@ sealed class Screen(val route: String){
             return "book_screen/$bookName"
         }
     }
-    object Order: Screen(route = "order_screen/{orderID}") {
-        fun passOrderID(orderID: String): String {
-            return "order_screen/$orderID"
+    object Order: Screen(route = "order_screen/{order_code}") {
+        fun passOrder(orderCode: String): String {
+            return "order_screen/$orderCode"
         }
     }
 }

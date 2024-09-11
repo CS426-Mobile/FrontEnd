@@ -1,142 +1,183 @@
-//package com.example.bookstore
-//
-//import androidx.compose.foundation.Image
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.Arrangement
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.PaddingValues
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.foundation.layout.height
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.layout.size
-//import androidx.compose.foundation.lazy.LazyColumn
-//import androidx.compose.foundation.lazy.grid.GridCells
-//import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-//import androidx.compose.foundation.lazy.grid.items
-//import androidx.compose.foundation.lazy.items
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.KeyboardArrowDown
-//import androidx.compose.material.icons.filled.KeyboardArrowUp
-//import androidx.compose.material3.Button
-//import androidx.compose.material3.ButtonDefaults
-//import androidx.compose.material3.Card
-//import androidx.compose.material3.CardDefaults
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.IconButton
-//import androidx.compose.material3.Scaffold
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.mutableStateOf
-//import androidx.compose.runtime.remember
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.res.painterResource
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.text.style.TextAlign
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import androidx.navigation.NavHostController
-//import androidx.navigation.compose.rememberNavController
-//import com.example.bookstore.components.CustomTopAppBar
-//import com.example.bookstore.components.Order
-//import com.example.bookstore.ui.theme.mainColor
-//
-//@Composable
-//fun ListOrder(navController: NavHostController) {
-//    // Dữ liệu mẫu cho các sách trong giỏ hàng
-//    var orders  = sampleOrders()
-//
-//    Scaffold(
-//        topBar = {
-//            CustomTopAppBar(title = "Order", navController = navController, isCart = true)
-//        },
-//        content = { paddingValues ->
-//            if (orders.isEmpty()) {
-//                // Hiển thị thông báo mờ khi không có đơn hàng
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(paddingValues),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text(
-//                        text = "No orders found.",
-////                        style = MaterialTheme.typography.h6,
-//                        color = Color.Gray,
-//                        textAlign = TextAlign.Center
-//                    )
-//                }
-//            } else {
-//                // Hiển thị danh sách đơn hàng theo dạng lưới
-//                LazyVerticalGrid(
-//                    columns = GridCells.Fixed(1), // Số cột là 2
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(paddingValues),
-//                    contentPadding = PaddingValues(16.dp),
-//                    verticalArrangement = Arrangement.spacedBy(8.dp), // Khoảng cách giữa các hàng
-//                    horizontalArrangement = Arrangement.spacedBy(8.dp) // Khoảng cách giữa các cột
-//                ) {
-//                    items(orders) { order ->
-//                        OrderCard(order = order, navController = navController)
-//                    }
-//                }
-//            }
-//        }
-//    )
-//}
-//
-//@Composable
-//fun OrderCard(order: Order, navController: NavHostController) {
-//    val totalPrice = order.listBookOrder.sumOf({ it.price })
-//    val totalBooks = order.listBookOrder.size
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 8.dp, horizontal = 16.dp)
-//            .clickable {
-//                navController.navigate(route = Screen.Order.passOrderID(order.id))
-//            },
-//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp)
-//        ) {
-//
-//            Text(text = "Order ID: ${order.id}", fontWeight = FontWeight.Bold)
-//            Text(text = "Total: $${totalPrice}", fontWeight = FontWeight.Medium)
-//            Text(text = "Books: ${totalBooks}", color = Color.Gray)
-//        }
-//    }
-//}
-//
-////fun sampleOrders(): List<Order> {
-////    return listOf(
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////        Order("12345",  sampleFavoriteBooks()),
-////    )
-////}
-//
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun ListOrderPreview() {
-//    ListOrder(navController = rememberNavController())
-//}
+package com.example.bookstore
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.bookstore.components.CustomTopAppBar
+import com.example.bookstore.model.OrderResponse
+import com.example.bookstore.ui.theme.mainColor
+import com.example.bookstore.viewmodel.OrderViewModel
+import com.example.bookstore.viewmodel.UserViewModel
+
+@Composable
+fun ListOrder(navController: NavHostController) {
+    val userViewModel: UserViewModel = viewModel()
+    val orderViewModel: OrderViewModel = viewModel()
+
+    var userEmail by remember { mutableStateOf<String?>(null) }
+    var orders by remember { mutableStateOf<List<OrderResponse>?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    // Fetch user info and then the list of orders
+    LaunchedEffect(Unit) {
+        userViewModel.getUserInfo { success, userInfo, _ ->
+            if (success && userInfo != null) {
+                userEmail = userInfo.user_email
+
+                // Fetch the list of orders for this user
+                orderViewModel.queryCustomerOrder(userEmail!!) { orderSuccess, orderResult ->
+                    if (orderSuccess && orderResult != null) {
+                        orders = orderResult
+                    } else {
+                        errorMessage = "Failed to load orders."
+                    }
+                    isLoading = false
+                }
+            } else {
+                errorMessage = "Failed to fetch user info."
+                isLoading = false
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(title = "Order", navController = navController, isCart = true)
+        },
+        content = { paddingValues ->
+            when {
+                isLoading -> {
+                    // Show loading indicator
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color.Gray)
+                    }
+                }
+
+                errorMessage != null -> {
+                    // Show error message
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = errorMessage!!,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                orders.isNullOrEmpty() -> {
+                    // Show message when there are no orders
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No orders found.",
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                else -> {
+                    // Show list of orders in a grid
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(1), // 1 column (for full-width)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(orders!!) { order ->
+                            OrderCard(order = order, navController = navController)
+                        }
+                    }
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun OrderCard(order: OrderResponse, navController: NavHostController) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .shadow(
+                elevation = 16.dp,
+                shape = RoundedCornerShape(16.dp),
+                ambientColor = mainColor.copy(alpha = 1f),  // Blur shadow
+                spotColor = mainColor.copy(alpha = 1f)
+            )
+            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
+            .clickable {
+                navController.navigate(route = Screen.Order.passOrder(order.order_code))
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(color = Color.White)
+                .padding(start = 16.dp),  // Add padding at the start
+            verticalArrangement = Arrangement.Center,  // Center the content vertically
+            horizontalAlignment = Alignment.Start      // Align the content at the start horizontally
+        ) {
+            Spacer(modifier = Modifier.height(8.dp)) // Add space between text elements
+            Text(text = "Order ID: ${order.order_code}", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp)) // Add space between text elements
+            Text(text = "Total: $${order.total_price}", fontWeight = FontWeight.Medium)
+            Spacer(modifier = Modifier.height(4.dp)) // Add space between text elements
+            Text(text = "Number of items: ${order.num_books}", color = Color.Gray)
+            Spacer(modifier = Modifier.height(8.dp)) // Add space between text elements
+        }
+
+    }
+}

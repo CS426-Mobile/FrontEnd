@@ -105,7 +105,7 @@ fun PurchaseSuccessScreen(navController: NavHostController) {
                 // Nút "Track Order"
                 Button(
                     onClick = {
-                        navController.navigate("order_screen")
+                        navController.navigate(Screen.ListOrder.route)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = mainColor,

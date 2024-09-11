@@ -19,6 +19,10 @@ import com.example.bookstore.model.LoginRequest
 import com.example.bookstore.model.LoginResponse
 import com.example.bookstore.model.LogoutResponse
 import com.example.bookstore.model.NumFollowerResponse
+import com.example.bookstore.model.OrderDetailResponse
+import com.example.bookstore.model.OrderListResponse
+import com.example.bookstore.model.OrderRequest
+import com.example.bookstore.model.OrderResponse
 import com.example.bookstore.model.QueryFollowResponse
 import com.example.bookstore.model.RegisterRequest
 import com.example.bookstore.model.RegisterResponse
@@ -221,4 +225,17 @@ interface ApiService {
     // Fetch all categories
     @GET("/categories/")
     suspend fun getAllCategories(): Response<List<CategoryResponse>>
+
+    // Order APIs
+    // Insert a new customer order
+    @POST("/order/insert/")
+    suspend fun insertCustomerOrder(@Body request: OrderRequest): Response<RegisterResponse>
+
+    // Query all customer orders for a user
+    @GET("/order/query/")
+    suspend fun queryCustomerOrder(@Query("user_email") userEmail: String): Response<OrderListResponse>
+
+    // Query all order details for a specific order code
+    @GET("/order/detail/")
+    suspend fun queryOrderDetail(@Query("order_code") orderCode: String): Response<List<OrderDetailResponse>>
 }

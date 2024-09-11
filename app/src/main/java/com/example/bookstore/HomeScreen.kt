@@ -118,6 +118,8 @@ fun HomeScreen(navController: NavHostController) {
             onQueryChanged = { searchQuery = it },
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         FilterScreen(
             isSheetOpen = isSheetOpen,
             onSheetOpenChange = { isSheetOpen = it }

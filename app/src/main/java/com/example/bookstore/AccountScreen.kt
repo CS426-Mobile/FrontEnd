@@ -90,7 +90,7 @@ fun AccountScreen(navController: NavHostController) {
                     .fillMaxSize()
                     .background(Color.White)
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(start = 16.dp, end = 16.dp)
             ) {
 
                 if (isLoading) {

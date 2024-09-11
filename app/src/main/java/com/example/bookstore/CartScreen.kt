@@ -47,12 +47,14 @@ import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.CustomerCartViewModel
 import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
+import com.example.bookstore.viewmodel.OrderViewModel
 import com.example.bookstore.viewmodel.UserViewModel
 
 @Composable
 fun CartScreen(navController: NavHostController) {
     val userViewModel: UserViewModel = viewModel()
     val customerCartViewModel: CustomerCartViewModel = viewModel()
+    val orderViewModel: OrderViewModel = viewModel()
 
     var userEmail by remember { mutableStateOf<String?>(null) }
     var cartItems by remember { mutableStateOf<List<CustomerCartResponse>?>(null) }
@@ -235,9 +237,17 @@ fun CartScreen(navController: NavHostController) {
                                 )
                             }
 
-                            // Buy button
                             Button(
-                                onClick = { navController.navigate(Screen.Success.route) },
+                                onClick = {
+                                    // Insert customer order
+                                    if (userEmail != null) {
+                                        orderViewModel.insertCustomerOrder(userEmail!!) { orderSuccess, message ->
+                                            if (orderSuccess) {
+                                                navController.navigate(Screen.Success.route) // Navigate to success screen
+                                            }
+                                        }
+                                    }
+                                },
                                 colors = ButtonDefaults.buttonColors(containerColor = mainColor),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -252,20 +262,4 @@ fun CartScreen(navController: NavHostController) {
             }
         }
     )
-}
-
-
-fun sampleCartItems(): List<BookDetail> {
-    return listOf(
-        BookDetail("The Secret About Us", "Elizabeth McKean", 4.2f, true),
-        BookDetail("The Happiness", "Kate Kirkwood", 4.7f, true),
-        BookDetail("Peace in His Life", "Armando Newman", 3.9f, true)
-    )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun CartScreenPreview() {
-    CartScreen(navController = rememberNavController())
 }

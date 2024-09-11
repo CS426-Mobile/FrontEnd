@@ -126,3 +126,22 @@ data class CategoryResponse(
     val category_name: String
 )
 
+// Order Response
+data class OrderListResponse(
+    val order_list: List<OrderResponse>
+)
+
+data class OrderResponse(
+    val order_code: String,
+    val total_price: Float,
+    val num_books: Int
+)
+
+data class OrderDetailResponse(
+    val book_name: String,
+    val author_name: String,
+    val book_image: String,
+    val average_rating: Float,
+    val price: Float,
+    val num_books: Int
+)
