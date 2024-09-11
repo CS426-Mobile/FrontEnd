@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.bookstore.Screen
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.model.OrderResponse
 import com.example.bookstore.ui.theme.mainColor
@@ -85,6 +85,7 @@ fun ListOrder(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(color = Color.White)
                             .padding(paddingValues),
                         contentAlignment = Alignment.Center
                     ) {
@@ -97,6 +98,7 @@ fun ListOrder(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(color = Color.White)
                             .padding(paddingValues),
                         contentAlignment = Alignment.Center
                     ) {
@@ -113,6 +115,7 @@ fun ListOrder(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(color = Color.White)
                             .padding(paddingValues),
                         contentAlignment = Alignment.Center
                     ) {
@@ -130,6 +133,7 @@ fun ListOrder(navController: NavHostController) {
                         columns = GridCells.Fixed(1), // 1 column (for full-width)
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(color = Color.White)
                             .padding(paddingValues),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -149,7 +153,7 @@ fun OrderCard(order: OrderResponse, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .padding(vertical = 8.dp, horizontal = 8.dp)
             .shadow(
                 elevation = 16.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -171,7 +175,7 @@ fun OrderCard(order: OrderResponse, navController: NavHostController) {
             horizontalAlignment = Alignment.Start      // Align the content at the start horizontally
         ) {
             Spacer(modifier = Modifier.height(8.dp)) // Add space between text elements
-            Text(text = "Order ID: ${order.order_code}", fontWeight = FontWeight.Bold)
+            Text(text = "Order Code: ${order.order_code}", fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(4.dp)) // Add space between text elements
             Text(text = "Total: $${order.total_price}", fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp)) // Add space between text elements

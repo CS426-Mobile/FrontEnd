@@ -60,7 +60,7 @@ fun BookCardHorizontal(
     book: CustomerFavoriteResponse,
     onFavoriteClick: () -> Unit,  // Callback to handle favorite logic
     navController: NavHostController,
-    favoriteScreen: Boolean = true
+    favoriteScreen: Int = 1
 ) {
     var isVisible by remember { mutableStateOf(true) }  // Track visibility for this specific book card
     var isDone by remember { mutableStateOf(false) }
@@ -102,19 +102,23 @@ fun BookCardHorizontal(
             }
 
             Column {
-                IconButton(
-                    onClick = {
-                        isVisible = false  // Trigger the disappearing animation
+                if (favoriteScreen <= 1) {
+                    IconButton(
+                        onClick = {
+                            isVisible = false  // Trigger the disappearing animation
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (favoriteScreen == 1) (Icons.Default.Favorite) else (Icons.Default.Delete),
+                            contentDescription = "Remove from Favorites",
+                            tint = Color.Red
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = if (favoriteScreen) (Icons.Default.Favorite) else (Icons.Default.Delete),
-                        contentDescription = "Remove from Favorites",
-                        tint = Color.Red
-                    )
                 }
                 Text("$${book.price}", color = Color.Gray, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
+            if (favoriteScreen > 1)
+                Spacer(modifier = Modifier.width(10.dp))
         }
     }
 

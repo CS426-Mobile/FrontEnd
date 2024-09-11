@@ -96,7 +96,7 @@ fun AccountScreen(navController: NavHostController) {
                 if (isLoading) {
                     // Show loading state
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().background(color = Color.White),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(color = Color.Gray)
@@ -104,7 +104,7 @@ fun AccountScreen(navController: NavHostController) {
                 } else if (errorMessage != null) {
                     // Show error message
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().background(color = Color.White),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -117,7 +117,7 @@ fun AccountScreen(navController: NavHostController) {
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.background(Color.White)
+                        modifier = Modifier.background(Color.White).padding(top = 16.dp)
                     ) {
                         // Address section
                         item {

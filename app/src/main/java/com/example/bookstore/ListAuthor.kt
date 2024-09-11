@@ -80,12 +80,10 @@ fun ListAuthor(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(start = 16.dp, end = 16.dp)
                     .background(color = Color.White)
             ) {
-                SearchBar(
-                    query = searchQuery,
-                    onQueryChanged = { searchQuery = it },
+                SearchBarHolder(
+                    navController = navController
                 )
 //                // Search bar with navigation to search screen
 //                SearchBar(
@@ -97,12 +95,10 @@ fun ListAuthor(navController: NavHostController) {
 //                    }
 //                )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 when {
                     isLoading -> {
                         // Loading state
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(modifier = Modifier.fillMaxSize().background(color = Color.White), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(color = Color.Gray)
                         }
                     }
@@ -118,7 +114,7 @@ fun ListAuthor(navController: NavHostController) {
                     }
                     listAuthor != null -> {
                         // Display the list of authors
-                        LazyColumn {
+                        LazyColumn (modifier = Modifier.padding(16.dp)) {
                             items(listAuthor!!) { author ->
                                 AuthorHorizontalItem(
                                     author = author,

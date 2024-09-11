@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,10 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.bookstore.Screen
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.RatingBar
 import com.example.bookstore.model.OrderDetailResponse
@@ -125,7 +123,7 @@ fun OrderDetail(navController: NavHostController, orderCode: String) {
                     errorMessage != null -> {
                         // Show error message
                         Box(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize().background(color = Color.White),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -142,18 +140,18 @@ fun OrderDetail(navController: NavHostController, orderCode: String) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(horizontal = 16.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .background(color = Color.White)
                         ) {
                             Text(
-                                text = "Order ID: ${order!!.order_code}",
+                                text = "Order Code: ${order!!.order_code}",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                                color = Color.Black,
+                                fontSize = 18.sp,
+                                color = mainColor,
                                 modifier = Modifier.fillMaxWidth()
                                     .align(Alignment.CenterHorizontally)
+                                    .padding(8.dp)
                             )
-
-                            Spacer(modifier = Modifier.height(16.dp))
 
                             // LazyColumn for order items
                             if (orderItems != null && orderItems!!.isNotEmpty()) {
@@ -170,7 +168,7 @@ fun OrderDetail(navController: NavHostController, orderCode: String) {
                                 }
                             } else {
                                 Box(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier.fillMaxSize().background(Color.White),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
@@ -261,7 +259,7 @@ fun OrderDetailCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 12.dp, start = 24.dp, end = 24.dp)
+            .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
             .shadow(
                 elevation = 14.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -290,5 +288,6 @@ fun OrderDetailCard(
         }
 
         Text("$${book.price}", color = Color.Gray, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.width(10.dp))
     }
 }

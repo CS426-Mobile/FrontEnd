@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.bookstore.R
 import com.example.bookstore.Screen
 import com.example.bookstore.canGoBack
+import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.ui.theme.textColor
 
 @Composable
@@ -28,7 +29,7 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
     TopAppBar(
         backgroundColor = Color.White,
         contentColor = Color.Black,
-        elevation = 0.dp
+        elevation = 2.dp
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -68,11 +69,12 @@ fun CustomTopAppBar(title: String, isBack: Boolean = false, isCart: Boolean = fa
                 if (isCart) {
                     IconButton(
                         onClick = { navController.navigate(Screen.Cart.route) },
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(10.dp)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_shopping), // Thay bằng icon giỏ hàng của bạn
-                            contentDescription = "Cart"
+                            contentDescription = "Cart",
+                            tint = mainColor
                         )
                     }
                 }

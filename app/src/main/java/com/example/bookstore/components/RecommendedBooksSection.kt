@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.bookstore.model.SimpleBookResponse
+import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.BookViewModel
 
 @Composable
@@ -47,11 +48,12 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 0.dp, bottom = 8.dp)) {
         // Section title
         Text(
             text = "Recommended Books",
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 24.dp),
+            color = mainColor,
             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
         )
 
@@ -59,7 +61,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
             !isDataFetched -> {
                 // Show placeholder while loading
                 LazyRow(
-                    Modifier.fillMaxWidth(),
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(3) { // Show 3 placeholder items
@@ -80,7 +82,7 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
             books != null && books!!.isNotEmpty() -> {
                 // Show books in a LazyRow
                 LazyRow(
-                    Modifier.fillMaxWidth(),
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(books!!) { book ->

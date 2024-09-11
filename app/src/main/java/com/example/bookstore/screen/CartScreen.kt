@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,20 +33,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.bookstore.Screen
 import com.example.bookstore.components.BookCardHorizontal
-import com.example.bookstore.components.BookDetail
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.model.CustomerCartResponse
 import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.CustomerCartViewModel
-import com.example.bookstore.viewmodel.CustomerFavoriteViewModel
 import com.example.bookstore.viewmodel.OrderViewModel
 import com.example.bookstore.viewmodel.UserViewModel
 
@@ -151,7 +148,6 @@ fun CartScreen(navController: NavHostController) {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(vertical = 8.dp)
-                                .padding(bottom = 20.dp)
                         ) {
                             // LazyColumn for cart items
                             LazyColumn(
@@ -174,7 +170,7 @@ fun CartScreen(navController: NavHostController) {
                                                 }
                                             }
                                         },
-                                        favoriteScreen = false
+                                        favoriteScreen = 0
                                     )
                                 }
                             }
@@ -251,7 +247,7 @@ fun CartScreen(navController: NavHostController) {
                                 colors = ButtonDefaults.buttonColors(containerColor = mainColor),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 16.dp)
+                                    .padding(16.dp)
                                     .height(56.dp)
                             ) {
                                 Text("Buy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)

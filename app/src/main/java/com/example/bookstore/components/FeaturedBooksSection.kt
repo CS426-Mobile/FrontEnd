@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.bookstore.model.SimpleBookResponse
+import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.BookViewModel
 
 @Composable
@@ -49,8 +50,9 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
         // Section title
         Text(
             text = "Featured Books",
+            color = mainColor,
             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 24.dp)
         )
 
         when {
@@ -59,7 +61,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 30.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     repeat(2) { // Show 10 placeholder items
@@ -83,7 +85,7 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .padding(horizontal = 30.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         for (book in bookRow) {

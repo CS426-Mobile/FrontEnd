@@ -62,8 +62,8 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
 
     // Get books by matching string
     fun getBooksByMatchingString(
-        categoryName: String,
-        bookInput: String,
+        categoryName: String = "",
+        bookInput: String = "",
         ratingOptional: String = "all",
         priceOptional: String = "no",
         priceMin: Double = 0.0,

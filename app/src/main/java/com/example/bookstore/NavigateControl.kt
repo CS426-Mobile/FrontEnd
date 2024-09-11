@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -25,7 +29,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookstore.screen.AuthorDetailScreen
 import com.example.bookstore.screen.BookDetailScreen
+import com.example.bookstore.screen.CartScreen
 import com.example.bookstore.screen.FavoriteScreen
+import com.example.bookstore.screen.ListOrder
+import com.example.bookstore.screen.OrderDetail
 import com.example.bookstore.screen.PurchaseSuccessScreen
 import com.example.bookstore.ui.theme.mainColor
 
@@ -70,16 +77,30 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         // Add AuthorDetailScreen with a dynamic author_name argument
         composable(
             route = Screen.Author.route,
-            arguments = listOf(navArgument("author_name") { type = NavType.StringType })
+            arguments = listOf(navArgument("author_name") { type = NavType.StringType }),
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
         ) { backStackEntry ->
             // Extract the author_name argument from the back stack
             val authorName = backStackEntry.arguments?.getString("author_name")
-            if (authorName != null)
+            if (authorName != null) {
                 AuthorDetailScreen(navController, authorName)
+            }
         }
+
         composable(
             route = Screen.Order.route, // Định nghĩa route có argument
-            arguments = listOf(navArgument("order_code") { type = NavType.StringType }) // Khai báo loại argument
+            arguments = listOf(navArgument("order_code") { type = NavType.StringType }),
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }// Khai báo loại argument
         ) { backStackEntry ->
             val orderCode = backStackEntry.arguments?.getString("order_code") // Lấy giá trị argument
             if (orderCode != null)
@@ -88,32 +109,95 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
 
         composable(
             route = Screen.Book.route, // Định nghĩa route có argument
-            arguments = listOf(navArgument("book_name") { type = NavType.StringType }) // Khai báo loại argument
+            arguments = listOf(navArgument("book_name") { type = NavType.StringType }), // Khai báo loại argument
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
         ) { backStackEntry ->
             val bookName = backStackEntry.arguments?.getString("book_name") // Lấy giá trị argument
-            if (bookName != null)
-                BookDetailScreen(navController, bookName) // Truyền argument vào hàm
+            BookDetailScreen(navController, bookName) // Truyền argument vào hàm
         }
 
-        composable(Screen.ListOrder.route) {
-            ListOrder(navController)
-        }
-        composable(Screen.Favorite.route) {
-            FavoriteScreen(navController)
-        }
-        composable(Screen.Cart.route) {
+        composable(
+            route = Screen.Cart.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ) {
             CartScreen(navController)
         }
-        composable(Screen.Account.route) {
+        composable(
+            route = Screen.ListOrder.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ) {
+            ListOrder(navController)
+        }
+        composable(
+            route = Screen.Favorite.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ) {
+            FavoriteScreen(navController)
+        }
+
+        composable(
+            route = Screen.Account.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ) {
             AccountScreen(navController)
         }
-        composable(Screen.ListAuthor.route){
+
+        composable(
+            route = Screen.ListAuthor.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ){
             ListAuthor(navController)
         }
-//        composable(Screen.Search.route){
-//            SearchScreen(navController)
-//        }
-        composable(Screen.Success.route){
+        composable(
+            route = Screen.Search.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ){
+            SearchScreen(navController)
+        }
+        composable(
+            route = Screen.Success.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ){
             PurchaseSuccessScreen(navController)
         }
     }

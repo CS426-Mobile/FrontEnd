@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.bookstore.Screen
 import com.example.bookstore.model.AuthorResponse
+import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 
 @Composable
@@ -59,23 +60,24 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
     }
 
     // UI Layout with header and authors list
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 0.dp, bottom = 8.dp)) {
         // Row for "Popular Authors" title and "See all" button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 24.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Popular Authors",
+                color = mainColor,
                 style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = "See all >",
-                color = Color.Gray,
+                text = "See all > ",
+                color = mainColor,
                 fontSize = 14.sp,
                 modifier = Modifier
                     .clickable { navController.navigate(Screen.ListAuthor.route) }
@@ -86,8 +88,8 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
             isLoading -> {
                 // Show placeholder while loading
                 LazyRow(
-                    modifier = Modifier.padding(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(5) { // Show 5 placeholder items
                         AuthorItemPlaceholder()
@@ -107,8 +109,8 @@ fun AuthorsSection(navController: NavHostController, authorViewModel: AuthorView
             authors != null && authors!!.isNotEmpty() -> {
                 // Show LazyRow with authors if data is available
                 LazyRow(
-                    modifier = Modifier.padding(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(authors!!) { author ->
                         AuthorItem(
@@ -140,7 +142,7 @@ fun AuthorItemPlaceholder() {
         // Placeholder image with a diameter of 100.dp
         Box(
             modifier = Modifier
-                .size(100.dp)  // Set the size to 100.dp diameter
+                .size(90.dp)  // Set the size to 100.dp diameter
                 .clip(CircleShape)
                 .background(Color.Gray)  // Placeholder color
         )
@@ -148,7 +150,7 @@ fun AuthorItemPlaceholder() {
         // Placeholder text constrained to the width of the image
         Box(
             modifier = Modifier
-                .widthIn(max = 100.dp)  // Constrain the width to match the image diameter
+                .widthIn(max = 90.dp)  // Constrain the width to match the image diameter
                 .padding(horizontal = 4.dp)
         ) {
             Text(

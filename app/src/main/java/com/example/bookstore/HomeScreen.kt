@@ -1,6 +1,8 @@
 package com.example.bookstore
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Space
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -77,13 +79,14 @@ fun HomeScreen(navController: NavHostController) {
     var selectedCategories by remember { mutableStateOf(listOf<String>()) }
     var offsetY by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
+    // State để theo dõi vị trí cuộn
+    val listState = rememberLazyListState()
 
     // Create AuthorViewModel instance
     val authorViewModel: AuthorViewModel = viewModel()
     val bookViewModel: BookViewModel = viewModel()
 
     // State để theo dõi vị trí cuộn
-    val listState = rememberLazyListState()
 
     var searchQuery by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
@@ -92,20 +95,14 @@ fun HomeScreen(navController: NavHostController) {
     var isFilterActive by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(SortType.NONE) }
 
-    // Animation for Recommended Books height
-    val recommendedBooksHeight by animateDpAsState(
-        targetValue = if (offsetY > -100) 200.dp else 0.dp
-    )
-
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            }
+//            .pointerInput(Unit) {
+//                detectTapGestures(onTap = { focusManager.clearFocus() })
+//            }
     ) {
         CustomTopAppBar(
             title = "Browse everything",
@@ -113,17 +110,9 @@ fun HomeScreen(navController: NavHostController) {
             navController = navController
         )
 
-        SearchBar(
-            query = searchQuery,
-            onQueryChanged = { searchQuery = it },
-        )
+        SearchBarHolder(navController = navController)
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        FilterScreen(
-            isSheetOpen = isSheetOpen,
-            onSheetOpenChange = { isSheetOpen = it }
-        )
 
         LazyColumn(
             modifier = Modifier
@@ -193,58 +182,6 @@ fun HomeScreen(navController: NavHostController) {
     }
 }
 
-@Composable
-fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
-    val focusRequester = remember { FocusRequester() }
-    val isFocused = remember { mutableStateOf(false) }
-
-    OutlinedTextField(
-        value = query,
-        onValueChange = { newQuery ->
-            // Update the query with the new text
-            onQueryChanged(newQuery)
-        },
-        label = {
-            if (query.isEmpty()) {
-                Text(
-                    text = "Search",
-                    color = when {
-                        isFocused.value -> mainColor
-                        else -> Color.Gray
-                    }
-                )
-            }
-        },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = null,
-                tint = when {
-                    isFocused.value -> mainColor
-                    else -> Color.Gray
-                },
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        textStyle = TextStyle(
-            fontSize = 18.sp,
-            color = Color.Black
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = mainColor,
-            unfocusedBorderColor = Color.Gray,
-            backgroundColor = if (isFocused.value) Color.White else Color.Transparent
-        ),
-        shape = RoundedCornerShape(32.dp),
-        modifier = Modifier
-            .fillMaxWidth() // Make the search bar shorter (80% of the width)
-            .padding(start = 8.dp, end = 8.dp)
-            .onFocusChanged { focusState -> isFocused.value = focusState.isFocused }
-            .focusRequester(focusRequester)
-    )
-    Spacer(modifier = Modifier.width(16.dp))
-}
-
 
 @Composable
 fun rememberNestedScrollConnection(onScroll: (Float) -> Unit): NestedScrollConnection {
@@ -257,6 +194,50 @@ fun rememberNestedScrollConnection(onScroll: (Float) -> Unit): NestedScrollConne
         }
     }
 }
+
+@Composable
+fun SearchBarHolder(navController: NavHostController) {
+    Spacer(modifier = Modifier.height(4.dp))
+    // Outer Box to handle clicks and give the illusion of a search bar
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)  // Set a height similar to the standard OutlinedTextField
+            .padding(horizontal = 20.dp)
+            .clip(RoundedCornerShape(32.dp))
+            .background(Color(0xFFF0F0F0)) // Light gray background like a search bar
+            .clickable {
+                // Navigate to the search screen when clicked
+                navController.navigate(Screen.Search.route)
+            }
+            .padding(horizontal = 16.dp),  // Padding inside the search bar
+        contentAlignment = Alignment.CenterStart
+    ) {
+        // Row inside the Box to align the search icon and text
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Search icon
+            Icon(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = "Search Icon",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            )
+
+            // Spacer to create space between the icon and text
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Placeholder text, similar to OutlinedTextField's label
+            Text(
+                text = "Search",
+                color = Color.Gray,
+                fontSize = 18.sp
+            )
+        }
+    }
+}
+
 @Composable
 fun CategoriesSection(
     selectedCategories: List<String>,
@@ -265,7 +246,8 @@ fun CategoriesSection(
     // Section title
     Text(
         text = "Categories",
-        modifier = Modifier.padding(16.dp),
+        color = mainColor,
+        modifier = Modifier.padding(horizontal = 24.dp),
         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
     )
 
@@ -273,8 +255,8 @@ fun CategoriesSection(
 
     // Categories list with spacing
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp), // Padding between boxes
-        modifier = Modifier.padding(horizontal = 16.dp) // Overall padding for the section
+        horizontalArrangement = Arrangement.spacedBy(12.dp), // Padding between boxes
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp) // Overall padding for the section
     ) {
         items(listOf("All", "Romance", "Fiction", "Education", "Manga")) { category ->
             Box(
@@ -293,7 +275,7 @@ fun CategoriesSection(
     }
 
     // Add white space below the categories section
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable

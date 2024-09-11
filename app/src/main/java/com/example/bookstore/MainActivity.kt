@@ -55,7 +55,6 @@ class MainActivity : ComponentActivity() {
                     val rememberedUserEmail = sharedPref.getString("remembered_user_email", null)
                     val rememberedUserPassword = sharedPref.getString("remembered_user_password", null)
                     val userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-                    val coroutineScope = rememberCoroutineScope()
 
                     LaunchedEffect(Unit) {
                         if (rememberedUserEmail != null && rememberedUserPassword != null) {
@@ -69,12 +68,12 @@ class MainActivity : ComponentActivity() {
                                     finish()
                                 }
                             }
-                        } else if (!onboardingComplete) {
+                        } else {//if (!onboardingComplete) {
                             startActivity(Intent(this@MainActivity, OnboardingActivity::class.java))
                             finish()
-                        } else {
-                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                            finish()
+//                        } else {
+//                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+//                            finish()
                         }
                         isLoading = false
                     }
