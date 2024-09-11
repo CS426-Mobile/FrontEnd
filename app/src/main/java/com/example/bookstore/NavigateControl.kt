@@ -67,7 +67,13 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
         // Add AuthorDetailScreen with a dynamic author_name argument
         composable(
             route = Screen.Author.route,
-            arguments = listOf(navArgument("author_name") { type = NavType.StringType })
+            arguments = listOf(navArgument("author_name") { type = NavType.StringType }),
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
         ) { backStackEntry ->
             // Extract the author_name argument from the back stack
             val authorName = backStackEntry.arguments?.getString("author_name")
@@ -78,7 +84,13 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
 
         composable(
             route = Screen.Order.route, // Định nghĩa route có argument
-            arguments = listOf(navArgument("orderID") { type = NavType.StringType }) // Khai báo loại argument
+            arguments = listOf(navArgument("orderID") { type = NavType.StringType }),
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }// Khai báo loại argument
         ) { backStackEntry ->
             val orderID = backStackEntry.arguments?.getString("orderID") // Lấy giá trị argument
             OrderDetail(navController, orderID) // Truyền argument vào hàm
