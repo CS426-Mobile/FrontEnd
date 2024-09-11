@@ -100,9 +100,6 @@ fun HomeScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .pointerInput(Unit) {
-//                detectTapGestures(onTap = { focusManager.clearFocus() })
-//            }
     ) {
         CustomTopAppBar(
             title = "Browse everything",
@@ -113,6 +110,11 @@ fun HomeScreen(navController: NavHostController) {
         SearchBarHolder(navController = navController)
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        FilterScreen(
+            isSheetOpen = isSheetOpen,
+            onSheetOpenChange = { isSheetOpen = it }
+        )
 
         LazyColumn(
             modifier = Modifier
