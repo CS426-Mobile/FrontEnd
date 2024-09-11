@@ -59,10 +59,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.FeaturedBooksSection
@@ -94,6 +97,7 @@ fun HomeScreen(navController: NavHostController) {
     // State cho nút Filter và Sort
     var isFilterActive by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(SortType.NONE) }
+    var isTopRating by remember { mutableStateOf(false)}
 
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -113,7 +117,8 @@ fun HomeScreen(navController: NavHostController) {
 
         FilterScreen(
             isSheetOpen = isSheetOpen,
-            onSheetOpenChange = { isSheetOpen = it }
+            onSheetOpenChange = { isSheetOpen = it },
+            onFilterActive = {isFilterActive = it}
         )
 
         LazyColumn(
@@ -139,39 +144,48 @@ fun HomeScreen(navController: NavHostController) {
             }
 
             stickyHeader {
-                Column(
-                    modifier = Modifier.background(Color.White) // Ensure sticky header stays visible
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White) // Đặt nền vững chắc
+                        .zIndex(1f)
+                        .pointerInput(Unit) {}
                 ) {
-
-
-                    CategoriesSection(
-                        selectedCategories = selectedCategories,
-                        onCategorySelected = { category ->
-                            selectedCategories = if (selectedCategories.contains(category)) {
-                                selectedCategories - category
-                            } else {
-                                selectedCategories + category
-                            }
-                        }
-                    )
-
-                    // Thay thế FilterSection bằng FilterBar
-                    if (selectedCategories.isNotEmpty()) {
-                        FilterBar(
-                            isFilterActive = isFilterActive,
-                            navController = navController,
-                            sortType = sortType,
-                            onSortClick = {
-                                sortType = when (sortType) {
-                                    SortType.NONE -> SortType.ASCENDING
-                                    SortType.ASCENDING -> SortType.DESCENDING
-                                    SortType.DESCENDING -> SortType.NONE
+                    Column(
+                        modifier = Modifier.background(Color.White) // Ensure sticky header stays visible
+                    ) {
+                        CategoriesSection(
+                            selectedCategories = selectedCategories,
+                            onCategorySelected = { category ->
+                                selectedCategories = if (selectedCategories.contains(category)) {
+                                    selectedCategories - category
+                                } else {
+                                    selectedCategories + category
                                 }
-                            },
-                            onFilterClick = {
-                                isSheetOpen = true
                             }
                         )
+
+                        // Thay thế FilterSection bằng FilterBar
+                        if (selectedCategories.isNotEmpty()) {
+                            FilterBar(
+                                isFilterActive = isFilterActive,
+                                isTopRating = isTopRating,
+                                sortType = sortType,
+                                onSortClick = {
+                                    sortType = when (sortType) {
+                                        SortType.NONE -> SortType.ASCENDING
+                                        SortType.ASCENDING -> SortType.DESCENDING
+                                        SortType.DESCENDING -> SortType.NONE
+                                    }
+                                },
+                                onFilterClick = {
+                                    isSheetOpen = true
+                                },
+                                onRatingClick = {
+                                    isTopRating = !isTopRating
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -277,16 +291,29 @@ fun CategoriesSection(
     }
 
     // Add white space below the categories section
-    Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FilterPreview(){
+    FilterBar(
+        isFilterActive = true,
+        isTopRating = true,
+        onRatingClick = {},
+        sortType = SortType.ASCENDING,
+        onSortClick = {},
+        onFilterClick = {}
+    )
 }
 
 @Composable
 fun FilterBar(
     isFilterActive: Boolean = false,
-    navController: NavHostController,
+    onFilterClick: () -> Unit,
+    isTopRating: Boolean = false,
+    onRatingClick: () -> Unit,
     sortType: SortType = SortType.NONE,
-    onSortClick: () -> Unit,
-    onFilterClick: () -> Unit
+    onSortClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -305,51 +332,41 @@ fun FilterBar(
                 contentColor = if (isFilterActive) Color(0xFFFF6600) else Color.Gray
             ),
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize() // Đảm bảo nút vừa với nội dung
+            modifier = Modifier.wrapContentSize().weight(1f) // Đảm bảo nút vừa với nội dung
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_filter), // Thay bằng icon của bạn
                 contentDescription = "Filter",
-                tint = if (isFilterActive) Color(0xFFFF6600) else Color.Gray,
+                tint = if (isFilterActive) mainColor else Color.Gray,
                 modifier = Modifier.size(16.dp) // Điều chỉnh kích thước icon
             )
         }
 
-        // Nút Top Sales
-        Button(
-            onClick = { /* Xử lý khi nút Top Sales được bấm */ },
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFFF0F0F0),
-                contentColor = Color.Gray
-            ),
-            shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize()
-        ) {
-            Text("Top Sales", fontSize = 12.sp) // Điều chỉnh font size cho dễ nhìn hơn
-        }
-
         // Nút Top Ratings
         Button(
-            onClick = { /* Xử lý khi nút Top Ratings được bấm */ },
+            onClick = {
+                onRatingClick()
+            },
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFFF0F0F0),
-                contentColor = Color.Gray
+                backgroundColor = if (isTopRating) Color(0xFFFFF0E0) else Color(0xFFF0F0F0),
+                contentColor = if (isTopRating) mainColor else Color.Gray
             ),
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier.wrapContentSize().weight(2f)
         ) {
-            Text("Top Ratings", fontSize = 12.sp)
+            Text("Top Ratings", fontSize = 12.sp,
+                color = if (isTopRating) mainColor else Color.Gray)
         }
 
         // Nút Price
         Button(
             onClick = onSortClick,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFFF0F0F0),
-                contentColor = if (sortType == SortType.NONE) Color.Gray else Color(0xFFFF6600)
+                backgroundColor = if (sortType == SortType.NONE) Color(0xFFF0F0F0) else Color(0xFFFFF0E0),
+                contentColor = if (sortType == SortType.NONE) Color.Gray else mainColor
             ),
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier.wrapContentSize().weight(2f)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -364,12 +381,18 @@ fun FilterBar(
                         SortType.NONE -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
                     },
                     contentDescription = "Sort Order",
-                    tint = if (sortType == SortType.NONE) Color.Gray else Color(0xFFFF6600),
+                    tint = if (sortType == SortType.NONE) Color.Gray else mainColor,
                     modifier = Modifier.size(16.dp) // Điều chỉnh kích thước icon
                 )
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(navController = rememberNavController())
 }
 
 

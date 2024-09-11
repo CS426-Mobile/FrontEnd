@@ -11,6 +11,7 @@ sealed class Screen(val route: String){
     object ListAuthor: Screen(route = "listAuthor_screen")
     object Search: Screen(route = "search_screen")
     object Success: Screen(route = "success_screen")
+    object PasswordChange: Screen(route = "passwordChange_screen")
 
     object Author: Screen(route = "author_screen/{author_name}") {
         fun passAuthorName(authorName: String): String {

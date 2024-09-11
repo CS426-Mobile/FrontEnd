@@ -168,7 +168,9 @@ fun AccountScreen(navController: NavHostController) {
                                         modifier = Modifier.size(28.dp)
                                     )
                                 },
-                                modifier = Modifier.clickable { /* Open change password screen */}
+                                modifier = Modifier.clickable {
+                                    navController.navigate(Screen.PasswordChange.route)
+                                }
                             )
 
                             ListItem(

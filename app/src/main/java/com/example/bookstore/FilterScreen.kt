@@ -65,10 +65,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun FilterScreen(
     isSheetOpen: Boolean = false,
-    onSheetOpenChange: (Boolean) -> Unit = {}
+    onSheetOpenChange: (Boolean) -> Unit = {},
+    onFilterActive: (Boolean) -> Unit = {}
 ) {
-    var priceRange by remember { mutableStateOf(1f..20f) }
+    var priceRange by remember { mutableStateOf(1f..50f) }
     var selectedStarRating by remember { mutableStateOf(0) }
+
+    if (priceRange != 1f..50f || selectedStarRating != 0) onFilterActive(true)
+        else onFilterActive(false)
 
     if (isSheetOpen) {
         ModalBottomSheet(
@@ -103,7 +107,7 @@ fun FilterScreen(
                                 // Nút "Reset" bên phải
                                 TextButton(
                                     onClick = {
-                                        priceRange = 1f..20f
+                                        priceRange = 1f..50f
                                         selectedStarRating = 0
                                     }
                                 ) {
@@ -122,7 +126,7 @@ fun FilterScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
-                            .padding(8.dp),
+                            .padding(start = 24.dp, end = 24.dp),
                     ) {
                         // Price Range Section
                         Text(
@@ -196,7 +200,10 @@ fun FilterScreen(
 
                         // Done Button
                         Button(
-                            onClick = { /* Handle Done Click */ },
+                            onClick = {
+                                // handle Done
+                                onSheetOpenChange(false)
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor  = mainColor,
                                 contentColor = Color.White
@@ -209,7 +216,7 @@ fun FilterScreen(
                             Text("Done", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
                         }
 
-                        Spacer(modifier = Modifier.size(24.dp))
+                        Spacer(modifier = Modifier.size(40.dp))
                     }
                 }
             )
@@ -224,8 +231,8 @@ fun FilterScreen(
 fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeChange: (ClosedFloatingPointRange<Float>) -> Unit) {
     var isFromFocused by remember { mutableStateOf(false) } // Trạng thái focus của ô "From"
     var isToFocused by remember { mutableStateOf(false) } // Trạng thái focus của ô "To"
-    var fromPrice by remember { mutableStateOf(priceRange.start) }
-    var toPrice by remember { mutableStateOf(priceRange.endInclusive) }
+    var fromPrice = priceRange.start
+    var toPrice = priceRange.endInclusive
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -277,7 +284,7 @@ fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeCh
             OutlinedTextField(
                 value = "${toPrice.toInt()}",
                 onValueChange = { value ->
-                    toPrice = value.toFloatOrNull() ?: 20f
+                    toPrice = value.toFloatOrNull() ?: 50f
                     onPriceRangeChange(fromPrice..toPrice)},
                 modifier = Modifier
                     .width(100.dp) // Giảm chiều rộng của ô
@@ -310,7 +317,7 @@ fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeCh
                 fromPrice = range.start
                 toPrice = range.endInclusive
             },
-            valueRange = 1f..20f,
+            valueRange = 1f..50f,
             onValueChangeFinished = {
                 // Xử lý khi người dùng hoàn thành thay đổi
             },
