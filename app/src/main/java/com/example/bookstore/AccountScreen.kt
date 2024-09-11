@@ -126,7 +126,7 @@ fun AccountScreen(navController: NavHostController) {
                                     contentDescription = "Change Password"
                                 )
                             },
-                            modifier = Modifier.clickable { /* Mở màn hình thay đổi mật khẩu */ }
+                            modifier = Modifier.clickable { navController.navigate(Screen.ChangePassword.route) }
                         )
 
                         ListItem(

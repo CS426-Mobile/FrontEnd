@@ -63,7 +63,15 @@ fun Home() {
 @Composable
 fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = Screen.Home.route, modifier = modifier) {
-        composable(Screen.Home.route) { HomeScreen(navController)}
+        composable(
+            route = Screen.Home.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ) { HomeScreen(navController)}
         // Add AuthorDetailScreen with a dynamic author_name argument
         composable(
             route = Screen.Author.route,
@@ -209,6 +217,17 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             }
         ){
             PurchaseSuccessScreen(navController)
+        }
+        composable(
+            route = Screen.ChangePassword.route,
+            enterTransition = { // Animation cho transition vào
+                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            },
+            exitTransition = { // Animation cho transition ra
+                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            }
+        ){
+            ChangePasswordScreen(navController)
         }
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
