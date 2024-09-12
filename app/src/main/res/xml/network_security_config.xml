@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
+        <!-- Allow cleartext traffic for specific domains -->
         <domain includeSubdomains="true">192.168.1.9</domain>
+        <domain includeSubdomains="true">onlinebookstoreapp-c0h2fyavdze9dper.southeastasia-01.azurewebsites.net</domain>
         <domain includeSubdomains="true">books.google.com</domain>
     </domain-config>
 </network-security-config>

@@ -85,15 +85,6 @@ fun ListAuthor(navController: NavHostController) {
                 SearchBarHolder(
                     navController = navController
                 )
-//                // Search bar with navigation to search screen
-//                SearchBar(
-//                    searchText = searchText,
-//                    onTextChange = { searchText = it },
-//                    onClearClick = { searchText = "" },
-//                    onSearchClick = {
-//                        navController.navigate(Screen.Home.route) // Navigate to search screen
-//                    }
-//                )
 
                 when {
                     isLoading -> {
@@ -126,41 +117,5 @@ fun ListAuthor(navController: NavHostController) {
                 }
             }
         }
-    )
-}
-
-// Updated SearchBar composable
-@Composable
-fun SearchBar(
-    searchText: String,
-    onTextChange: (String) -> Unit,
-    onClearClick: () -> Unit,
-    onSearchClick: () -> Unit // Added search click handler
-) {
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = onTextChange,
-        placeholder = { Text(text = "Search") },
-        leadingIcon = {
-            IconButton(onClick = onSearchClick) { // Trigger search click event
-                Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = "Search")
-            }
-        },
-        trailingIcon = {
-            if (searchText.isNotEmpty()) {
-                IconButton(onClick = onClearClick) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = " ",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp) // Set a height to make it more compact
-            .padding(8.dp)
     )
 }

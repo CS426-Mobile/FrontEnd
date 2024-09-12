@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Space
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -37,6 +39,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,9 +73,11 @@ import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.FeaturedBooksSection
 import com.example.bookstore.components.RecommendedBooksSection
+import com.example.bookstore.model.CategoryResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel
+import com.example.bookstore.viewmodel.CategoryViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("RememberReturnType")
@@ -157,10 +162,23 @@ fun HomeScreen(navController: NavHostController) {
                         CategoriesSection(
                             selectedCategories = selectedCategories,
                             onCategorySelected = { category ->
-                                selectedCategories = if (selectedCategories.contains(category)) {
-                                    selectedCategories - category
-                                } else {
-                                    selectedCategories + category
+                                if (category == "All")
+                                {
+                                    if (selectedCategories.contains(category)) {
+                                        selectedCategories = emptyList()
+                                    } else {
+                                        selectedCategories = listOf("All")
+                                    }
+                                }
+                                else {
+                                    if (selectedCategories.contains("All")) {
+                                        selectedCategories = listOf(category)
+                                    }
+                                    else if (selectedCategories.contains(category)) {
+                                        selectedCategories = selectedCategories - category
+                                    } else {
+                                        selectedCategories = selectedCategories + category
+                                    }
                                 }
                             }
                         )
@@ -254,11 +272,29 @@ fun SearchBarHolder(navController: NavHostController) {
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun CategoriesSection(
     selectedCategories: List<String>,
     onCategorySelected: (String) -> Unit
 ) {
+    val categoryViewModel: CategoryViewModel = viewModel()
+    var categories by remember { mutableStateOf<List<CategoryResponse>?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Fetch categories from ViewModel when the composable is first displayed
+    LaunchedEffect(Unit) {
+        categoryViewModel.getAllCategories { success, result ->
+            if (success && result != null) {
+                categories = result
+            } else {
+                errorMessage = "Failed to load categories"
+            }
+            isLoading = false
+        }
+    }
+
     // Section title
     Text(
         text = "Categories",
@@ -269,29 +305,50 @@ fun CategoriesSection(
 
     val lighterMainColor = mainColor.copy(alpha = 0.2f) // Lighter main color for unselected items
 
-    // Categories list with spacing
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp), // Padding between boxes
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp) // Overall padding for the section
-    ) {
-        items(listOf("All", "Romance", "Fiction", "Education", "Manga")) { category ->
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { onCategorySelected(category) }
-                    .background(if (selectedCategories.contains(category)) mainColor else lighterMainColor)
-                    .padding(horizontal = 12.dp, vertical = 8.dp) // Padding inside the box
-            ) {
-                Text(
-                    text = category,
-                    color = if (selectedCategories.contains(category)) Color.White else Color.Black,
-                )
+    // Show loading or error message
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize().background(color = Color.White), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = Color.Gray)
+        }
+    } else if (errorMessage != null) {
+        Text(text = errorMessage!!, color = Color.Red, modifier = Modifier.padding(16.dp))
+    } else {
+        // Add the "All" category manually to the list
+        val categoriesWithAll = listOf(CategoryResponse("All")) + (categories ?: emptyList())
+
+        // Categories list with spacing
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp), // Padding between boxes
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp) // Overall padding for the section
+        ) {
+            items(categoriesWithAll) { category ->
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            if (category.category_name == "All") {
+                                // If "All" is selected, unselect other categories and select "All"
+                                onCategorySelected("All") // Use empty string for "All"
+                            } else {
+                                // If another category is selected, unselect "All"
+                                onCategorySelected(category.category_name)
+                            }
+                        }
+                        .background(
+                            if (selectedCategories.contains(category.category_name)) mainColor else lighterMainColor
+                        )
+                        .padding(horizontal = 12.dp, vertical = 8.dp) // Padding inside the box
+                ) {
+                    Text(
+                        text = category.category_name,
+                        color = if (selectedCategories.contains(category.category_name)) Color.White else Color.Black,
+                    )
+                }
             }
         }
     }
-
-    // Add white space below the categories section
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -318,11 +375,10 @@ fun FilterBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp), // Thêm khoảng cách giữa các nút
+            .padding(horizontal = 20.dp), // Padding 16.dp ở 2 đầu
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Nút Filter
+        // Nút Filter (Sát bên trái)
         Button(
             onClick = {
                 onFilterClick()
@@ -331,18 +387,22 @@ fun FilterBar(
                 backgroundColor = if (isFilterActive) Color(0xFFFFF0E0) else Color(0xFFF0F0F0),
                 contentColor = if (isFilterActive) Color(0xFFFF6600) else Color.Gray
             ),
+            border = BorderStroke(1.dp, if (isFilterActive) mainColor else Color.Gray), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize().weight(1f) // Đảm bảo nút vừa với nội dung
+            elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
+            modifier = Modifier.wrapContentSize()
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_filter), // Thay bằng icon của bạn
                 contentDescription = "Filter",
                 tint = if (isFilterActive) mainColor else Color.Gray,
-                modifier = Modifier.size(16.dp) // Điều chỉnh kích thước icon
+                modifier = Modifier.size(20.dp) // Điều chỉnh kích thước icon
             )
         }
 
-        // Nút Top Ratings
+        Spacer(modifier = Modifier.weight(1f)) // Đẩy nút Top Ratings vào giữa
+
+        // Nút Top Ratings (Ở giữa)
         Button(
             onClick = {
                 onRatingClick()
@@ -351,28 +411,38 @@ fun FilterBar(
                 backgroundColor = if (isTopRating) Color(0xFFFFF0E0) else Color(0xFFF0F0F0),
                 contentColor = if (isTopRating) mainColor else Color.Gray
             ),
+            border = BorderStroke(1.dp, if (isTopRating) mainColor else Color.Gray), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize().weight(2f)
+            elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
+            modifier = Modifier.wrapContentSize()
         ) {
-            Text("Top Ratings", fontSize = 12.sp,
-                color = if (isTopRating) mainColor else Color.Gray)
+            Text(
+                text = "Top Ratings",
+                style = MaterialTheme.typography.body2,
+                fontSize = 13.sp,
+                color = if (isTopRating) mainColor else Color.Gray
+            )
         }
 
-        // Nút Price
+        Spacer(modifier = Modifier.weight(1f)) // Đẩy nút Price sát bên phải
+
+        // Nút Price (Sát bên phải)
         Button(
             onClick = onSortClick,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = if (sortType == SortType.NONE) Color(0xFFF0F0F0) else Color(0xFFFFF0E0),
                 contentColor = if (sortType == SortType.NONE) Color.Gray else mainColor
             ),
+            border = BorderStroke(1.dp, if (sortType == SortType.NONE) Color.Gray else mainColor), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize().weight(2f)
+            elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
+            modifier = Modifier.wrapContentSize()
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center // Canh giữa nội dung trong Row
             ) {
-                Text("Price", fontSize = 12.sp, maxLines = 1) // Sửa lỗi text bị cắt bằng maxLines
+                Text("Price", style = MaterialTheme.typography.body2, fontSize = 13.sp, maxLines = 1) // Sửa lỗi text bị cắt bằng maxLines
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = when (sortType) {
@@ -382,7 +452,7 @@ fun FilterBar(
                     },
                     contentDescription = "Sort Order",
                     tint = if (sortType == SortType.NONE) Color.Gray else mainColor,
-                    modifier = Modifier.size(16.dp) // Điều chỉnh kích thước icon
+                    modifier = Modifier.size(20.dp) // Điều chỉnh kích thước icon
                 )
             }
         }
