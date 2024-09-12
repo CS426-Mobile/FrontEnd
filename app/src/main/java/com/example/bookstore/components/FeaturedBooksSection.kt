@@ -21,27 +21,48 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.bookstore.model.BookCategoryResponse
 import com.example.bookstore.model.SimpleBookResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.BookViewModel
 
 @Composable
-fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookViewModel) {
-    var books by remember { mutableStateOf<List<SimpleBookResponse>?>(null) }
+fun FeaturedBooksSection(
+    navController: NavHostController,
+    bookViewModel: BookViewModel,
+    selectedCategories: String,
+    isTopRating: Boolean,
+    sortType: String,
+    fromPrice: Int = 0,
+    toPrice: Int = 50,
+    rating: String = "all",
+    shouldRefetch: Boolean,
+    onFetchComplete: () -> Unit
+) {
+    var books by remember { mutableStateOf<List<BookCategoryResponse>?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var isDataFetched by remember { mutableStateOf(false) }  // Track if data was fetched
+    var isDataFetched by remember { mutableStateOf(false) }
 
-    // Fetch books data only once
-    LaunchedEffect(isDataFetched) {
-        if (!isDataFetched) {  // Ensure the API call is made only once
-            bookViewModel.get20Books { success, result ->
+    if (shouldRefetch) isDataFetched = false // Reset the flag if needed
+    LaunchedEffect(shouldRefetch) {
+        if (shouldRefetch || !isDataFetched) { // Fetch data if needed or first time
+            bookViewModel.getBooksByCategory(
+                categoryName = if (selectedCategories == "All") "" else selectedCategories,
+                ratingOptional = rating,
+                priceOptional = "yes",
+                priceMin = fromPrice.toDouble(),
+                priceMax = toPrice.toDouble(),
+                ratingSort = if (isTopRating) "asce" else "none",
+                priceSort = sortType
+            ) { success, result ->
                 if (success && result != null) {
                     books = result
                     errorMessage = null
                 } else {
                     errorMessage = "Failed to load featured books"
                 }
-                isDataFetched = true  // Mark data as fetched
+                isDataFetched = true
+                onFetchComplete() // Reset the refetch flag after data is fetched
             }
         }
     }
@@ -89,9 +110,8 @@ fun FeaturedBooksSection(navController: NavHostController, bookViewModel: BookVi
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         for (book in bookRow) {
-                            var isFavorite by remember { mutableStateOf(false) }  // Handle favorite state
                             BookCard(
-                                book = book,
+                                book = SimpleBookResponse(book.book_name, book.author_name, book.book_image, book.average_rating),
                                 navController = navController
                             )
                         }

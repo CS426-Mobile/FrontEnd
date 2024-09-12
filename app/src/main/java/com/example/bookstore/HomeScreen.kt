@@ -1,14 +1,10 @@
 package com.example.bookstore
 
 import android.annotation.SuppressLint
-import android.util.Log
-import android.widget.Space
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,9 +27,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -49,18 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,7 +57,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.FeaturedBooksSection
@@ -84,7 +72,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    var selectedCategories by remember { mutableStateOf(listOf<String>()) }
     var offsetY by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
     // State để theo dõi vị trí cuộn
@@ -94,17 +81,43 @@ fun HomeScreen(navController: NavHostController) {
     val authorViewModel: AuthorViewModel = viewModel()
     val bookViewModel: BookViewModel = viewModel()
 
-    // State để theo dõi vị trí cuộn
-
-    var searchQuery by remember { mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
-
     // State cho nút Filter và Sort
+    var selectedCategories by remember { mutableStateOf(listOf<String>()) }
     var isFilterActive by remember { mutableStateOf(false) }
-    var sortType by remember { mutableStateOf(SortType.NONE) }
+    var sortType by remember { mutableStateOf("none") }
     var isTopRating by remember { mutableStateOf(false)}
-
+    var fromPrice by remember { mutableStateOf(0) }
+    var toPrice by remember { mutableStateOf(50) }
+    var rating by remember { mutableStateOf("all") }
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var shouldRefetchData by remember { mutableStateOf(false) }
+
+    // Track previous states to detect changes
+    var prevSelectedCategories by remember { mutableStateOf(listOf<String>()) }
+    var prevIsTopRating by remember { mutableStateOf(false) }
+    var prevSortType by remember { mutableStateOf("none") }
+    var prevFromPrice by remember { mutableStateOf(0) }
+    var prevToPrice by remember { mutableStateOf(50) }
+    var prevRating by remember { mutableStateOf("all") }
+
+    // Only trigger re-fetch when actual changes occur
+    LaunchedEffect(selectedCategories, isTopRating, sortType, fromPrice, toPrice, rating) {
+        if (selectedCategories != prevSelectedCategories ||
+            isTopRating != prevIsTopRating ||
+            sortType != prevSortType ||
+            fromPrice != prevFromPrice ||
+            toPrice != prevToPrice ||
+            rating != prevRating
+        ) {
+            shouldRefetchData = true
+            prevSelectedCategories = selectedCategories
+            prevIsTopRating = isTopRating
+            prevSortType = sortType
+            prevFromPrice = fromPrice
+            prevToPrice = toPrice
+            prevRating = rating
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -123,7 +136,10 @@ fun HomeScreen(navController: NavHostController) {
         FilterScreen(
             isSheetOpen = isSheetOpen,
             onSheetOpenChange = { isSheetOpen = it },
-            onFilterActive = {isFilterActive = it}
+            onFilterActive = {isFilterActive = it},
+            rating = {rating = it},
+            fromPrice = {fromPrice = it},
+            toPrice = {toPrice = it}
         )
 
         LazyColumn(
@@ -162,23 +178,10 @@ fun HomeScreen(navController: NavHostController) {
                         CategoriesSection(
                             selectedCategories = selectedCategories,
                             onCategorySelected = { category ->
-                                if (category == "All")
-                                {
-                                    if (selectedCategories.contains(category)) {
-                                        selectedCategories = emptyList()
-                                    } else {
-                                        selectedCategories = listOf("All")
-                                    }
-                                }
-                                else {
-                                    if (selectedCategories.contains("All")) {
-                                        selectedCategories = listOf(category)
-                                    }
-                                    else if (selectedCategories.contains(category)) {
-                                        selectedCategories = selectedCategories - category
-                                    } else {
-                                        selectedCategories = selectedCategories + category
-                                    }
+                                selectedCategories = if (selectedCategories.contains(category)) {
+                                    emptyList() // Unselect if already selected
+                                } else {
+                                    listOf(category) // Select the new category
                                 }
                             }
                         )
@@ -191,9 +194,10 @@ fun HomeScreen(navController: NavHostController) {
                                 sortType = sortType,
                                 onSortClick = {
                                     sortType = when (sortType) {
-                                        SortType.NONE -> SortType.ASCENDING
-                                        SortType.ASCENDING -> SortType.DESCENDING
-                                        SortType.DESCENDING -> SortType.NONE
+                                        "none" -> "asce"
+                                        "asce" -> "desc"
+                                        "desc" -> "none"
+                                        else -> "none" // Fallback case, if needed
                                     }
                                 },
                                 onFilterClick = {
@@ -210,7 +214,18 @@ fun HomeScreen(navController: NavHostController) {
 
             // Featured Books Section
             item {
-                FeaturedBooksSection(navController = navController, bookViewModel = bookViewModel)
+                FeaturedBooksSection(
+                    navController = navController,
+                    bookViewModel = bookViewModel,
+                    selectedCategories = selectedCategories.getOrElse(0) { "" }, // Avoid out of bounds
+                    isTopRating = isTopRating,
+                    sortType = sortType,
+                    fromPrice = fromPrice,
+                    toPrice = toPrice,
+                    rating = rating,
+                    shouldRefetch = shouldRefetchData, // Pass re-fetch trigger
+                    onFetchComplete = { shouldRefetchData = false } // Reset re-fetch flag after fetching
+                )
             }
         }
     }
@@ -357,7 +372,7 @@ fun FilterPreview(){
         isFilterActive = true,
         isTopRating = true,
         onRatingClick = {},
-        sortType = SortType.ASCENDING,
+        sortType = "asce",
         onSortClick = {},
         onFilterClick = {}
     )
@@ -369,7 +384,7 @@ fun FilterBar(
     onFilterClick: () -> Unit,
     isTopRating: Boolean = false,
     onRatingClick: () -> Unit,
-    sortType: SortType = SortType.NONE,
+    sortType: String = "none",
     onSortClick: () -> Unit
 ) {
     Row(
@@ -430,10 +445,10 @@ fun FilterBar(
         Button(
             onClick = onSortClick,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (sortType == SortType.NONE) Color(0xFFF0F0F0) else Color(0xFFFFF0E0),
-                contentColor = if (sortType == SortType.NONE) Color.Gray else mainColor
+                backgroundColor = if (sortType == "none") Color(0xFFF0F0F0) else Color(0xFFFFF0E0),
+                contentColor = if (sortType == "none") Color.Gray else mainColor
             ),
-            border = BorderStroke(1.dp, if (sortType == SortType.NONE) Color.Gray else mainColor), // Viền tùy chỉnh
+            border = BorderStroke(1.dp, if (sortType == "none") Color.Gray else mainColor), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
             elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
             modifier = Modifier.wrapContentSize()
@@ -446,31 +461,16 @@ fun FilterBar(
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = when (sortType) {
-                        SortType.ASCENDING -> Icons.Default.KeyboardArrowUp // Icon khi sắp xếp tăng dần
-                        SortType.DESCENDING -> Icons.Default.KeyboardArrowDown // Icon khi sắp xếp giảm dần
-                        SortType.NONE -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
+                        "asce" -> Icons.Default.KeyboardArrowUp // Icon khi sắp xếp tăng dần
+                        "desc" -> Icons.Default.KeyboardArrowDown // Icon khi sắp xếp giảm dần
+                        "none" -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
+                        else -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
                     },
                     contentDescription = "Sort Order",
-                    tint = if (sortType == SortType.NONE) Color.Gray else mainColor,
+                    tint = if (sortType == "none") Color.Gray else mainColor,
                     modifier = Modifier.size(20.dp) // Điều chỉnh kích thước icon
                 )
             }
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
-}
-
-
-// Định nghĩa các loại sắp xếp
-enum class SortType {
-    NONE,
-    ASCENDING,
-    DESCENDING
-}
-
-data class Book(val title: String, val author: String)
