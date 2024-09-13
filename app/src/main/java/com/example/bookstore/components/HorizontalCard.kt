@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -35,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -46,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.bookstore.Book
 import com.example.bookstore.Screen
 import com.example.bookstore.model.AuthorResponse
 import com.example.bookstore.model.CustomerFavoriteResponse
@@ -272,22 +269,3 @@ fun AuthorHorizontalItem(
         }
     }
 }
-
-data class BookDetail(
-    var title: String,
-    var author: String,
-    var rating: Float,
-    var isFavorite: Boolean,
-    var price: Double = 0.0
-)
-
-// Mẫu dữ liệu tác giả
-data class Author(
-    val name: String,
-    val followers: String,
-    val books: Int,
-    val isFollowing: Boolean,
-    val categories: List<String>,
-    val about: String,
-    val booksList: List<Book>
-)

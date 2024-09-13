@@ -1,13 +1,10 @@
 package com.example.bookstore
 
 import android.annotation.SuppressLint
-import android.util.Log
-import android.widget.Space
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,16 +24,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,18 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,21 +57,21 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.FeaturedBooksSection
 import com.example.bookstore.components.RecommendedBooksSection
+import com.example.bookstore.model.CategoryResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel
 import com.example.bookstore.viewmodel.BookViewModel
+import com.example.bookstore.viewmodel.CategoryViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    var selectedCategories by remember { mutableStateOf(listOf<String>()) }
     var offsetY by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
     // State để theo dõi vị trí cuộn
@@ -89,17 +81,43 @@ fun HomeScreen(navController: NavHostController) {
     val authorViewModel: AuthorViewModel = viewModel()
     val bookViewModel: BookViewModel = viewModel()
 
-    // State để theo dõi vị trí cuộn
-
-    var searchQuery by remember { mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
-
     // State cho nút Filter và Sort
+    var selectedCategories by remember { mutableStateOf(listOf<String>()) }
     var isFilterActive by remember { mutableStateOf(false) }
-    var sortType by remember { mutableStateOf(SortType.NONE) }
+    var sortType by remember { mutableStateOf("none") }
     var isTopRating by remember { mutableStateOf(false)}
-
+    var fromPrice by remember { mutableStateOf(0) }
+    var toPrice by remember { mutableStateOf(50) }
+    var rating by remember { mutableStateOf("all") }
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var shouldRefetchData by remember { mutableStateOf(false) }
+
+    // Track previous states to detect changes
+    var prevSelectedCategories by remember { mutableStateOf(listOf<String>()) }
+    var prevIsTopRating by remember { mutableStateOf(false) }
+    var prevSortType by remember { mutableStateOf("none") }
+    var prevFromPrice by remember { mutableStateOf(0) }
+    var prevToPrice by remember { mutableStateOf(50) }
+    var prevRating by remember { mutableStateOf("all") }
+
+    // Only trigger re-fetch when actual changes occur
+    LaunchedEffect(selectedCategories, isTopRating, sortType, fromPrice, toPrice, rating) {
+        if (selectedCategories != prevSelectedCategories ||
+            isTopRating != prevIsTopRating ||
+            sortType != prevSortType ||
+            fromPrice != prevFromPrice ||
+            toPrice != prevToPrice ||
+            rating != prevRating
+        ) {
+            shouldRefetchData = true
+            prevSelectedCategories = selectedCategories
+            prevIsTopRating = isTopRating
+            prevSortType = sortType
+            prevFromPrice = fromPrice
+            prevToPrice = toPrice
+            prevRating = rating
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -118,7 +136,10 @@ fun HomeScreen(navController: NavHostController) {
         FilterScreen(
             isSheetOpen = isSheetOpen,
             onSheetOpenChange = { isSheetOpen = it },
-            onFilterActive = {isFilterActive = it}
+            onFilterActive = {isFilterActive = it},
+            rating = {rating = it},
+            fromPrice = {fromPrice = it},
+            toPrice = {toPrice = it}
         )
 
         LazyColumn(
@@ -158,9 +179,9 @@ fun HomeScreen(navController: NavHostController) {
                             selectedCategories = selectedCategories,
                             onCategorySelected = { category ->
                                 selectedCategories = if (selectedCategories.contains(category)) {
-                                    selectedCategories - category
+                                    emptyList() // Unselect if already selected
                                 } else {
-                                    selectedCategories + category
+                                    listOf(category) // Select the new category
                                 }
                             }
                         )
@@ -173,9 +194,10 @@ fun HomeScreen(navController: NavHostController) {
                                 sortType = sortType,
                                 onSortClick = {
                                     sortType = when (sortType) {
-                                        SortType.NONE -> SortType.ASCENDING
-                                        SortType.ASCENDING -> SortType.DESCENDING
-                                        SortType.DESCENDING -> SortType.NONE
+                                        "none" -> "asce"
+                                        "asce" -> "desc"
+                                        "desc" -> "none"
+                                        else -> "none" // Fallback case, if needed
                                     }
                                 },
                                 onFilterClick = {
@@ -192,7 +214,18 @@ fun HomeScreen(navController: NavHostController) {
 
             // Featured Books Section
             item {
-                FeaturedBooksSection(navController = navController, bookViewModel = bookViewModel)
+                FeaturedBooksSection(
+                    navController = navController,
+                    bookViewModel = bookViewModel,
+                    selectedCategories = selectedCategories.getOrElse(0) { "" }, // Avoid out of bounds
+                    isTopRating = isTopRating,
+                    sortType = sortType,
+                    fromPrice = fromPrice,
+                    toPrice = toPrice,
+                    rating = rating,
+                    shouldRefetch = shouldRefetchData, // Pass re-fetch trigger
+                    onFetchComplete = { shouldRefetchData = false } // Reset re-fetch flag after fetching
+                )
             }
         }
     }
@@ -254,11 +287,29 @@ fun SearchBarHolder(navController: NavHostController) {
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun CategoriesSection(
     selectedCategories: List<String>,
     onCategorySelected: (String) -> Unit
 ) {
+    val categoryViewModel: CategoryViewModel = viewModel()
+    var categories by remember { mutableStateOf<List<CategoryResponse>?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Fetch categories from ViewModel when the composable is first displayed
+    LaunchedEffect(Unit) {
+        categoryViewModel.getAllCategories { success, result ->
+            if (success && result != null) {
+                categories = result
+            } else {
+                errorMessage = "Failed to load categories"
+            }
+            isLoading = false
+        }
+    }
+
     // Section title
     Text(
         text = "Categories",
@@ -269,29 +320,50 @@ fun CategoriesSection(
 
     val lighterMainColor = mainColor.copy(alpha = 0.2f) // Lighter main color for unselected items
 
-    // Categories list with spacing
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp), // Padding between boxes
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp) // Overall padding for the section
-    ) {
-        items(listOf("All", "Romance", "Fiction", "Education", "Manga")) { category ->
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { onCategorySelected(category) }
-                    .background(if (selectedCategories.contains(category)) mainColor else lighterMainColor)
-                    .padding(horizontal = 12.dp, vertical = 8.dp) // Padding inside the box
-            ) {
-                Text(
-                    text = category,
-                    color = if (selectedCategories.contains(category)) Color.White else Color.Black,
-                )
+    // Show loading or error message
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize().background(color = Color.White), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = Color.Gray)
+        }
+    } else if (errorMessage != null) {
+        Text(text = errorMessage!!, color = Color.Red, modifier = Modifier.padding(16.dp))
+    } else {
+        // Add the "All" category manually to the list
+        val categoriesWithAll = listOf(CategoryResponse("All")) + (categories ?: emptyList())
+
+        // Categories list with spacing
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp), // Padding between boxes
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp) // Overall padding for the section
+        ) {
+            items(categoriesWithAll) { category ->
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            if (category.category_name == "All") {
+                                // If "All" is selected, unselect other categories and select "All"
+                                onCategorySelected("All") // Use empty string for "All"
+                            } else {
+                                // If another category is selected, unselect "All"
+                                onCategorySelected(category.category_name)
+                            }
+                        }
+                        .background(
+                            if (selectedCategories.contains(category.category_name)) mainColor else lighterMainColor
+                        )
+                        .padding(horizontal = 12.dp, vertical = 8.dp) // Padding inside the box
+                ) {
+                    Text(
+                        text = category.category_name,
+                        color = if (selectedCategories.contains(category.category_name)) Color.White else Color.Black,
+                    )
+                }
             }
         }
     }
-
-    // Add white space below the categories section
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -300,7 +372,7 @@ fun FilterPreview(){
         isFilterActive = true,
         isTopRating = true,
         onRatingClick = {},
-        sortType = SortType.ASCENDING,
+        sortType = "asce",
         onSortClick = {},
         onFilterClick = {}
     )
@@ -312,17 +384,16 @@ fun FilterBar(
     onFilterClick: () -> Unit,
     isTopRating: Boolean = false,
     onRatingClick: () -> Unit,
-    sortType: SortType = SortType.NONE,
+    sortType: String = "none",
     onSortClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp), // Thêm khoảng cách giữa các nút
+            .padding(horizontal = 20.dp), // Padding 16.dp ở 2 đầu
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Nút Filter
+        // Nút Filter (Sát bên trái)
         Button(
             onClick = {
                 onFilterClick()
@@ -331,18 +402,22 @@ fun FilterBar(
                 backgroundColor = if (isFilterActive) Color(0xFFFFF0E0) else Color(0xFFF0F0F0),
                 contentColor = if (isFilterActive) Color(0xFFFF6600) else Color.Gray
             ),
+            border = BorderStroke(1.dp, if (isFilterActive) mainColor else Color.Gray), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize().weight(1f) // Đảm bảo nút vừa với nội dung
+            elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
+            modifier = Modifier.wrapContentSize()
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_filter), // Thay bằng icon của bạn
                 contentDescription = "Filter",
                 tint = if (isFilterActive) mainColor else Color.Gray,
-                modifier = Modifier.size(16.dp) // Điều chỉnh kích thước icon
+                modifier = Modifier.size(20.dp) // Điều chỉnh kích thước icon
             )
         }
 
-        // Nút Top Ratings
+        Spacer(modifier = Modifier.weight(1f)) // Đẩy nút Top Ratings vào giữa
+
+        // Nút Top Ratings (Ở giữa)
         Button(
             onClick = {
                 onRatingClick()
@@ -351,56 +426,51 @@ fun FilterBar(
                 backgroundColor = if (isTopRating) Color(0xFFFFF0E0) else Color(0xFFF0F0F0),
                 contentColor = if (isTopRating) mainColor else Color.Gray
             ),
+            border = BorderStroke(1.dp, if (isTopRating) mainColor else Color.Gray), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize().weight(2f)
+            elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
+            modifier = Modifier.wrapContentSize()
         ) {
-            Text("Top Ratings", fontSize = 12.sp,
-                color = if (isTopRating) mainColor else Color.Gray)
+            Text(
+                text = "Top Ratings",
+                style = MaterialTheme.typography.body2,
+                fontSize = 13.sp,
+                color = if (isTopRating) mainColor else Color.Gray
+            )
         }
 
-        // Nút Price
+        Spacer(modifier = Modifier.weight(1f)) // Đẩy nút Price sát bên phải
+
+        // Nút Price (Sát bên phải)
         Button(
             onClick = onSortClick,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (sortType == SortType.NONE) Color(0xFFF0F0F0) else Color(0xFFFFF0E0),
-                contentColor = if (sortType == SortType.NONE) Color.Gray else mainColor
+                backgroundColor = if (sortType == "none") Color(0xFFF0F0F0) else Color(0xFFFFF0E0),
+                contentColor = if (sortType == "none") Color.Gray else mainColor
             ),
+            border = BorderStroke(1.dp, if (sortType == "none") Color.Gray else mainColor), // Viền tùy chỉnh
             shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.wrapContentSize().weight(2f)
+            elevation = ButtonDefaults.elevation(0.dp), // Loại bỏ shadow
+            modifier = Modifier.wrapContentSize()
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center // Canh giữa nội dung trong Row
             ) {
-                Text("Price", fontSize = 12.sp, maxLines = 1) // Sửa lỗi text bị cắt bằng maxLines
+                Text("Price", style = MaterialTheme.typography.body2, fontSize = 13.sp, maxLines = 1) // Sửa lỗi text bị cắt bằng maxLines
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = when (sortType) {
-                        SortType.ASCENDING -> Icons.Default.KeyboardArrowUp // Icon khi sắp xếp tăng dần
-                        SortType.DESCENDING -> Icons.Default.KeyboardArrowDown // Icon khi sắp xếp giảm dần
-                        SortType.NONE -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
+                        "asce" -> Icons.Default.KeyboardArrowUp // Icon khi sắp xếp tăng dần
+                        "desc" -> Icons.Default.KeyboardArrowDown // Icon khi sắp xếp giảm dần
+                        "none" -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
+                        else -> Icons.Default.Add // Icon mặc định khi không có sắp xếp
                     },
                     contentDescription = "Sort Order",
-                    tint = if (sortType == SortType.NONE) Color.Gray else mainColor,
-                    modifier = Modifier.size(16.dp) // Điều chỉnh kích thước icon
+                    tint = if (sortType == "none") Color.Gray else mainColor,
+                    modifier = Modifier.size(20.dp) // Điều chỉnh kích thước icon
                 )
             }
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
-}
-
-
-// Định nghĩa các loại sắp xếp
-enum class SortType {
-    NONE,
-    ASCENDING,
-    DESCENDING
-}
-
-data class Book(val title: String, val author: String)

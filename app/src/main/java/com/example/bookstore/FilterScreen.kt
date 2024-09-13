@@ -66,13 +66,25 @@ import kotlinx.coroutines.launch
 fun FilterScreen(
     isSheetOpen: Boolean = false,
     onSheetOpenChange: (Boolean) -> Unit = {},
-    onFilterActive: (Boolean) -> Unit = {}
+    onFilterActive: (Boolean) -> Unit = {},
+    rating: (String) -> Unit = {},
+    fromPrice: (Int) -> Unit = {},
+    toPrice: (Int) -> Unit = {}
 ) {
-    var priceRange by remember { mutableStateOf(1f..50f) }
+    var priceRange by remember { mutableStateOf(0f..50f) }
     var selectedStarRating by remember { mutableStateOf(0) }
 
-    if (priceRange != 1f..50f || selectedStarRating != 0) onFilterActive(true)
-        else onFilterActive(false)
+
+    if (priceRange != 0f..50f || selectedStarRating != 0) {
+        onFilterActive(true)
+    }
+    else {
+        onFilterActive(false)
+    }
+
+    fromPrice(priceRange.start.toInt())
+    toPrice(priceRange.endInclusive.toInt())
+    if (selectedStarRating != 0) rating(selectedStarRating.toString()) else rating("all")
 
     if (isSheetOpen) {
         ModalBottomSheet(
@@ -107,7 +119,7 @@ fun FilterScreen(
                                 // Nút "Reset" bên phải
                                 TextButton(
                                     onClick = {
-                                        priceRange = 1f..50f
+                                        priceRange = 0f..50f
                                         selectedStarRating = 0
                                     }
                                 ) {
@@ -251,7 +263,7 @@ fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeCh
             OutlinedTextField(
                 value = "${fromPrice.toInt()}",
                 onValueChange = { value ->
-                    fromPrice = value.toFloatOrNull() ?: 1f
+                    fromPrice = value.toFloatOrNull() ?: 0f
                     onPriceRangeChange(fromPrice..toPrice)
                 },
                 modifier = Modifier
@@ -317,7 +329,7 @@ fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeCh
                 fromPrice = range.start
                 toPrice = range.endInclusive
             },
-            valueRange = 1f..50f,
+            valueRange = 0f..50f,
             onValueChangeFinished = {
                 // Xử lý khi người dùng hoàn thành thay đổi
             },
