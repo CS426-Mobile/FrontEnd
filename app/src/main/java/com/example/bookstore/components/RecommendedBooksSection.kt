@@ -86,7 +86,6 @@ fun RecommendedBooksSection(navController: NavHostController, bookViewModel: Boo
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(books!!) { book ->
-                        var isFavorite by remember { mutableStateOf(false) } // Manage favorite state locally
                         BookCard(
                             book = book,
                             navController = navController

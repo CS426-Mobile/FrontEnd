@@ -110,7 +110,7 @@ interface ApiService {
 
     // Get 20 books
     @GET("/books/20/")
-    suspend fun get20Books(): Response<List<SimpleBookResponse>>
+    suspend fun get20Books(): Response<List<BookCategoryResponse>>
 
     // Get books by category with optional filters
     @GET("/books/category/")

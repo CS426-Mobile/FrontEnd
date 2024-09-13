@@ -68,12 +68,12 @@ class MainActivity : ComponentActivity() {
                                     finish()
                                 }
                             }
-                        } else {//if (!onboardingComplete) {
+                        } else if (!onboardingComplete) {
                             startActivity(Intent(this@MainActivity, OnboardingActivity::class.java))
                             finish()
-//                        } else {
-//                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-//                            finish()
+                        } else {
+                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                            finish()
                         }
                         isLoading = false
                     }

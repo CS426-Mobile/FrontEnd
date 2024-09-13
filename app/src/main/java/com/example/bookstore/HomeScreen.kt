@@ -87,7 +87,7 @@ fun HomeScreen(navController: NavHostController) {
     var sortType by remember { mutableStateOf("none") }
     var isTopRating by remember { mutableStateOf(false)}
     var fromPrice by remember { mutableStateOf(0) }
-    var toPrice by remember { mutableStateOf(50) }
+    var toPrice by remember { mutableStateOf(100) }
     var rating by remember { mutableStateOf("all") }
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     var shouldRefetchData by remember { mutableStateOf(false) }
@@ -97,11 +97,18 @@ fun HomeScreen(navController: NavHostController) {
     var prevIsTopRating by remember { mutableStateOf(false) }
     var prevSortType by remember { mutableStateOf("none") }
     var prevFromPrice by remember { mutableStateOf(0) }
-    var prevToPrice by remember { mutableStateOf(50) }
+    var prevToPrice by remember { mutableStateOf(100) }
     var prevRating by remember { mutableStateOf("all") }
 
     // Only trigger re-fetch when actual changes occur
     LaunchedEffect(selectedCategories, isTopRating, sortType, fromPrice, toPrice, rating) {
+        if (selectedCategories.isEmpty()) {
+            isTopRating = false
+            sortType = "none"
+            fromPrice = 0
+            toPrice = 100
+            rating = "all"
+        }
         if (selectedCategories != prevSelectedCategories ||
             isTopRating != prevIsTopRating ||
             sortType != prevSortType ||

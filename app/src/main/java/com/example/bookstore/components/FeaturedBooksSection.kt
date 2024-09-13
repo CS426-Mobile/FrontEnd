@@ -34,7 +34,7 @@ fun FeaturedBooksSection(
     isTopRating: Boolean,
     sortType: String,
     fromPrice: Int = 0,
-    toPrice: Int = 50,
+    toPrice: Int = 100,
     rating: String = "all",
     shouldRefetch: Boolean,
     onFetchComplete: () -> Unit
@@ -43,16 +43,28 @@ fun FeaturedBooksSection(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isDataFetched by remember { mutableStateOf(false) }
 
-    if (shouldRefetch) isDataFetched = false // Reset the flag if needed
     LaunchedEffect(shouldRefetch) {
-        if (shouldRefetch || !isDataFetched) { // Fetch data if needed or first time
+        if ((selectedCategories == "All" && !isTopRating && sortType == "none" && fromPrice == 0 && toPrice == 100 && rating == "all") || !isDataFetched)
+        { // Fetch data if needed or first time
+            bookViewModel.get20Books { success, result ->
+                if (success && result != null) {
+                    books = result
+                    errorMessage = null
+                } else {
+                    errorMessage = "Failed to load featured books"
+                }
+                isDataFetched = true
+                onFetchComplete() // Reset the refetch flag after data is fetched
+            }
+        }
+        else if (shouldRefetch) { // Fetch data if needed or first time
             bookViewModel.getBooksByCategory(
                 categoryName = if (selectedCategories == "All") "" else selectedCategories,
                 ratingOptional = rating,
                 priceOptional = "yes",
                 priceMin = fromPrice.toDouble(),
                 priceMax = toPrice.toDouble(),
-                ratingSort = if (isTopRating) "asce" else "none",
+                ratingSort = if (isTopRating) "desc" else "none",
                 priceSort = sortType
             ) { success, result ->
                 if (success && result != null) {

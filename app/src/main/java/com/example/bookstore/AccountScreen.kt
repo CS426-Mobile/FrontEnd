@@ -1,5 +1,6 @@
 package com.example.bookstore
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -119,33 +120,33 @@ fun AccountScreen(navController: NavHostController) {
                     LazyColumn(
                         modifier = Modifier.background(Color.White).padding(top = 16.dp)
                     ) {
-                        // Address section
-                        item {
-                            Text(
-                                text = "Address",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                color = Color.Black
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                                    .clickable { /* Open address screen */ }
-                            ) {
-                                Text(
-                                    text = "43 Bourke Street, Newbridge NSW 837 R...",
-                                    color = Color.Black
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+//                        // Address section
+//                        item {
+//                            Text(
+//                                text = "Address",
+//                                fontWeight = FontWeight.Bold,
+//                                fontSize = 17.sp,
+//                                color = Color.Black
+//                            )
+//                            Row(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(vertical = 8.dp)
+//                                    .clickable { /* Open address screen */ }
+//                            ) {
+//                                Text(
+//                                    text = "43 Bourke Street, Newbridge NSW 837 R...",
+//                                    color = Color.Black
+//                                )
+//                            }
+//
+//                            Spacer(modifier = Modifier.height(16.dp))
+//                        }
 
                         // Account section
                         item {
                             Text(
-                                text = "Account",
+                                text = "Setting",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 17.sp,
                                 color = Color.Black
@@ -191,6 +192,7 @@ fun AccountScreen(navController: NavHostController) {
                                     )
                                 },
                                 modifier = Modifier.clickable {
+                                    userViewModel.logoutUser()
                                     navController.popBackStack(route = "login", inclusive = true)
                                 }
                             )

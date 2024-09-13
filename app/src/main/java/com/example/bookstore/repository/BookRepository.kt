@@ -23,7 +23,7 @@ class BookRepository {
         }
     }
 
-    suspend fun get20Books(): Result<List<SimpleBookResponse>> {
+    suspend fun get20Books(): Result<List<BookCategoryResponse>> {
         return try {
             val response = RetrofitInstance.api.get20Books()
             if (response.isSuccessful) {

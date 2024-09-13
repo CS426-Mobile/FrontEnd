@@ -71,11 +71,11 @@ fun FilterScreen(
     fromPrice: (Int) -> Unit = {},
     toPrice: (Int) -> Unit = {}
 ) {
-    var priceRange by remember { mutableStateOf(0f..50f) }
+    var priceRange by remember { mutableStateOf(0f..100f) }
     var selectedStarRating by remember { mutableStateOf(0) }
 
 
-    if (priceRange != 0f..50f || selectedStarRating != 0) {
+    if (priceRange != 0f..100f || selectedStarRating != 0) {
         onFilterActive(true)
     }
     else {
@@ -119,7 +119,7 @@ fun FilterScreen(
                                 // Nút "Reset" bên phải
                                 TextButton(
                                     onClick = {
-                                        priceRange = 0f..50f
+                                        priceRange = 0f..100f
                                         selectedStarRating = 0
                                     }
                                 ) {
@@ -296,7 +296,7 @@ fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeCh
             OutlinedTextField(
                 value = "${toPrice.toInt()}",
                 onValueChange = { value ->
-                    toPrice = value.toFloatOrNull() ?: 50f
+                    toPrice = value.toFloatOrNull() ?: 100f
                     onPriceRangeChange(fromPrice..toPrice)},
                 modifier = Modifier
                     .width(100.dp) // Giảm chiều rộng của ô
@@ -329,7 +329,7 @@ fun PriceRangeSlider(priceRange: ClosedFloatingPointRange<Float>, onPriceRangeCh
                 fromPrice = range.start
                 toPrice = range.endInclusive
             },
-            valueRange = 0f..50f,
+            valueRange = 0f..100f,
             onValueChangeFinished = {
                 // Xử lý khi người dùng hoàn thành thay đổi
             },

@@ -183,21 +183,21 @@ fun CartScreen(navController: NavHostController) {
                                 fontSize = 13.sp,
                                 color = Color.Gray
                             )
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                                    .clickable { /* Navigate to address screen */ }
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = "43 Bourke Street, Newbridge NSW 837 Raffles...",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
-                                    )
-                                }
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Arrow")
-                            }
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                modifier = Modifier.fillMaxWidth()
+//                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+//                                    .clickable { /* Navigate to address screen */ }
+//                            ) {
+//                                Column(modifier = Modifier.weight(1f)) {
+//                                    Text(
+//                                        text = "43 Bourke Street, Newbridge NSW 837 Raffles...",
+//                                        fontWeight = FontWeight.Bold,
+//                                        fontSize = 15.sp
+//                                    )
+//                                }
+//                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Arrow")
+//                            }
 
                             // Delivery Fee and Total Price section
                             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))

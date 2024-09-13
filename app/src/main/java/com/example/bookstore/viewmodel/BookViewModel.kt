@@ -29,7 +29,7 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun get20Books(onResult: (Boolean, List<SimpleBookResponse>?) -> Unit) {
+    fun get20Books(onResult: (Boolean, List<BookCategoryResponse>?) -> Unit) {
         viewModelScope.launch {
             val result = bookRepository.get20Books()
             result.onSuccess { books ->

@@ -217,7 +217,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                                 )
                                 ProductInformationRow("Publication Date", book!!.public_date)
                                 ProductInformationRow("Language", book!!.book_language)
-                                ProductInformationRow("Weight", "${book!!.book_weight} ounces")
+                                ProductInformationRow("Weight", "${book!!.book_weight} grams")
                                 ProductInformationRow("Pages", "${book!!.book_page}")
                             }
 
