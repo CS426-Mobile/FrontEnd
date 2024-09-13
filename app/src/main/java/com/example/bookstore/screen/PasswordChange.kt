@@ -1,5 +1,6 @@
 package com.example.bookstore.screen
 
+import android.app.Activity.MODE_PRIVATE
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

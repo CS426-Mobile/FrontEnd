@@ -66,6 +66,18 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val result = userRepository.changePassword(oldPassword, newPassword, confirmPassword)
             result.onSuccess { message ->
+                val sharedPref = getApplication<Application>().getSharedPreferences("app_preferences", MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    remove("remembered_user_password")
+                    putString("remembered_user_password", newPassword)
+                    apply()
+                }
+                val rememberedUserEmail = sharedPref.getString("remembered_user_email", null)
+                val rememberedUserPassword = sharedPref.getString("remembered_user_password", null)
+                if (rememberedUserEmail != null && rememberedUserPassword != null)
+                    loginUser(rememberedUserEmail, rememberedUserPassword) { success, message ->
+                        onResult(true, message)
+                    }
                 onResult(true, message)
             }.onFailure { exception ->
                 onResult(false, exception.message)
