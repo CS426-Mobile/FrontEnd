@@ -75,11 +75,13 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
     NavHost(navController = navController, startDestination = Screen.Home.route, modifier = modifier) {
         composable(
             route = Screen.Home.route,
-            enterTransition = { // Animation cho transition vào
-                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            enterTransition = {null},
+            exitTransition = {null},
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
             },
-            exitTransition = { // Animation cho transition ra
-                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) { HomeScreen(navController)}
         // Add AuthorDetailScreen with a dynamic author_name argument
@@ -91,6 +93,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) { backStackEntry ->
             // Extract the author_name argument from the back stack
@@ -108,6 +116,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }// Khai báo loại argument
         ) { backStackEntry ->
             val orderCode = backStackEntry.arguments?.getString("order_code") // Lấy giá trị argument
@@ -123,6 +137,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) { backStackEntry ->
             val bookName = backStackEntry.arguments?.getString("book_name") // Lấy giá trị argument
@@ -131,33 +151,39 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
 
         composable(
             route = Screen.Cart.route,
-            enterTransition = { // Animation cho transition vào
-                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            enterTransition = {null},
+            exitTransition = {null},
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
             },
-            exitTransition = { // Animation cho transition ra
-                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) {
             CartScreen(navController)
         }
         composable(
             route = Screen.ListOrder.route,
-            enterTransition = { // Animation cho transition vào
-                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            enterTransition = {null},
+            exitTransition = {null},
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
             },
-            exitTransition = { // Animation cho transition ra
-                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) {
             ListOrder(navController)
         }
         composable(
             route = Screen.Favorite.route,
-            enterTransition = { // Animation cho transition vào
-                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            enterTransition = {null},
+            exitTransition = {null},
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
             },
-            exitTransition = { // Animation cho transition ra
-                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) {
             FavoriteScreen(navController)
@@ -169,6 +195,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) {
             ChangePasswordScreen(navController)
@@ -176,11 +208,13 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
 
         composable(
             route = Screen.Account.route,
-            enterTransition = { // Animation cho transition vào
-                slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn()
+            enterTransition = {null},
+            exitTransition = {null},
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
             },
-            exitTransition = { // Animation cho transition ra
-                slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ) {
             AccountScreen(navController)
@@ -193,6 +227,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ){
             ListAuthor(navController)
@@ -204,6 +244,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ){
             SearchScreen(navController)
@@ -215,6 +261,12 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             },
             exitTransition = { // Animation cho transition ra
                 slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) + fadeIn()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
         ){
             PurchaseSuccessScreen(navController)
