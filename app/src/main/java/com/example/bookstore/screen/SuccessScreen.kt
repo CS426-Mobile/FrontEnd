@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookstore.R
-import com.example.bookstore.Screen
 import com.example.bookstore.ui.theme.mainColor
 
 @Composable

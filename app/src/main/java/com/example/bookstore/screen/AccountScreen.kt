@@ -1,14 +1,13 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
-import android.content.Context
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -146,10 +144,10 @@ fun AccountScreen(navController: NavHostController) {
                         // Account section
                         item {
                             Text(
-                                text = "Setting",
+                                text = "Settings",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 17.sp,
-                                color = Color.Black
+                                color = mainColor
                             )
 
                             ListItem(
@@ -193,7 +191,9 @@ fun AccountScreen(navController: NavHostController) {
                                 },
                                 modifier = Modifier.clickable {
                                     userViewModel.logoutUser()
-                                    navController.popBackStack(route = "login", inclusive = true)
+                                    val intent = Intent(navController.context, LoginActivity::class.java)
+                                    navController.context.startActivity(intent)
+                                    (navController.context as? Activity)?.finish()
                                 }
                             )
 
@@ -204,7 +204,7 @@ fun AccountScreen(navController: NavHostController) {
                                 text = "Following",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 17.sp,
-                                color = Color.Black
+                                color = mainColor
                             )
                         }
 

@@ -102,7 +102,19 @@ class UserRepository() {
                 val changePasswordResponse = response.body()
                 Result.success(changePasswordResponse?.message ?: "Password changed successfully")
             } else {
-                Result.failure(Exception(response.body()?.message ?: "Password change failed with code ${response.code()}"))
+                // Handle non-2xx responses by parsing error body
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = if (errorBody != null) {
+                    try {
+                        // Parse the error body to extract the message field
+                        JSONObject(errorBody).getString("message")
+                    } catch (e: Exception) {
+                        "Login failed with code: ${response.code()}."
+                    }
+                } else {
+                    "Login failed with code: ${response.code()}."
+                }
+                Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {
             Result.failure(Exception("Network or HTTP error: ${e.message}"))

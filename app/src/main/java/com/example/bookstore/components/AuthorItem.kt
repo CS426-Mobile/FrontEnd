@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.bookstore.Screen
+import com.example.bookstore.screen.Screen
 import com.example.bookstore.model.AuthorResponse
 
 @Composable

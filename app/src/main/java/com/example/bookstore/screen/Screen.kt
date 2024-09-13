@@ -1,6 +1,4 @@
-package com.example.bookstore
-
-import com.example.bookstore.model.OrderResponse
+package com.example.bookstore.screen
 
 sealed class Screen(val route: String){
     object Home: Screen(route = "home_screen")

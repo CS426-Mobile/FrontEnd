@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.bookstore.Screen
+import com.example.bookstore.screen.Screen
 import com.example.bookstore.model.AuthorResponse
 import com.example.bookstore.model.CustomerFavoriteResponse
 import com.example.bookstore.ui.theme.mainColor

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.bookstore.R
-import com.example.bookstore.Screen
+import com.example.bookstore.screen.Screen
 import com.example.bookstore.canGoBack
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.ui.theme.textColor

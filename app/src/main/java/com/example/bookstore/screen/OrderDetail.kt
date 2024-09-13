@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.bookstore.Screen
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.RatingBar
 import com.example.bookstore.model.OrderDetailResponse
@@ -183,12 +182,12 @@ fun OrderDetail(navController: NavHostController, orderCode: String) {
                             Spacer(modifier = Modifier.height(12.dp))
 
                             // Delivery Address section
-                            Text(
-                                text = "Delivery Address",
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                fontSize = 13.sp,
-                                color = Color.Gray
-                            )
+//                            Text(
+//                                text = "Delivery Address",
+//                                modifier = Modifier.padding(horizontal = 16.dp),
+//                                fontSize = 13.sp,
+//                                color = Color.Gray
+//                            )
 //                            Row(
 //                                verticalAlignment = Alignment.CenterVertically,
 //                                modifier = Modifier.fillMaxWidth()

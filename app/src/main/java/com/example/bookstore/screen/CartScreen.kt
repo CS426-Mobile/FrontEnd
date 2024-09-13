@@ -1,7 +1,6 @@
 package com.example.bookstore.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.bookstore.Screen
 import com.example.bookstore.components.BookCardHorizontal
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.model.CustomerCartResponse
@@ -176,13 +171,13 @@ fun CartScreen(navController: NavHostController) {
                             }
 
                             Spacer(modifier = Modifier.height(12.dp))
-                            // Delivery Address section
-                            Text(
-                                text = "Delivery Address",
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                fontSize = 13.sp,
-                                color = Color.Gray
-                            )
+//                            // Delivery Address section
+//                            Text(
+//                                text = "Delivery Address",
+//                                modifier = Modifier.padding(horizontal = 16.dp),
+//                                fontSize = 13.sp,
+//                                color = Color.Gray
+//                            )
 //                            Row(
 //                                verticalAlignment = Alignment.CenterVertically,
 //                                modifier = Modifier.fillMaxWidth()

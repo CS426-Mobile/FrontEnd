@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.bookstore.Screen
 import com.example.bookstore.components.AuthorHorizontalItem
 import com.example.bookstore.components.BookCard
 import com.example.bookstore.components.CustomTopAppBar
@@ -217,7 +216,7 @@ fun BookDetailScreen(navController: NavHostController, bookName: String?) {
                                 )
                                 ProductInformationRow("Publication Date", book!!.public_date)
                                 ProductInformationRow("Language", book!!.book_language)
-                                ProductInformationRow("Weight", "${book!!.book_weight} grams")
+                                ProductInformationRow("Weight", "${book!!.book_weight} g")
                                 ProductInformationRow("Pages", "${book!!.book_page}")
                             }
 

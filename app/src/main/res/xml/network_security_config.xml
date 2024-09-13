@@ -3,7 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <!-- Allow cleartext traffic for specific domains -->
         <domain includeSubdomains="true">192.168.1.8</domain>
-        <domain includeSubdomains="true">192.168.1.9</domain>
+        <domain includeSubdomains="true">onlinebookstore-app-bwd4hgfnfke4dvas.southeastasia-01.azurewebsites.net</domain>
         <domain includeSubdomains="true">onlinebookstoreapp-c0h2fyavdze9dper.southeastasia-01.azurewebsites.net</domain>
         <domain includeSubdomains="true">books.google.com</domain>
     </domain-config>

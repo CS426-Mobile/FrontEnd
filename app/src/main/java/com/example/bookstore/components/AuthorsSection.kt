@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.bookstore.Screen
+import com.example.bookstore.screen.Screen
 import com.example.bookstore.model.AuthorResponse
 import com.example.bookstore.ui.theme.mainColor
 import com.example.bookstore.viewmodel.AuthorViewModel

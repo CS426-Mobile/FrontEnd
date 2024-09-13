@@ -1,4 +1,4 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.bookstore.R
 import com.example.bookstore.components.AuthorsSection
 import com.example.bookstore.components.CustomTopAppBar
 import com.example.bookstore.components.FeaturedBooksSection

@@ -1,10 +1,9 @@
-package com.example.bookstore
+package com.example.bookstore.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,10 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.bookstore.R
 import com.example.bookstore.components.AuthorItem
 import com.example.bookstore.components.BookCardHorizontal
 import com.example.bookstore.components.CustomTopAppBar
@@ -78,10 +76,12 @@ fun SearchScreen(navController: NavHostController) {
             // Fetch matching authors
             authorViewModel.getMatchingAuthors(searchText) { success, result ->
                 if (success) authors = result
+                else authors = emptyList()
             }
             // Fetch matching books
             bookViewModel.getBooksByMatchingString(bookInput = searchText) { success, result ->
                 if (success) books = result
+                else books = emptyList()
             }
         }
     }

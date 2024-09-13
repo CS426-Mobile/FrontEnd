@@ -27,13 +27,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bookstore.screen.AccountScreen
 import com.example.bookstore.screen.AuthorDetailScreen
 import com.example.bookstore.screen.BookDetailScreen
 import com.example.bookstore.screen.CartScreen
+import com.example.bookstore.screen.ChangePasswordScreen
 import com.example.bookstore.screen.FavoriteScreen
+import com.example.bookstore.screen.HomeScreen
+import com.example.bookstore.screen.ListAuthor
 import com.example.bookstore.screen.ListOrder
 import com.example.bookstore.screen.OrderDetail
 import com.example.bookstore.screen.PurchaseSuccessScreen
+import com.example.bookstore.screen.Screen
+import com.example.bookstore.screen.SearchScreen
 import com.example.bookstore.ui.theme.mainColor
 
 val NavHostController.canGoBack: Boolean
@@ -83,7 +89,7 @@ fun NavHostContainer(navController: NavHostController, modifier: Modifier = Modi
             popExitTransition = {
                 slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut()
             }
-        ) { HomeScreen(navController)}
+        ) { HomeScreen(navController) }
         // Add AuthorDetailScreen with a dynamic author_name argument
         composable(
             route = Screen.Author.route,
